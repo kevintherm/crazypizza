@@ -11,14 +11,24 @@
                 <h1 class="text-2xl">Manage Ingredients</h1>
                 <p class="opacity-90">Manage your ingredients here.</p>
             </div>
-            <div>
+            <div class="flex gap-4 items-center">
                 <button type="button" x-on:click="createUpdate.open({})"
                     class="whitespace-nowrap rounded-radius bg-primary border border-primary px-4 py-2 text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-primary-dark dark:border-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark flex items-center gap-2">
-                    Insert
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="size-4">
+                        stroke="currentColor" class="size-5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
+                    Insert
+                </button>
+
+                <button type="button" x-show="selected.length > 0" x-cloak x-transition x-on:click="bulkDelete.open()"
+                    class="inline-flex justify-center items-center gap-2 whitespace-nowrap rounded-radius bg-danger border border-danger dark:border-danger px-4 py-2 text-sm font-medium tracking-wide text-on-danger transition hover:opacity-75 text-center focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-danger active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-danger dark:text-on-danger dark:focus-visible:outline-danger">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-5">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                    </svg>
+                    Bulk Delete
                 </button>
             </div>
             <div class="absolute left-0">
@@ -62,7 +72,7 @@
                         <th scope="col" class="p-4">
                             <label for="checkAll" class="flex items-center text-on-surface dark:text-on-surface-dark ">
                                 <div class="relative flex items-center">
-                                    <input type="checkbox" x-model="checkAll" id="checkAll"
+                                    <input type="checkbox" id="checkAll" x-model="checkAll" x-on:change="onCheckAll"
                                         class="before:content[''] peer relative size-4 appearance-none overflow-hidden rounded border border-outline bg-surface before:absolute before:inset-0 checked:border-primary checked:before:bg-primary focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong checked:focus:outline-primary active:outline-offset-0 dark:border-outline-dark dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark dark:focus:outline-outline-dark-strong dark:checked:focus:outline-primary-dark" />
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"
                                         stroke="currentColor" fill="none" stroke-width="4"
@@ -94,17 +104,18 @@
                         </template>
                     </template>
 
-                    <template data-name="when has data" x-for="(row, rowIndex) in items" :key="row.id + row.updated_at">
+                    <template data-name="when has data" x-for="(row, rowIndex) in items"
+                        :key="row.id + row.updated_at">
                         <tr>
                             <td class="p-4">
                                 <label :for="row.id"
                                     class="flex items-center text-on-surface dark:text-on-surface-dark ">
                                     <div class="relative flex items-center">
-                                        <input type="checkbox" :id="row.id"
+                                        <input type="checkbox" :id="row.id" x-on:change="onCheckSingle"
                                             class="before:content[''] peer relative size-4 appearance-none overflow-hidden rounded border border-outline bg-surface before:absolute before:inset-0 checked:border-primary checked:before:bg-primary focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong checked:focus:outline-primary active:outline-offset-0 dark:border-outline-dark dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark dark:focus:outline-outline-dark-strong dark:checked:focus:outline-primary-dark"
                                             :checked="checkAll" />
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"
-                                            stroke="currentColor" fill="none" stroke-width="4"
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                            aria-hidden="true" stroke="currentColor" fill="none" stroke-width="4"
                                             class="pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 text-on-primary peer-checked:visible dark:text-on-primary-dark">
                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                 d="M4.5 12.75l6 6 9-13.5" />
@@ -377,6 +388,32 @@
         </div>
     </x-modal>
 
+    <x-modal id="bulk-delete-modal">
+        <div class="p-6">
+
+            <div class="flex flex-col gap-4 items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-24 stroke-danger">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
+                </svg>
+                <h2 class="text-xl font-semibold">Warning!</h2>
+                <p class="text-md bulk-delete-message"></p>
+            </div>
+
+            <div class="w-full h-8"></div>
+
+            <div class="w-full flex justify-center gap-6">
+                <button type="button" x-on:click="$store.mg.bulkDelete.hide()"
+                    class="whitespace-nowrap rounded-radius bg-surface-alt border border-surface-alt px-6 py-2 text-sm font-medium tracking-wide text-on-surface-strong transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-surface-alt active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark-strong dark:focus-visible:outline-surface-dark-alt">No</button>
+
+                <button type="button" x-on:click="$store.mg.bulkDelete.handleConfirm($event)"
+                    class="whitespace-nowrap rounded-radius bg-danger border border-danger px-6 py-2 text-sm font-medium tracking-wide text-on-danger transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-danger-dark dark:border-danger-dark dark:text-on-danger-dark dark:focus-visible:outline-danger-dark">Yes</button>
+            </div>
+
+        </div>
+    </x-modal>
+
     <x-toast />
 
     <script>
@@ -388,14 +425,76 @@
                 loading: true,
 
                 checkAll: false,
+                selected: [],
                 items: [],
 
                 createUpdate: null,
                 confirm: null,
+                bulkDelete: null,
                 error: null,
                 nav: null,
 
                 init() {
+                    this.bulkDelete = {
+                        onConfirm: null,
+                        element: document.querySelector('#bulk-delete-modal'),
+                        show: () => $.notifier.modal(this.bulkDelete.element, 'show'),
+                        hide: () => $.notifier.modal(this.bulkDelete.element, 'hide'),
+                        setMessage: (message) => {
+                            this.bulkDelete.element.querySelector('.bulk-delete-message')
+                                .innerText = message;
+                        },
+                        handleConfirm(e) {
+                            e.preventDefault();
+                            if (this.onConfirm && typeof this.onConfirm === "function") {
+                                this.onConfirm(e);
+                            }
+                        },
+                        open: () => {
+
+                            const listString = this.items
+                                .filter(item => this.selected.includes(item.id))
+                                .map(item => `[${item.id}] ${item.name}`)
+                                .join(',\n');
+
+                            this.bulkDelete.setMessage(
+                                `Are you sure you want to delete:\n${listString}?\n\nThis action cannot be undone!`
+                            );
+
+                            this.bulkDelete.onConfirm = () => {
+                                axios.delete(@js(route('ingredients.bulkDelete')), {
+                                        data: {
+                                            ids: this.selected
+                                        }
+                                    }).then(res => {
+                                        this.updateItems(this.items.filter((item) => !this.selected.includes(item.id)));
+                                        this.selected = [];
+                                        this.fetchData();
+
+                                        const message = res?.data?.message || 'Deleted';
+                                        $.notifier.toast({
+                                            variant: 'success',
+                                            title: 'Success',
+                                            message
+                                        });
+                                        this.bulkDelete.hide();
+                                    })
+                                    .catch(err => {
+                                        this.bulkDelete.hide();
+                                        const message = err?.response?.data?.message || err
+                                            .message;
+                                        $.notifier.toast({
+                                            variant: 'danger',
+                                            title: 'Oops...',
+                                            message
+                                        });
+                                    });
+                            };
+
+                            this.bulkDelete.show();
+                        }
+                    };
+
                     this.nav = {
                         currentPage: 1,
                         pages: [],
@@ -419,6 +518,7 @@
                         },
                         changePerPage: () => {
                             this.nav.currentPage = 1;
+                            this.loadingRows = Math.max(this.nav.perPage, 3);
                             this.fetchData();
                         }
                     };
@@ -482,8 +582,26 @@
                                     this.createUpdate.hide();
 
                                     const updatedItem = res.data.data;
-                                    this.updateItems(this.items.map((item) => (item.id ===
-                                        updatedItem.id ? updatedItem : item)));
+
+                                    const found = this.items.findIndex((item) => item.id ===
+                                        updatedItem.id);
+
+                                    if (found === -1) {
+
+                                        if (this.items.length >= this.nav.perPage)
+                                            this.updateItems([updatedItem, ...this.items.slice(
+                                                0, -1)]);
+
+                                        else
+                                            this.updateItems([updatedItem, ...this.items]);
+
+                                    } else {
+                                        const newItems = [...this.items];
+                                        newItems[found] = updatedItem;
+
+                                        this.updateItems(newItems);
+                                    }
+
                                 })
                                 .catch(err => {
                                     const message = err?.response?.data?.message || err.message;
@@ -495,6 +613,37 @@
                                 });
                         }
                     };
+                },
+
+                get loadSkeleton() {
+                    return Array.from({
+                            length: this.loadingRows
+                        }, () =>
+                        Array.from({
+                            length: this.cols
+                        })
+                    );
+                },
+
+                updateItems(newItems = []) {
+                    this.items = newItems;
+                    this.checkAll = false;
+                },
+
+                onCheckAll() {
+                    if (this.checkAll) {
+                        this.selected = this.items.map((item) => item.id);
+                    } else {
+                        this.selected = [];
+                    }
+                },
+
+                onCheckSingle(e) {
+                    if (!e.target.checked) this.selected = this.selected.filter((id) =>
+                        id !== parseInt(e.target.id));
+                    else this.selected = [parseInt(e.target.id), ...this.selected];
+
+                    if (this.selected.length < 1) this.checkAll = false;
                 },
 
                 fetchData() {
@@ -559,21 +708,6 @@
                     }
 
                     this.confirm.show();
-                },
-
-                get loadSkeleton() {
-                    return Array.from({
-                            length: this.loadingRows
-                        }, () =>
-                        Array.from({
-                            length: this.cols
-                        })
-                    );
-                },
-
-                updateItems(newItems = []) {
-                    this.items = newItems;
-                    this.loadingRows = Math.max(this.loadingRows, newItems.length);
                 },
             });
         });

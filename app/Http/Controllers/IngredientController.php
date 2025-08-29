@@ -110,4 +110,31 @@ class IngredientController extends Controller
             return ApiResponse::error($e->getMessage(), status: 500);
         }
     }
+
+    public function bulkDelete(Request $request)
+    {
+        try {
+
+            DB::beginTransaction();
+
+            $validator = Validator::make($request->all(), [
+                'ids' => 'required|array',
+                'ids.*' => 'integer|exists:ingredients,id',
+            ]);
+
+            if ($validator->fails()) {
+                return ApiResponse::error($validator->errors()->first(), status: 400);
+            }
+
+            Ingredient::destroy($request->input('ids'));
+
+            DB::commit();
+
+            return ApiResponse::success("Ingredients deleted successfully.", null, 200);
+
+        } catch (\Throwable $e) {
+            Helper::LogThrowable($request, __FILE__, $e);
+            return ApiResponse::error($e->getMessage(), status: 500);
+        }
+    }
 }
