@@ -23,8 +23,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('products')->group(function () {
         Route::view('ingredients', 'admin.manage-ingredients');
-        Route::get('ingredients/data-table', [IngredientController::class, 'dataTable']);
-        Route::post('ingredients', [IngredientController::class, 'store']);
+        Route::get('ingredients/data-table', [IngredientController::class, 'dataTable'])->name('ingredients.dataTable');
+        Route::post('ingredients', [IngredientController::class, 'createUpdate'])->name('ingredients.createUpdate');
+        Route::delete('ingredients', [IngredientController::class, 'delete'])->name('ingredients.delete');
     });
 
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');

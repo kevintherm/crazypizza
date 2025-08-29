@@ -35,6 +35,13 @@ class AddUser extends Command
         $password = $this->secret('Password');
         $role = $this->choice('Role', User::ROLE);
 
+        $exists = User::where('email', $email)->exists();
+
+        if ($exists) {
+            $this->error("User with email {$email} already exists.");
+            return;
+        }
+
         User::create([
             'name' => $name,
             'email' => $email,

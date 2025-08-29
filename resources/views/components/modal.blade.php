@@ -4,10 +4,11 @@
     'backdropClass' => '',
     'static' => false,
     'attributes' => [],
+    'open' => false,
 ])
 
-<div x-data="{ modalOpen: false }">
-    <div x-ref="{{ $id }}" id="{{ $id }}" x-cloak x-show="modalOpen"
+<div x-data="{ modalOpen: @js($open) }">
+    <div x-ref="{{ Str::camel($id) }}" id="{{ $id }}" x-cloak x-show="modalOpen"
         x-on:modal="
                 if ($event.detail.action === 'toggle') modalOpen = !modalOpen;
                 else if ($event.detail.action === 'show') modalOpen = true;

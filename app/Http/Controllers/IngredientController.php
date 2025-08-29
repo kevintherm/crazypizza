@@ -2,44 +2,41 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Responses\ApiResponse;
 use App\Models\Ingredient;
-use DB;
 use Illuminate\Http\Request;
+use DB;
+use Helper;
 use Validator;
 
 class IngredientController extends Controller
 {
-    public function dataTable()
+    public function dataTable(Request $request)
     {
         try {
 
             $ingredients = DB::table('ingredients')
                 ->select('*')
+                ->whereNull('deleted_at')
                 ->orderBy('created_at', 'desc')
                 ->get();
 
-            return response()->json([
-                'message' => 'Ingredients fetched successfully.',
-                'data' => $ingredients,
-            ]);
+            return ApiResponse::success('Ingredients fetched successfully.', $ingredients);
 
+        } catch (\Throwable $e) {
+            Helper::LogThrowable($request, __FILE__, $e);
+            return ApiResponse::error($e->getMessage(), status: 500);
         }
-
-        catch (\Exception $e) {}
-        catch (\Throwable $e) {}
-
-        return response()->json([
-            'message' => 'An error occurred while fetching the ingredients.',
-        ], 500);
     }
 
-    public function store(Request $request)
+    public function createUpdate(Request $request)
     {
         try {
 
             DB::beginTransaction();
 
             $validator = Validator::make($request->all(), [
+                'id' => 'nullable|integer|exists:ingredients,id',
                 'name' => 'required|string|max:255',
                 'description' => 'nullable|string|max:1000',
                 'image' => 'nullable|image|max:2048',
@@ -48,30 +45,53 @@ class IngredientController extends Controller
                 'is_vegan' => 'nullable|boolean',
                 'is_gluten_free' => 'nullable|boolean',
                 'stock_quantity' => 'nullable|integer|min:0',
-                'price' => 'required|numeric|min:0',
             ]);
 
             if ($validator->fails()) {
-                return response()->json([
-                    'message' => $validator->errors()->first()
-                ], 400);
+                return ApiResponse::error($validator->errors()->first(), status: 400);
             }
 
-            Ingredient::create($validator->validated());
+            $ingredient = Ingredient::updateOrCreate(
+                ['id' => $request->input('id')],
+                $validator->validated()
+            );
 
             DB::commit();
 
-            return response()->json([
-                'message' => 'Ingredient added successfully.',
-            ], 201);
+            return ApiResponse::success("{$ingredient->name} saved successfully.", $ingredient, 200);
+
+        } catch (\Throwable $e) {
+            Helper::LogThrowable($request, __FILE__, $e);
+            return ApiResponse::error($e->getMessage(), status: 500);
+        }
+    }
+
+    public function delete(Request $request)
+    {
+        try {
+
+            DB::beginTransaction();
+
+            $validator = Validator::make($request->all(), [
+                'id' => 'required|integer|exists:ingredients,id',
+            ]);
+
+            if ($validator->fails()) {
+                return ApiResponse::error($validator->errors()->first(), status: 400);
+            }
+
+            $ingredient = Ingredient::find($request->input('id'));
+            $ingredient->delete();
+
+            DB::commit();
+
+            return ApiResponse::success("{$ingredient->name} deleted successfully.", null, 200);
 
         }
 
-        catch (\Exception $e) {}
-        catch (\Throwable $e) {}
-
-        return response()->json([
-            'message' => 'An error occurred while adding the ingredient.',
-        ], 500);
+        catch (\Throwable $e) {
+            Helper::LogThrowable($request, __FILE__, $e);
+            return ApiResponse::error($e->getMessage(), status: 500);
+        }
     }
 }

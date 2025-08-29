@@ -10,8 +10,8 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     public const ROLE = [
-        'super',
-        'user',
+        'super' => 'super',
+        'user' => 'user'
     ];
 
     /** @use HasFactory<\Database\Factories\UserFactory> */

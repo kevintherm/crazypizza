@@ -28,7 +28,12 @@ const alpineModal = () => {
     return (selector, action) => {
         if (!action) throw new Error("Action is required.");
 
-        document.querySelector(selector).dispatchEvent(new CustomEvent('modal', { detail: { action } }));
+        if (selector instanceof Element) {
+            selector.dispatchEvent(new CustomEvent('modal', { detail: { action } }));
+        } else {
+            document.querySelector(selector).dispatchEvent(new CustomEvent('modal', { detail: { action } }));
+        }
+
     };
 }
 
@@ -41,8 +46,23 @@ Alpine.magic('modal', alpineModal);
 
 Alpine.notifier = {};
 Alpine.notifier.toast = (detail) => alpineToast()(detail);
-Alpine.notifier.modal = (detail) => alpineModal()(detail);
-Alpine.notifier.banner = (selector, action) => alpineBanner()(selector, action);
+Alpine.notifier.modal = (selector, action) => alpineModal()(selector, action);
+Alpine.notifier.banner = (detail) => alpineBanner()(detail);
+
+Alpine.data('skeletonLoader', (rows = 2, cols = 6, details = {}) => ({
+    loading: true,
+    rows,
+    cols,
+    details,
+    items: [],
+
+    get data() {
+        return Array.from({ length: this.rows }, () =>
+            Array.from({ length: this.cols })
+        );
+    },
+}));
+
 
 window.$ = Alpine;
 
