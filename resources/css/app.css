@@ -14,7 +14,7 @@
     --color-surface-alt: var(--color-amber-100);
     --color-on-surface: var(--color-neutral-500);
     --color-on-surface-strong: var(--color-neutral-700);
-    --color-primary: var(--color-rose-400);
+    --color-primary: var(--color-indigo-400);
     --color-on-primary: var(--color-white);
     --color-secondary: var(--color-orange-200);
     --color-on-secondary: var(--color-neutral-800);
@@ -26,7 +26,7 @@
     --color-surface-dark-alt: var(--color-neutral-800);
     --color-on-surface-dark: var(--color-violet-100);
     --color-on-surface-dark-strong: var(--color-white);
-    --color-primary-dark: var(--color-rose-400);
+    --color-primary-dark: var(--color-indigo-400);
     --color-on-primary-dark: var(--color-white);
     --color-secondary-dark: var(--color-orange-200);
     --color-on-secondary-dark: var(--color-neutral-800);
@@ -40,7 +40,7 @@
     --color-on-success: var(--color-green-800);
     --color-warning: var(--color-amber-300);
     --color-on-warning: var(--color-amber-700);
-    --color-danger: var(--color-red-300);
+    --color-danger: var(--color-red-500);
     --color-on-danger: var(--color-red-800);
 
     /* Border Radius */
@@ -49,4 +49,35 @@
 
 [x-cloak] {
     display: none;
+}
+
+button:not(:disabled) {
+    cursor: pointer;
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: translateY(-5px);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        transform: translateY(5px);
+    }
+}
+
+.shake {
+    animation: shake 0.3s cubic-bezier(.36, .07, .19, .97) both;
 }

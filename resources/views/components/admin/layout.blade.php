@@ -53,6 +53,8 @@
 
         <!-- main content  -->
         <div id="main-content" class="w-full overflow-y-auto bg-white dark:bg-neutral-950">
+            <x-banner />
+
             {{ $slot }}
         </div>
 

@@ -1,6 +1,6 @@
 <div x-data="{
     currentRoute: window.location.pathname
-}" class="flex flex-col gap-2 overflow-y-auto pb-6">
+}" class="flex flex-col gap-2 h-full pb-6">
     <!-- Dashboard -->
     <a href="/dashboard"
         x-bind:class="currentRoute === '/dashboard' ?
@@ -38,6 +38,14 @@
         </button>
 
         <ul x-cloak x-collapse x-show="isExpanded" aria-labelledby="products-btn" id="products">
+            <li class="px-1 py-0.5 first:mt-2">
+                <a href="/products/ingredients"
+                    x-bind:class="currentRoute === '/products/ingredients' ?
+                        'flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm text-on-surface-strong bg-primary/5 dark:text-on-surface-dark-strong dark:bg-primary-dark/5 underline-offset-2 focus:outline-hidden focus-visible:underline' :
+                        'flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm text-on-surface underline-offset-2 hover:bg-primary/5 hover:text-on-surface-strong focus:outline-hidden focus-visible:underline dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong'">
+                    Ingredients
+                </a>
+            </li>
             <li class="px-1 py-0.5 first:mt-2">
                 <a href="/products/inventory"
                     x-bind:class="currentRoute === '/products/inventory' ?
@@ -135,4 +143,55 @@
         </svg>
         <span>Settings</span>
     </a>
+
+    <div x-data="{ isExpanded: currentRoute.includes('/orders') }" class="flex flex-col mt-auto">
+        <button type="button" x-on:click="isExpanded = !isExpanded" id="orders-btn" aria-controls="orders"
+            x-bind:aria-expanded="isExpanded ? 'true' : 'false'"
+            class="flex items-center justify-between rounded-radius gap-2 px-2 py-1.5 text-sm font-medium underline-offset-2 focus:outline-hidden focus-visible:underline"
+            x-bind:class="isExpanded || currentRoute.includes('/orders') ?
+                'text-on-surface-strong bg-primary/10 dark:text-on-surface-dark-strong dark:bg-primary-dark/10' :
+                'text-on-surface hover:bg-primary/5 hover:text-on-surface-strong dark:text-on-surface-dark dark:hover:text-on-surface-dark-strong dark:hover:bg-primary-dark/5'">
+            <span
+                class="flex size-6 items-center justify-center overflow-hidden rounded-full border border-outline bg-surface-alt text-on-surface/50 dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark/50">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"
+                    class="w-full h-full mt-3">
+                    <path fill-rule="evenodd"
+                        d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z"
+                        clip-rule="evenodd" />
+                </svg>
+            </span>
+            <span class="mr-auto text-left">{{ Auth::user()->name }}</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                class="size-5 transition-transform rotate-0 shrink-0"
+                x-bind:class="isExpanded ? 'rotate-180' : 'rotate-0'" aria-hidden="true">
+                <path fill-rule="evenodd"
+                    d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                    clip-rule="evenodd" />
+            </svg>
+        </button>
+
+        <ul x-cloak x-collapse x-show="isExpanded" aria-labelledby="orders-btn" id="orders">
+            <li class="px-1 py-0.5 first:mt-2">
+                <a href="/profile"
+                    x-bind:class="currentRoute === '/profile' ?
+                        'flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm text-on-surface-strong bg-primary/5 dark:text-on-surface-dark-strong dark:bg-primary-dark/5 underline-offset-2 focus:outline-hidden focus-visible:underline' :
+                        'flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm text-on-surface underline-offset-2 hover:bg-primary/5 hover:text-on-surface-strong focus:outline-hidden focus-visible:underline dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong'">
+                    <span>Profile</span>
+                </a>
+            </li>
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <li class="px-1 py-0.5 first:mt-2">
+                    <button type="submit"
+                        x-bind:class="currentRoute === '/logout' ?
+                            'w-full flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm text-on-surface-strong bg-primary/5 dark:text-on-surface-dark-strong dark:bg-primary-dark/5 underline-offset-2 focus:outline-hidden focus-visible:underline' :
+                            'w-full flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm text-on-surface underline-offset-2 hover:bg-primary/5 hover:text-on-surface-strong focus:outline-hidden focus-visible:underline dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong'">
+                        <span>Logout</span>
+                    </button>
+                </li>
+            </form>
+        </ul>
+    </div>
+
+
 </div>

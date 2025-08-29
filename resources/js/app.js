@@ -24,15 +24,25 @@ const alpineBanner = () => {
     };
 }
 
+const alpineModal = () => {
+    return (selector, action) => {
+        if (!action) throw new Error("Action is required.");
+
+        document.querySelector(selector).dispatchEvent(new CustomEvent('modal', { detail: { action } }));
+    };
+}
+
 Alpine.plugin(collapse);
 Alpine.plugin(focus);
 Alpine.plugin(mask);
 
 Alpine.magic('toast', alpineToast);
+Alpine.magic('modal', alpineModal);
 
 Alpine.notifier = {};
 Alpine.notifier.toast = (detail) => alpineToast()(detail);
-Alpine.notifier.banner = (detail) => alpineBanner()(detail);
+Alpine.notifier.modal = (detail) => alpineModal()(detail);
+Alpine.notifier.banner = (selector, action) => alpineBanner()(selector, action);
 
 window.$ = Alpine;
 

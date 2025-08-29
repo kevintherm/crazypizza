@@ -4,7 +4,8 @@
 
         <x-banner />
 
-        <div class="w-100 h-24"></div>
+        <div class="w-full h-24"></div>
+
     </main>
 
 </x-admin.layout>
