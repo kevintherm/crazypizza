@@ -32,6 +32,27 @@
 
         <div class="w-full h-12"></div>
 
+        <div aria-label="table-info">
+            <div class="relative flex w-full max-w-36 flex-col gap-1 text-on-surface dark:text-on-surface-dark">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                    class="absolute pointer-events-none right-4 top-2 size-5">
+                    <path fill-rule="evenodd"
+                        d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                        clip-rule="evenodd" />
+                </svg>
+                <select id="perpage" name="perpage" x-model="nav.perPage" x-on:change="nav.changePerPage"
+                    class="w-full appearance-none rounded-radius border border-outline bg-surface-alt px-4 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark">
+                    <option value="" selected>Per Page</option>
+                    <option value="10">10</option>
+                    @foreach (range(0, 100, 25) as $i)
+                        <option value="{{ max(1, $i) }}">{{ max(1, $i) }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+
+        <div class="w-full h-6"></div>
+
         <div x-init="fetchData" x-on:refresh.window="fetchData"
             class="overflow-hidden w-full overflow-x-auto rounded-radius border border-outline dark:border-outline-dark">
             <table class="w-full text-left text-sm text-on-surface dark:text-on-surface-dark">
@@ -119,6 +140,58 @@
                     </template>
                 </tbody>
             </table>
+        </div>
+
+        <div class="w-full h-6"></div>
+
+        <div aria-label="table-info" class="flex flex-col md:flex-row justify-between items-center gap-2">
+            <p class="text-sm leading-tight">Showing <span x-text="items.length"></span> of <span
+                    x-text="nav.total"></span>
+                Items </p>
+            <nav aria-label="pagination">
+                <ul class="flex shrink-0 items-center gap-2 text-sm font-medium">
+                    <li>
+                        <button type="button" x-on:click="nav.prev()" :disabled="!nav.hasPreviousPage"
+                            :inert="!nav.hasPreviousPage"
+                            class="flex items-center rounded-radius p-1 text-on-surface hover:text-primary dark:text-on-surface-dark dark:hover:text-primary-dark disabled:opacity-60"
+                            aria-label="previous page">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                aria-hidden="true" class="size-6">
+                                <path fill-rule="evenodd"
+                                    d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            Previous
+                        </button>
+                    </li>
+
+                    <template x-for="page in nav.pages" :key="page">
+                        <li>
+                            <button type="button" x-on:click="nav.goTo(page)" :disabled="nav.currentPage === page"
+                                :class="nav.currentPage === page ?
+                                    'flex size-6 items-center justify-center rounded-radius bg-primary p-1 font-bold text-on-primary dark:bg-primary-dark dark:text-on-primary-dark' :
+                                    'flex size-6 items-center justify-center rounded-radius p-1 text-on-surface hover:text-primary dark:text-on-surface-dark dark:hover:text-primary-dark'"
+                                :aria-label="`page ${page}`" x-text="page">
+                            </button>
+                        </li>
+                    </template>
+
+                    <li>
+                        <button type="button" x-on:click="nav.next()" :disabled="!nav.hasNextPage"
+                            :inert="!nav.hasNextPage"
+                            class="flex items-center rounded-radius p-1 text-on-surface hover:text-primary dark:text-on-surface-dark dark:hover:text-primary-dark disabled:opacity-60"
+                            aria-label="next page">
+                            Next
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                aria-hidden="true" class="size-6">
+                                <path fill-rule="evenodd"
+                                    d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
         </div>
 
     </main>
@@ -311,14 +384,45 @@
             $.store('mg', {
                 cols: 6,
                 loadingRows: 3,
+
                 loading: true,
+
                 checkAll: false,
                 items: [],
+
                 createUpdate: null,
                 confirm: null,
                 error: null,
+                nav: null,
 
                 init() {
+                    this.nav = {
+                        currentPage: 1,
+                        pages: [],
+                        hasNextPage: false,
+                        hasPreviousPage: false,
+                        perPage: 0,
+                        total: 0,
+                        goTo: (page) => {
+                            if (this.nav.pages.includes(page)) {
+                                this.nav.currentPage = page;
+                                this.fetchData();
+                            }
+                        },
+                        prev: () => {
+                            this.nav.currentPage--;
+                            this.fetchData();
+                        },
+                        next: () => {
+                            this.nav.currentPage++;
+                            this.fetchData();
+                        },
+                        changePerPage: () => {
+                            this.nav.currentPage = 1;
+                            this.fetchData();
+                        }
+                    };
+
                     this.confirm = {
                         onConfirm: null,
                         element: document.querySelector('#confirm-modal'),
@@ -378,7 +482,8 @@
                                     this.createUpdate.hide();
 
                                     const updatedItem = res.data.data;
-                                    this.updateItems(this.items.map((item) => (item.id === updatedItem.id ? updatedItem : item)));
+                                    this.updateItems(this.items.map((item) => (item.id ===
+                                        updatedItem.id ? updatedItem : item)));
                                 })
                                 .catch(err => {
                                     const message = err?.response?.data?.message || err.message;
@@ -395,9 +500,25 @@
                 fetchData() {
                     this.loading = true;
                     this.updateItems([]);
-                    axios.get(@js(route('ingredients.dataTable')))
+                    axios.get(@js(route('ingredients.dataTable')), {
+                            params: {
+                                page: this.nav.currentPage,
+                                perpage: this.nav.perPage || null,
+                            }
+                        })
                         .then(res => {
-                            this.updateItems(res.data.data);
+                            const api = res.data.data;
+
+                            this.updateItems(api.data);
+                            Object.assign(this.nav, {
+                                currentPage: api.current_page,
+                                pages: api.pages,
+                                total: api.total,
+                                perPage: api.per_page,
+                                hasNextPage: api.has_next_page,
+                                hasPreviousPage: api.has_previous_page
+                            });
+
                             this.loading = false;
                         })
                         .catch(err => {

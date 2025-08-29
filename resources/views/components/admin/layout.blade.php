@@ -1,5 +1,5 @@
 <x-app>
-    <div x-data="{ showSidebar: false }" class="relative flex w-full flex-col md:flex-row">
+    <div x-data="{ showSidebar: true }" class="relative flex w-full flex-col md:flex-row h-screen">
         <!-- This allows screen readers to skip the sidebar and go directly to the main content. -->
         <a class="sr-only" href="#main-content">skip to the main content</a>
 
@@ -56,6 +56,9 @@
             <x-banner />
 
             {{ $slot }}
+
+            <x-admin.footer />
+
         </div>
 
         <!-- toggle button for small screen  -->

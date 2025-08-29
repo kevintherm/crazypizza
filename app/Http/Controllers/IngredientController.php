@@ -15,13 +15,31 @@ class IngredientController extends Controller
     {
         try {
 
+            $perPage = $request->input('perpage', 10);
+
             $ingredients = DB::table('ingredients')
                 ->select('*')
                 ->whereNull('deleted_at')
                 ->orderBy('created_at', 'desc')
-                ->get();
+                ->simplePaginate($perPage);
 
-            return ApiResponse::success('Ingredients fetched successfully.', $ingredients);
+            $total = DB::table('ingredients')->whereNull('deleted_at')->count();
+
+            $lastPage = $perPage == 0 ? 1 : (int) ceil($total / $perPage);
+            $pages = array_values(array_unique(array_merge(
+                range(1, max(1, min(3, $lastPage))),
+                range(max(1, $lastPage - 2), max(1, $lastPage))
+            )));
+
+            return ApiResponse::success('Ingredients fetched successfully.', [
+                'current_page' => $ingredients->currentPage(),
+                'per_page' => $ingredients->perPage(),
+                'total' => $total,
+                'pages' => $pages,
+                'has_next_page' => $ingredients->hasMorePages(),
+                'has_previous_page' => $ingredients->currentPage() > 1,
+                'data' => $ingredients->items(),
+            ]);
 
         } catch (\Throwable $e) {
             Helper::LogThrowable($request, __FILE__, $e);
@@ -87,9 +105,7 @@ class IngredientController extends Controller
 
             return ApiResponse::success("{$ingredient->name} deleted successfully.", null, 200);
 
-        }
-
-        catch (\Throwable $e) {
+        } catch (\Throwable $e) {
             Helper::LogThrowable($request, __FILE__, $e);
             return ApiResponse::error($e->getMessage(), status: 500);
         }
