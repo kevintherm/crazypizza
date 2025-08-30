@@ -5,15 +5,15 @@
     <main class="flex flex-col px-6 md:px-12" x-data="$store.mg">
 
         {{-- Header Section --}}
-        <div class="w-full h-6"></div>
-        <section id="header" class="flex items-center justify-between relative">
+        <div class="h-6 w-full"></div>
+        <section id="header" class="relative flex items-center justify-between">
             <div>
                 <h1 class="text-2xl">Manage Ingredients</h1>
                 <p class="opacity-90">Manage your ingredients here.</p>
             </div>
-            <div class="flex gap-4 items-center">
+            <div class="flex items-center gap-4">
                 <button type="button" x-on:click="createUpdate.open({})"
-                    class="whitespace-nowrap rounded-radius bg-primary border border-primary px-4 py-2 text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-primary-dark dark:border-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark flex items-center gap-2">
+                    class="rounded-radius bg-primary border-primary text-on-primary focus-visible:outline-primary dark:bg-primary-dark dark:border-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark flex items-center gap-2 whitespace-nowrap border px-4 py-2 text-center text-sm font-medium tracking-wide transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-75">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="size-5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -21,7 +21,7 @@
                     Insert
                 </button>
                 <button type="button" x-show="selected.length > 0" x-cloak x-transition x-on:click="bulkDelete.open()"
-                    class="inline-flex justify-center items-center gap-2 whitespace-nowrap rounded-radius bg-danger border border-danger dark:border-danger px-4 py-2 text-sm font-medium tracking-wide text-on-danger transition hover:opacity-75 text-center focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-danger active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-danger dark:text-on-danger dark:focus-visible:outline-danger">
+                    class="rounded-radius bg-danger border-danger dark:border-danger text-on-danger focus-visible:outline-danger dark:bg-danger dark:text-on-danger dark:focus-visible:outline-danger inline-flex items-center justify-center gap-2 whitespace-nowrap border px-4 py-2 text-center text-sm font-medium tracking-wide transition hover:opacity-75 focus-visible:outline focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-75">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="size-5">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -32,7 +32,7 @@
             </div>
             <div class="absolute left-0">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="size-24 opacity-20 stroke-primary">
+                    stroke="currentColor" class="stroke-primary size-24 opacity-20">
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" />
                 </svg>
@@ -40,18 +40,18 @@
         </section>
 
         {{-- Table Controls --}}
-        <div class="w-full h-12"></div>
-        <div aria-label="table-info" class="w-full flex justify-between">
-            <div class="relative flex w-full max-w-36 flex-col gap-1 text-on-surface dark:text-on-surface-dark">
+        <div class="h-12 w-full"></div>
+        <div aria-label="table-info" class="flex w-full justify-between">
+            <div class="text-on-surface dark:text-on-surface-dark relative flex w-full max-w-36 flex-col gap-1">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                    class="absolute pointer-events-none right-4 top-2 size-5">
+                    class="pointer-events-none absolute right-4 top-2 size-5">
                     <path fill-rule="evenodd"
                         d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
                         clip-rule="evenodd" />
                 </svg>
                 <select id="perpage" name="perpage" x-model="nav.perPage" x-on:change="nav.changePerPage"
                     :disabled="loading"
-                    class="w-full appearance-none rounded-radius border border-outline bg-surface-alt px-4 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark">
+                    class="rounded-radius border-outline bg-surface-alt focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark w-full appearance-none border px-4 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-75">
                     <option value="" selected>Per Page</option>
                     <option value="8">8</option>
                     @foreach (range(0, 100, 25) as $i)
@@ -61,7 +61,7 @@
             </div>
             <button type="button" x-on:click.debounce="fetchData" :disabled="loading" aria-label="Refresh Table"
                 title="Refresh Table"
-                class="whitespace-nowrap bg-transparent rounded-radius border border-outline px-4 py-2 text-sm font-medium tracking-wide text-on-surface transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-outline active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:border-outline-dark dark:text-on-surface-dark dark:focus-visible:outline-outline-dark"><svg
+                class="rounded-radius border-outline text-on-surface focus-visible:outline-outline dark:border-outline-dark dark:text-on-surface-dark dark:focus-visible:outline-outline-dark whitespace-nowrap border bg-transparent px-4 py-2 text-center text-sm font-medium tracking-wide transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-75"><svg
                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="size-5">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -70,25 +70,25 @@
         </div>
 
         {{-- Table --}}
-        <div class="w-full h-6"></div>
+        <div class="h-6 w-full"></div>
         <div x-init="fetchData" x-on:refresh.window="fetchData"
-            class="overflow-hidden w-full overflow-x-auto rounded-radius border border-outline dark:border-outline-dark">
-            <table class="w-full text-left text-sm text-on-surface dark:text-on-surface-dark table-fixed">
+            class="rounded-radius border-outline dark:border-outline-dark w-full overflow-hidden overflow-x-auto border">
+            <table class="text-on-surface dark:text-on-surface-dark w-full table-fixed text-left text-sm">
                 <thead
-                    class="border-b border-outline bg-surface-alt text-on-surface-strong dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark-strong">
+                    class="border-outline bg-surface-alt text-on-surface-strong dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark-strong border-b">
                     <tr>
                         <template x-for="col in cols" :key="col.name">
                             <th scope="col" class="p-4" :class="col.class">
                                 <template x-if="col.name === 'CHECK_ALL'">
                                     <label for="checkAll"
-                                        class="flex items-center text-on-surface dark:text-on-surface-dark">
+                                        class="text-on-surface dark:text-on-surface-dark flex items-center">
                                         <div class="relative flex items-center">
                                             <input type="checkbox" id="checkAll" x-model="checkAll"
                                                 @change="onCheckAll"
-                                                class="before:content[''] peer relative size-4 appearance-none overflow-hidden rounded border border-outline bg-surface before:absolute before:inset-0 checked:border-primary checked:before:bg-primary focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong checked:focus:outline-primary active:outline-offset-0 dark:border-outline-dark dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark dark:focus:outline-outline-dark-strong dark:checked:focus:outline-primary-dark" />
+                                                class="before:content[''] border-outline bg-surface checked:border-primary checked:before:bg-primary focus:outline-outline-strong checked:focus:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark dark:focus:outline-outline-dark-strong dark:checked:focus:outline-primary-dark peer relative size-4 appearance-none overflow-hidden rounded border before:absolute before:inset-0 focus:outline-2 focus:outline-offset-2 active:outline-offset-0" />
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                                                 aria-hidden="true" stroke="currentColor" fill="none" stroke-width="4"
-                                                class="pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 text-on-primary peer-checked:visible dark:text-on-primary-dark">
+                                                class="text-on-primary dark:text-on-primary-dark pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 peer-checked:visible">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                     d="M4.5 12.75l6 6 9-13.5" />
                                             </svg>
@@ -114,14 +114,14 @@
                         </template>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-outline dark:divide-outline-dark">
+                <tbody class="divide-outline dark:divide-outline-dark divide-y">
                     <template data-name="when loading" x-if="loading">
                         <template x-for="(row, rowIndex) in loadSkeleton" :key="rowIndex">
                             <tr>
                                 <template x-for="col in cols" :key="col.name">
                                     <td class="p-4">
                                         <div
-                                            class="h-6 w-full animate-pulse rounded-radius bg-gray-300 dark:bg-gray-600">
+                                            class="rounded-radius h-6 w-full animate-pulse bg-gray-300 dark:bg-gray-600">
                                         </div>
                                     </td>
                                 </template>
@@ -134,14 +134,14 @@
                         <tr>
                             <td class="p-4">
                                 <label :for="row.id"
-                                    class="flex items-center text-on-surface dark:text-on-surface-dark ">
+                                    class="text-on-surface dark:text-on-surface-dark flex items-center">
                                     <div class="relative flex items-center">
                                         <input type="checkbox" :id="row.id" x-on:change="onCheckSingle"
-                                            class="before:content[''] peer relative size-4 appearance-none overflow-hidden rounded border border-outline bg-surface before:absolute before:inset-0 checked:border-primary checked:before:bg-primary focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong checked:focus:outline-primary active:outline-offset-0 dark:border-outline-dark dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark dark:focus:outline-outline-dark-strong dark:checked:focus:outline-primary-dark"
+                                            class="before:content[''] border-outline bg-surface checked:border-primary checked:before:bg-primary focus:outline-outline-strong checked:focus:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark dark:focus:outline-outline-dark-strong dark:checked:focus:outline-primary-dark peer relative size-4 appearance-none overflow-hidden rounded border before:absolute before:inset-0 focus:outline-2 focus:outline-offset-2 active:outline-offset-0"
                                             :checked="checkAll" />
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                                             aria-hidden="true" stroke="currentColor" fill="none" stroke-width="4"
-                                            class="pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 text-on-primary peer-checked:visible dark:text-on-primary-dark">
+                                            class="text-on-primary dark:text-on-primary-dark pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 peer-checked:visible">
                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                 d="M4.5 12.75l6 6 9-13.5" />
                                         </svg>
@@ -150,24 +150,26 @@
                             </td>
                             <td class="p-4" x-text="rowIndex + 1"></td>
                             <td class="p-2">
-                                <img src="https://placehold.co/400x300" :alt="row.name"
-                                    class="w-12 aspect-[4/3] rounded-radius object-cover cursor-pointer"
+                                <img :src="row.image || 'imagenotfound'" :alt="row.name"
+                                    x-on:click="viewImage.open(row.image, row.name)" x-on:error="$.when.imageError"
+                                    :class="row.image ? 'w-12 aspect-[4/3] rounded-radius object-cover cursor-pointer' :
+                                        'w-12 aspect-[4/3] rounded-radius object-cover'"
                                     draggable="false" />
                             </td>
-                            <td class="p-4 truncate" x-text="row.name"></td>
+                            <td class="truncate p-4" x-text="row.name"></td>
                             <td class="p-4" x-text="`${row.stock_quantity} ${row.unit}`"></td>
                             <td class="p-4">
-                                <div class="flex flex-col gap-1 justify-start">
+                                <div class="flex flex-col justify-start gap-1">
                                     <p x-text="row.updated_at"></p>
                                     <p class="text-xs opacity-80" x-text="`Created ${row.created_at}`"></p>
                                 </div>
                             </td>
                             <td class="p-4">
-                                <div class="flex gap-3 items-center">
+                                <div class="flex items-center gap-3">
                                     <button type="button" x-on:click="createUpdate.open(row)"
-                                        class="cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark">Edit</button>
+                                        class="rounded-radius text-primary outline-primary dark:text-primary-dark dark:outline-primary-dark cursor-pointer whitespace-nowrap bg-transparent p-0.5 font-semibold hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0">Edit</button>
                                     <button type="button" x-on:click="deleteItem(row.id, row.name)"
-                                        class="cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-danger outline-danger hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-danger dark:outline-danger">Delete</button>
+                                        class="rounded-radius text-danger outline-danger dark:text-danger dark:outline-danger cursor-pointer whitespace-nowrap bg-transparent p-0.5 font-semibold hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0">Delete</button>
                                 </div>
                             </td>
                         </tr>
@@ -176,7 +178,7 @@
                     <template data-name="when empty" x-if="items.length < 1 && !loading">
                         <tr>
                             <td :colspan="cols.length" class="p-4">
-                                <p class="text-center text-md font-semibold opacity-80">There's nothing to show.</p>
+                                <p class="text-md text-center font-semibold opacity-80">There's nothing to show.</p>
                             </td>
                         </tr>
                     </template>
@@ -185,8 +187,8 @@
         </div>
 
         {{-- Pagination --}}
-        <div class="w-full h-6"></div>
-        <div aria-label="table-info" class="flex flex-col md:flex-row justify-between items-center gap-2">
+        <div class="h-6 w-full"></div>
+        <div aria-label="table-info" class="flex flex-col items-center justify-between gap-2 md:flex-row">
             <p class="text-sm leading-tight">Showing <span x-text="items.length"></span> of <span
                     x-text="nav.total"></span>
                 Items </p>
@@ -195,7 +197,7 @@
                     <li>
                         <button type="button" x-on:click="nav.prev()" :disabled="!nav.hasPreviousPage || loading"
                             :inert="!nav.hasPreviousPage"
-                            class="flex items-center rounded-radius p-1 text-on-surface hover:text-primary dark:text-on-surface-dark dark:hover:text-primary-dark disabled:opacity-60"
+                            class="rounded-radius text-on-surface hover:text-primary dark:text-on-surface-dark dark:hover:text-primary-dark flex items-center p-1 disabled:opacity-60"
                             aria-label="previous page">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
                                 aria-hidden="true" class="size-6">
@@ -222,7 +224,7 @@
                     <li>
                         <button type="button" x-on:click="nav.next()" :disabled="!nav.hasNextPage || loading"
                             :inert="!nav.hasNextPage"
-                            class="flex items-center rounded-radius p-1 text-on-surface hover:text-primary dark:text-on-surface-dark dark:hover:text-primary-dark disabled:opacity-60"
+                            class="rounded-radius text-on-surface hover:text-primary dark:text-on-surface-dark dark:hover:text-primary-dark flex items-center p-1 disabled:opacity-60"
                             aria-label="next page">
                             Next
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
@@ -239,15 +241,15 @@
 
     </main>
 
-    <x-modal id="create-update-modal" :static="true">
+    <x-modal id="create-update-modal">
         <form id="create-update-form" x-on:submit.prevent="$store.mg.createUpdate.process($event)">
-            <input type="hidden" name="id">
+            <input type="hidden" name="id" x-model="$store.mg.selectedItem.id">
 
             <div class="p-6">
-                <div class="flex justify-between items-center">
+                <div class="flex items-center justify-between">
                     <h1 class="text-lg font-semibold">Ingredient</h1>
                     <button type="button" x-on:click="$store.mg.createUpdate.hide()"
-                        class="whitespace-nowrap rounded-radius bg-surface-alt border border-surface-alt px-4 py-2 text-sm font-medium tracking-wide text-on-surface-strong transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-surface-alt active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark-strong dark:focus-visible:outline-surface-dark-alt">
+                        class="rounded-radius bg-surface-alt border-surface-alt text-on-surface-strong focus-visible:outline-surface-alt dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark-strong dark:focus-visible:outline-surface-dark-alt whitespace-nowrap border px-4 py-2 text-center text-sm font-medium tracking-wide transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-75">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                             stroke-width="1.5" stroke="currentColor" class="size-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -255,15 +257,38 @@
                     </button>
                 </div>
 
-                <div class="w-full h-8"></div>
+                <div class="h-8 w-full"></div>
 
                 <div class="grid grid-cols-12 gap-2 md:gap-4">
+                    <div class="col-span-12 md:col-span-3">
+                        <p class="w-fit pb-1 pl-0.5 text-sm capitalize">Image</p>
+                        <button type="button" x-show="$store.mg.selectedItem.image" x-transition x-cloak
+                            x-on:click="$store.mg.deleteItem($store.mg.selectedItem.id, null, 'image')"
+                            class="rounded-radius border-danger text-danger focus-visible:outline-danger dark:border-danger dark:text-danger dark:focus-visible:outline-danger whitespace-nowrap border bg-transparent p-2 text-center text-sm font-medium tracking-wide transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-75">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke-width="1.5" stroke="currentColor" class="size-4">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="col-span-12 md:col-span-9">
+                        <img x-show="$store.mg.selectedItem.image" x-cloak
+                            x-on:click="$store.mg.viewImage.open($store.mg.selectedItem.image, $store.mg.selectedItem.title)"
+                            :src="$store.mg.selectedItem.image" x-on:error="$.when.imageError"
+                            class="rounded-radius max-w-1/3 w-full cursor-pointer">
+                        <div x-show="!$store.mg.selectedItem.image" x-cloak>
+                            <x-file-uploader id="image" :allowedTypes="['image/jpg', 'image/jpeg', 'image/png', 'image/webp']" :maxSize="5 * MB_IN_BYTES" />
+                        </div>
+                    </div>
+
                     <div class="col-span-12 md:col-span-3">
                         <label for="name" class="w-fit pl-0.5 text-sm capitalize">Name</label>
                     </div>
                     <div class="col-span-12 md:col-span-9">
-                        <input id="name" type="text"
-                            class="w-full rounded-radius border border-outline bg-surface-alt px-3 py-2 text-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark"
+                        <input id="name" type="text" x-model="$store.mg.selectedItem.name"
+                            class="rounded-radius border-outline bg-surface-alt text-md focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark w-full border px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-75"
                             name="name" placeholder="Name" autocomplete="name" required />
                     </div>
 
@@ -271,8 +296,8 @@
                         <label for="description" class="w-fit pl-0.5 text-sm capitalize">Description</label>
                     </div>
                     <div class="col-span-12 md:col-span-9">
-                        <textarea id="description"
-                            class="w-full rounded-radius border border-outline bg-surface-alt px-3 py-2 text-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark"
+                        <textarea id="description" x-model="$store.mg.selectedItem.description"
+                            class="rounded-radius border-outline bg-surface-alt text-md focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark w-full border px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-75"
                             name="description" placeholder="Description" autocomplete="off" required></textarea>
                     </div>
 
@@ -282,13 +307,13 @@
                     <div class="col-span-12 md:col-span-9">
                         <div class="relative">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                class="absolute pointer-events-none right-4 top-2 size-5">
+                                class="pointer-events-none absolute right-4 top-2 size-5">
                                 <path fill-rule="evenodd"
                                     d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
                                     clip-rule="evenodd" />
                             </svg>
-                            <select id="unit"
-                                class="w-full appearance-none rounded-radius border border-outline bg-surface-alt px-4 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark"
+                            <select id="unit" x-model="$store.mg.selectedItem.unit"
+                                class="rounded-radius border-outline bg-surface-alt focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark w-full appearance-none border px-4 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-75"
                                 name="unit" placeholder="Unit" autocomplete="off" required>
                                 <option value="" hidden>Select option</option>
                                 @foreach (Ingredient::UNITS as $abbr => $unit)
@@ -304,7 +329,8 @@
                     </div>
                     <div class="col-span-12 md:col-span-9">
                         <input type="number" id="calories_per_unit"
-                            class="w-full rounded-radius border border-outline bg-surface-alt px-3 py-2 text-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark"
+                            x-model="$store.mg.selectedItem.calories_per_unit"
+                            class="rounded-radius border-outline bg-surface-alt text-md focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark w-full border px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-75"
                             name="calories_per_unit" placeholder="Calories per unit" autocomplete="off" required />
                     </div>
 
@@ -314,13 +340,13 @@
                     <div class="col-span-12 md:col-span-9">
                         <div class="relative">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                class="absolute pointer-events-none right-4 top-2 size-5">
+                                class="pointer-events-none absolute right-4 top-2 size-5">
                                 <path fill-rule="evenodd"
                                     d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
                                     clip-rule="evenodd" />
                             </svg>
-                            <select id="is_vegan"
-                                class="w-full appearance-none rounded-radius border border-outline bg-surface-alt px-4 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark"
+                            <select id="is_vegan" x-model="$store.mg.selectedItem.is_vegan"
+                                class="rounded-radius border-outline bg-surface-alt focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark w-full appearance-none border px-4 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-75"
                                 name="is_vegan" placeholder="Is Vegan" autocomplete="off" required>
                                 <option value="" hidden>Select option</option>
                                 <option value="1">Yes</option>
@@ -335,13 +361,13 @@
                     <div class="col-span-12 md:col-span-9">
                         <div class="relative">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                class="absolute pointer-events-none right-4 top-2 size-5">
+                                class="pointer-events-none absolute right-4 top-2 size-5">
                                 <path fill-rule="evenodd"
                                     d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
                                     clip-rule="evenodd" />
                             </svg>
-                            <select id="is_gluten_free"
-                                class="w-full appearance-none rounded-radius border border-outline bg-surface-alt px-4 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark"
+                            <select id="is_gluten_free" x-model="$store.mg.selectedItem.is_gluten_free"
+                                class="rounded-radius border-outline bg-surface-alt focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark w-full appearance-none border px-4 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-75"
                                 name="is_gluten_free" placeholder="Is Gluten Free" autocomplete="off" required>
                                 <option value="" hidden>Select option</option>
                                 <option value="1">Yes</option>
@@ -351,22 +377,22 @@
                     </div>
 
                     <div class="col-span-12 md:col-span-3">
-                        <label for="is_gluten_free" class="w-fit pl-0.5 text-sm capitalize">Stock Quantity</label>
+                        <label for="stock_quantity" class="w-fit pl-0.5 text-sm capitalize">Stock Quantity</label>
                     </div>
                     <div class="col-span-12 md:col-span-9">
-                        <input type="number" id="is_gluten_free"
-                            class="w-full rounded-radius border border-outline bg-surface-alt px-3 py-2 text-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark"
+                        <input type="number" id="stock_quantity" x-model="$store.mg.selectedItem.stock_quantity"
+                            class="rounded-radius border-outline bg-surface-alt text-md focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark w-full border px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-75"
                             name="stock_quantity" placeholder="Stock Quantity" autocomplete="off" required />
                     </div>
                 </div>
 
-                <div class="w-full h-8"></div>
+                <div class="h-8 w-full"></div>
 
                 <div class="flex justify-end gap-4">
                     <button type="button" x-on:click="$store.mg.createUpdate.hide()"
-                        class="whitespace-nowrap rounded-radius bg-surface-alt border border-surface-alt px-4 py-2 text-xs font-medium tracking-wide text-on-surface-strong transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-surface-alt active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark-strong dark:focus-visible:outline-surface-dark-alt">Cancel</button>
+                        class="rounded-radius bg-surface-alt border-surface-alt text-on-surface-strong focus-visible:outline-surface-alt dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark-strong dark:focus-visible:outline-surface-dark-alt whitespace-nowrap border px-4 py-2 text-center text-xs font-medium tracking-wide transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-75">Cancel</button>
                     <button type="submit"
-                        class="whitespace-nowrap rounded-radius bg-primary border border-primary px-4 py-2 text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-primary-dark dark:border-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark">Save</button>
+                        class="rounded-radius bg-primary border-primary text-on-primary focus-visible:outline-primary dark:bg-primary-dark dark:border-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark whitespace-nowrap border px-4 py-2 text-center text-sm font-medium tracking-wide transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-75">Save</button>
                 </div>
             </div>
         </form>
@@ -375,9 +401,9 @@
     <x-modal id="error-modal" :static="true">
         <div class="p-6">
 
-            <div class="flex flex-col gap-4 items-center">
+            <div class="flex flex-col items-center gap-4">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="size-24 stroke-danger">
+                    stroke="currentColor" class="stroke-danger size-24">
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
                 </svg>
@@ -386,13 +412,13 @@
                 <p class="text-sm opacity-80">Please contact the administrator if this error keeps happening.</p>
             </div>
 
-            <div class="w-full h-8"></div>
+            <div class="h-8 w-full"></div>
 
-            <div class="w-full flex justify-center gap-4">
+            <div class="flex w-full justify-center gap-4">
                 <button type="button" x-on:click="window.location.reload()"
-                    class="whitespace-nowrap rounded-radius bg-primary border border-primary px-6 py-2 text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-primary-dark dark:border-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark">Refresh</button>
+                    class="rounded-radius bg-primary border-primary text-on-primary focus-visible:outline-primary dark:bg-primary-dark dark:border-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark whitespace-nowrap border px-6 py-2 text-center text-sm font-medium tracking-wide transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-75">Refresh</button>
                 <button type="button" x-on:click="$store.mg.error.hide()"
-                    class="whitespace-nowrap rounded-radius bg-surface-dark border border-surface-dark px-4 py-2 text-xs font-medium tracking-wide text-on-surface-dark transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-surface-dark active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-surface dark:border-surface dark:text-on-surface dark:focus-visible:outline-surface">Try
+                    class="rounded-radius bg-surface-dark border-surface-dark text-on-surface-dark focus-visible:outline-surface-dark dark:bg-surface dark:border-surface dark:text-on-surface dark:focus-visible:outline-surface whitespace-nowrap border px-4 py-2 text-center text-xs font-medium tracking-wide transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-75">Try
                     Again</button>
 
             </div>
@@ -403,9 +429,9 @@
     <x-modal id="confirm-modal">
         <div class="p-6">
 
-            <div class="flex flex-col gap-4 items-center">
+            <div class="flex flex-col items-center gap-4">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="size-24 stroke-primary">
+                    stroke="currentColor" class="stroke-primary size-24">
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
                 </svg>
@@ -413,14 +439,14 @@
                 <p class="text-md confirm-message"></p>
             </div>
 
-            <div class="w-full h-8"></div>
+            <div class="h-8 w-full"></div>
 
-            <div class="w-full flex justify-center gap-6">
+            <div class="flex w-full justify-center gap-6">
                 <button type="button" x-on:click="$store.mg.confirm.hide()"
-                    class="whitespace-nowrap rounded-radius bg-surface-alt border border-surface-alt px-6 py-2 text-sm font-medium tracking-wide text-on-surface-strong transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-surface-alt active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark-strong dark:focus-visible:outline-surface-dark-alt">No</button>
+                    class="rounded-radius bg-surface-alt border-surface-alt text-on-surface-strong focus-visible:outline-surface-alt dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark-strong dark:focus-visible:outline-surface-dark-alt whitespace-nowrap border px-6 py-2 text-center text-sm font-medium tracking-wide transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-75">No</button>
 
                 <button type="button" x-on:click="$store.mg.confirm.handleConfirm($event)"
-                    class="whitespace-nowrap rounded-radius bg-primary border border-primary px-6 py-2 text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-primary-dark dark:border-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark">Yes</button>
+                    class="rounded-radius bg-primary border-primary text-on-primary focus-visible:outline-primary dark:bg-primary-dark dark:border-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark whitespace-nowrap border px-6 py-2 text-center text-sm font-medium tracking-wide transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-75">Yes</button>
             </div>
 
         </div>
@@ -429,9 +455,9 @@
     <x-modal id="bulk-delete-modal">
         <div class="p-6">
 
-            <div class="flex flex-col gap-4 items-center">
+            <div class="flex flex-col items-center gap-4">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="size-24 stroke-danger">
+                    stroke="currentColor" class="stroke-danger size-24">
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
                 </svg>
@@ -439,16 +465,24 @@
                 <p class="text-md bulk-delete-message"></p>
             </div>
 
-            <div class="w-full h-8"></div>
+            <div class="h-8 w-full"></div>
 
-            <div class="w-full flex justify-center gap-6">
+            <div class="flex w-full justify-center gap-6">
                 <button type="button" x-on:click="$store.mg.bulkDelete.hide()"
-                    class="whitespace-nowrap rounded-radius bg-surface-alt border border-surface-alt px-6 py-2 text-sm font-medium tracking-wide text-on-surface-strong transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-surface-alt active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark-strong dark:focus-visible:outline-surface-dark-alt">No</button>
+                    class="rounded-radius bg-surface-alt border-surface-alt text-on-surface-strong focus-visible:outline-surface-alt dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark-strong dark:focus-visible:outline-surface-dark-alt whitespace-nowrap border px-6 py-2 text-center text-sm font-medium tracking-wide transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-75">No</button>
 
                 <button type="button" x-on:click="$store.mg.bulkDelete.handleConfirm($event)"
-                    class="whitespace-nowrap rounded-radius bg-danger border border-danger px-6 py-2 text-sm font-medium tracking-wide text-on-danger transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-danger-dark dark:border-danger-dark dark:text-on-danger-dark dark:focus-visible:outline-danger-dark">Yes</button>
+                    class="rounded-radius bg-danger border-danger text-on-danger focus-visible:outline-danger dark:bg-danger-dark dark:border-danger-dark dark:text-on-danger-dark dark:focus-visible:outline-danger-dark whitespace-nowrap border px-6 py-2 text-center text-sm font-medium tracking-wide transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-75">Yes</button>
             </div>
 
+        </div>
+    </x-modal>
+
+    <x-modal id="view-image-modal">
+        <div class="rounded-radius bg-transparent">
+            <img src="" alt="" class="image w-full max-w-2xl" x-on:error="$.when.imageError"
+                x-on:load="$refs.info.innerText = `${$el.naturalWidth}x${$el.naturalHeight}`" />
+            <p class="my-2 text-center" x-ref="info"></p>
         </div>
     </x-modal>
 
@@ -495,6 +529,7 @@
                 checkAll: false,
                 selected: [],
                 items: [],
+                selectedItem: {},
 
                 sort: 'created_at',
                 sortDesc: true,
@@ -504,8 +539,26 @@
                 bulkDelete: null,
                 error: null,
                 nav: null,
+                viewImage: null,
 
                 init() {
+                    this.viewImage = {
+                        element: document.querySelector('#view-image-modal'),
+                        image: document.querySelector('#view-image-modal img'),
+                        show: () => $.notifier.modal(this.viewImage.element, 'show'),
+                        hide: () => $.notifier.modal(this.viewImage.element, 'hide'),
+                        setImage(source, title = "") {
+                            this.image.src = source;
+                            this.image.title = title;
+                            this.image.alt = title;
+                        },
+                        open(source, title = "") {
+                            if (!source) return;
+                            this.setImage(source, title);
+                            this.show();
+                        }
+                    };
+
                     this.bulkDelete = {
                         onConfirm: null,
                         element: document.querySelector('#bulk-delete-modal'),
@@ -607,6 +660,7 @@
                             e.preventDefault();
                             if (this.onConfirm && typeof this.onConfirm === "function") {
                                 this.onConfirm(e);
+                                this.onConfirm = null;
                             }
                         },
                     };
@@ -623,20 +677,17 @@
                     this.createUpdate = {
                         element: document.querySelector('#create-update-modal'),
                         show: () => $.notifier.modal(this.createUpdate.element, 'show'),
-                        hide: () => $.notifier.modal(this.createUpdate.element, 'hide'),
+                        hide: () => {
+                            $.notifier.modal(this.createUpdate.element, 'hide');
+                            this.selectedItem = {}
+                        },
                         clearForm: () => {
-                            const inputs = this.createUpdate.element.querySelectorAll(
-                                'input,select,textarea'
-                            );
-                            inputs.forEach(input => input.value = '');
+                            this.selectedItem = {};
+                            window.dispatchEvent(new CustomEvent("file-upload-clear"));
                         },
                         open: (data = {}) => {
                             this.createUpdate.clearForm();
-                            for (const key of Object.keys(data)) {
-                                const el = this.createUpdate.element.querySelector(
-                                    `[name='${key}']`);
-                                if (el) el.value = data[key];
-                            }
+                            Object.assign(this.selectedItem, data);
                             this.createUpdate.show();
                         },
                         process: (e) => {
@@ -765,16 +816,23 @@
                         });
                 },
 
-                deleteItem(id, name = '') {
-                    this.confirm.setMessage(`Are you sure you want to delete ${name || 'this item'}?`);
+                deleteItem(id, name = '', column = null) {
+                    this.confirm.setMessage(
+                        `Are you sure you want to delete ${column || name || 'this item'}?`);
                     this.confirm.onConfirm = () => {
                         axios.delete(@js(route('ingredients.delete')), {
                                 data: {
-                                    id
+                                    id,
+                                    column
                                 }
                             })
                             .then(res => {
-                                this.updateItems(this.items.filter(item => item.id !== id));
+                                if (column) {
+                                    this.selectedItem[column] = null;
+                                    this.updateItems(this.items.map(item => item.id === this
+                                        .selectedItem.id ? this.selectedItem : item));
+                                } else this.updateItems(this.items.filter(item => item.id !== id));
+
                                 const message = res?.data?.message || 'Deleted';
                                 $.notifier.toast({
                                     variant: 'success',

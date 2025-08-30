@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Responses\ApiResponse;
-use App\Models\Ingredient;
-use Illuminate\Http\Request;
 use DB;
 use Helper;
+use Storage;
 use Validator;
+use App\Models\Ingredient;
+use Illuminate\Http\Request;
+use App\Http\Responses\ApiResponse;
+use Illuminate\Support\Facades\Schema;
 
 class IngredientController extends Controller
 {
@@ -83,6 +85,11 @@ class IngredientController extends Controller
                 $validator->validated()
             );
 
+            if ($request->hasFile('image')) {
+                $ingredient->image = Helper::uploadFile($request->file('image'), 'ingredients');
+                $ingredient->save();
+            }
+
             DB::commit();
 
             return ApiResponse::success("{$ingredient->name} saved successfully.", $ingredient, 200);
@@ -101,6 +108,7 @@ class IngredientController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'id' => 'required|integer|exists:ingredients,id',
+                'column' => 'nullable|string',
             ]);
 
             if ($validator->fails()) {
@@ -108,11 +116,27 @@ class IngredientController extends Controller
             }
 
             $ingredient = Ingredient::find($request->input('id'));
-            $ingredient->delete();
+
+            $deletingColumn = $request->input('column', null);
+
+            if ($request->has('column') && $request->filled('column')) {
+
+                if ($deletingColumn == 'image') {
+                    Helper::deleteFile($ingredient->image);
+                    $ingredient->update(['image' => null]);
+                }
+
+            } else {
+                $ingredient->delete();
+            }
 
             DB::commit();
 
-            return ApiResponse::success("{$ingredient->name} deleted successfully.", null, 200);
+            return ApiResponse::success(
+                message: ucfirst($deletingColumn ?? $ingredient->name) . " deleted successfully.",
+                data: $ingredient,
+                status: 200
+            );
 
         } catch (\Throwable $e) {
             Helper::LogThrowable($request, __FILE__, $e);
