@@ -20,35 +20,30 @@ class IngredientController extends Controller
             $search = $request->input('search');
             $sort = $request->input('sort', 'created_at');
             $sortDesc = $request->boolean('sort_desc', true);
-            $perPage = $request->integer('per_page', 8);
+            $perPage = max(1, $request->integer('per_page', 8));
 
-            $ingredients = DB::table('ingredients')
-                ->select('*')
+            $ingredients = Ingredient::query()
                 ->whereNull('deleted_at')
-                ->when($search, function ($query, $search) {
-                    return $query->where('name', 'like', "%{$search}%");
-                })
+                ->when($search, fn($q) => $q->where('name', 'like', "%{$search}%"))
                 ->orderBy($sort, $sortDesc ? 'desc' : 'asc')
-                ->simplePaginate($perPage);
+                ->paginate($perPage);
 
-            $total = DB::table('ingredients')->whereNull('deleted_at')->count();
+            $lastPage = $ingredients->lastPage();
+            $current = $ingredients->currentPage();
 
-            $lastPage = $perPage == 0 ? 1 : (int) ceil($total / $perPage);
-            $pages = collect(range(
-                max(1, $ingredients->currentPage() - 2),
-                min($lastPage, $ingredients->currentPage() + 2)
-            ))->values();
-
-            $pages->push($lastPage);
-            $pages = $pages->unique()->sort()->values();
+            $pages = collect(range(max(1, $current - 2), min($lastPage, $current + 2)))
+                ->push($lastPage)
+                ->unique()
+                ->sort()
+                ->values();
 
             return ApiResponse::success('Ingredients fetched successfully.', [
-                'current_page' => $ingredients->currentPage(),
+                'current_page' => $current,
                 'per_page' => $ingredients->perPage(),
-                'total' => $total,
+                'total' => $ingredients->total(),
                 'pages' => $pages,
                 'has_next_page' => $ingredients->hasMorePages(),
-                'has_previous_page' => $ingredients->currentPage() > 1,
+                'has_previous_page' => $current > 1,
                 'data' => $ingredients->items(),
             ]);
 

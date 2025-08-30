@@ -20,7 +20,8 @@
                     </svg>
                     Insert
                 </button>
-                <button type="button" x-show="selected.length > 0" x-cloak x-transition x-on:click="bulkDelete.open()"
+                <button type="button" x-show="selectedIds.length > 0" x-cloak x-transition
+                    x-on:click="bulkDelete.open()"
                     class="rounded-radius bg-danger border-danger dark:border-danger text-on-danger focus-visible:outline-danger dark:bg-danger dark:text-on-danger dark:focus-visible:outline-danger inline-flex items-center justify-center gap-2 whitespace-nowrap border px-4 py-2 text-center text-sm font-medium tracking-wide transition hover:opacity-75 focus-visible:outline focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-75">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="size-5">
@@ -115,7 +116,7 @@
                     </tr>
                 </thead>
                 <tbody class="divide-outline dark:divide-outline-dark divide-y">
-                    <template data-name="when loading" x-if="loading">
+                    <template data-name="when loading" x-if="loading && items.length < 1">
                         <template x-for="(row, rowIndex) in loadSkeleton" :key="rowIndex">
                             <tr>
                                 <template x-for="col in cols" :key="col.name">
@@ -296,7 +297,7 @@
                         <label for="description" class="w-fit pl-0.5 text-sm capitalize">Description</label>
                     </div>
                     <div class="col-span-12 md:col-span-9">
-                        <textarea id="description" x-model="$store.mg.selectedItem.description"
+                        <textarea x-grow id="description" x-model="$store.mg.selectedItem.description"
                             class="rounded-radius border-outline bg-surface-alt text-md focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark w-full border px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-75"
                             name="description" placeholder="Description" autocomplete="off" required></textarea>
                     </div>
@@ -494,27 +495,33 @@
                 cols: [{
                         name: 'CHECK_ALL',
                         class: 'w-12'
-                    }, {
+                    },
+                    {
                         name: '#',
                         class: 'w-14'
-                    }, {
+                    },
+                    {
                         name: 'Image',
                         class: 'w-20'
-                    }, {
+                    },
+                    {
                         name: 'Name',
                         class: ''
                     },
                     {
                         name: 'Stock',
                         class: 'w-32'
-                    }, {
+                    },
+                    {
                         name: 'Updated At',
                         class: 'w-96'
-                    }, {
+                    },
+                    {
                         name: 'Action',
                         class: 'w-32'
                     }
                 ],
+
                 sortables: {
                     '#': 'id',
                     'Name': 'name',
@@ -523,11 +530,9 @@
                 },
 
                 loadingRows: 3,
-
                 loading: true,
-
                 checkAll: false,
-                selected: [],
+                selectedIds: [],
                 items: [],
                 selectedItem: {},
 
@@ -575,9 +580,8 @@
                             }
                         },
                         open: () => {
-
                             const listString = this.items
-                                .filter(item => this.selected.includes(item.id))
+                                .filter(item => this.selectedIds.includes(item.id))
                                 .map(item => `[${item.id}] ${item.name}`)
                                 .join(',\n');
 
@@ -586,14 +590,19 @@
                             );
 
                             this.bulkDelete.onConfirm = () => {
+                                this.loading = true;
+
                                 axios.delete(@js(route('ingredients.bulkDelete')), {
                                         data: {
                                             ids: this.selected
                                         }
-                                    }).then(res => {
-                                        this.updateItems(this.items.filter((item) => !this
-                                            .selected.includes(item.id)));
-                                        this.selected = [];
+                                    })
+                                    .then(res => {
+                                        this.updateItems(
+                                            this.items.filter(item => !this.selectedIds
+                                                .includes(item.id))
+                                        );
+                                        this.selectedIds = [];
                                         this.fetchData();
 
                                         const message = res?.data?.message || 'Deleted';
@@ -605,6 +614,7 @@
                                         this.bulkDelete.hide();
                                     })
                                     .catch(err => {
+                                        this.loading = false;
                                         this.bulkDelete.hide();
                                         const message = err?.response?.data?.message || err
                                             .message;
@@ -662,7 +672,7 @@
                                 this.onConfirm(e);
                                 this.onConfirm = null;
                             }
-                        },
+                        }
                     };
 
                     this.error = {
@@ -671,7 +681,7 @@
                         hide: () => $.notifier.modal(this.error.element, 'hide'),
                         setMessage: (message) => {
                             this.error.element.querySelector('.error-message').innerText = message;
-                        },
+                        }
                     };
 
                     this.createUpdate = {
@@ -679,7 +689,7 @@
                         show: () => $.notifier.modal(this.createUpdate.element, 'show'),
                         hide: () => {
                             $.notifier.modal(this.createUpdate.element, 'hide');
-                            this.selectedItem = {}
+                            this.selectedItem = {};
                         },
                         clearForm: () => {
                             this.selectedItem = {};
@@ -691,6 +701,8 @@
                             this.createUpdate.show();
                         },
                         process: (e) => {
+                            this.loading = true;
+
                             const formData = new FormData(e.target);
                             axios.post(@js(route('ingredients.createUpdate')), formData)
                                 .then(res => {
@@ -705,37 +717,34 @@
                                     this.createUpdate.hide();
 
                                     const updatedItem = res.data.data;
-
-                                    const found = this.items.findIndex((item) => item.id ===
+                                    const found = this.items.findIndex(item => item.id ===
                                         updatedItem.id);
 
                                     if (found === -1) {
-
-                                        if (this.items.length >= this.nav.perPage)
-                                            this.updateItems([updatedItem, ...this.items
-                                                .slice(
-                                                    0, -1)
+                                        if (this.items.length >= this.nav.perPage) {
+                                            this.updateItems([
+                                                updatedItem,
+                                                ...this.items.slice(0, -1)
                                             ]);
-
-                                        else
+                                        } else {
                                             this.updateItems([updatedItem, ...this.items]);
-
+                                        }
                                     } else {
                                         const newItems = [...this.items];
                                         newItems[found] = updatedItem;
-
                                         this.updateItems(newItems);
                                     }
-
                                 })
                                 .catch(err => {
-                                    const message = err?.response?.data?.message || err
-                                        .message;
+                                    const message = err?.response?.data?.message || err.message;
                                     $.notifier.toast({
                                         variant: 'danger',
                                         title: 'Error',
                                         message
                                     });
+                                })
+                                .finally(() => {
+                                    this.loading = false;
                                 });
                         }
                     };
@@ -748,25 +757,27 @@
                 },
 
                 updateItems(newItems = []) {
+                    this.loadingRows = this.items.length > 0 ?
+                        this.items.length :
+                        Math.max(this.nav.perPage, 1);
                     this.items = newItems;
                     this.checkAll = false;
-                    this.loadingRows = Math.max(this.nav.perPage, this.items.length, 1);
                 },
 
                 onCheckAll() {
-                    if (this.checkAll) {
-                        this.selected = this.items.map((item) => item.id);
-                    } else {
-                        this.selected = [];
-                    }
+                    this.selectedIds = this.checkAll ?
+                        this.items.map(item => item.id) :
+                        [];
                 },
 
                 onCheckSingle(e) {
-                    if (!e.target.checked) this.selected = this.selected.filter((id) =>
-                        id !== parseInt(e.target.id));
-                    else this.selected = [parseInt(e.target.id), ...this.selected];
+                    if (!e.target.checked) {
+                        this.selectedIds = this.selectedIds.filter(id => id !== parseInt(e.target.id));
+                    } else {
+                        this.selectedIds = [parseInt(e.target.id), ...this.selectedIds];
+                    }
 
-                    if (this.selected.length < 1) this.checkAll = false;
+                    if (this.selectedIds.length < 1) this.checkAll = false;
                 },
 
                 toggleSort(colName) {
@@ -785,6 +796,7 @@
                 fetchData() {
                     this.loading = true;
                     this.updateItems([]);
+
                     axios.get(@js(route('ingredients.dataTable')), {
                             params: {
                                 page: this.nav.currentPage,
@@ -805,21 +817,25 @@
                                 hasNextPage: api.has_next_page,
                                 hasPreviousPage: api.has_previous_page
                             });
-
-                            this.loading = false;
                         })
                         .catch(err => {
-                            this.loading = false;
                             this.error.show();
                             const errorMessage = err?.response?.data?.message || err.message;
                             this.error.setMessage(errorMessage);
+                        })
+                        .finally(() => {
+                            this.loading = false;
                         });
                 },
 
                 deleteItem(id, name = '', column = null) {
                     this.confirm.setMessage(
-                        `Are you sure you want to delete ${column || name || 'this item'}?`);
+                        `Are you sure you want to delete ${column || name || 'this item'}?`
+                    );
+
                     this.confirm.onConfirm = () => {
+                        this.loading = true;
+
                         axios.delete(@js(route('ingredients.delete')), {
                                 data: {
                                     id,
@@ -829,9 +845,15 @@
                             .then(res => {
                                 if (column) {
                                     this.selectedItem[column] = null;
-                                    this.updateItems(this.items.map(item => item.id === this
-                                        .selectedItem.id ? this.selectedItem : item));
-                                } else this.updateItems(this.items.filter(item => item.id !== id));
+                                    this.updateItems(
+                                        this.items.map(item =>
+                                            item.id === this.selectedItem.id ? this
+                                            .selectedItem : item
+                                        )
+                                    );
+                                } else {
+                                    this.updateItems(this.items.filter(item => item.id !== id));
+                                }
 
                                 const message = res?.data?.message || 'Deleted';
                                 $.notifier.toast({
@@ -849,11 +871,14 @@
                                     title: 'Oops...',
                                     message
                                 });
+                            })
+                            .finally(() => {
+                                this.loading = false;
                             });
-                    }
+                    };
 
                     this.confirm.show();
-                },
+                }
             });
         });
     </script>

@@ -102,3 +102,7 @@ button:not(:disabled) {
     border-radius: 16px;
 	background-color: var(--color-on-surface);
 }
+
+textarea[x-grow] {
+    overflow-y: hidden;
+}
