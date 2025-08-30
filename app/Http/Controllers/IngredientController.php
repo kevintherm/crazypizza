@@ -15,21 +15,30 @@ class IngredientController extends Controller
     {
         try {
 
-            $perPage = $request->input('perpage', 10);
+            $search = $request->input('search');
+            $sort = $request->input('sort', 'created_at');
+            $sortDesc = $request->boolean('sort_desc', true);
+            $perPage = $request->integer('per_page', 8);
 
             $ingredients = DB::table('ingredients')
                 ->select('*')
                 ->whereNull('deleted_at')
-                ->orderBy('created_at', 'desc')
+                ->when($search, function ($query, $search) {
+                    return $query->where('name', 'like', "%{$search}%");
+                })
+                ->orderBy($sort, $sortDesc ? 'desc' : 'asc')
                 ->simplePaginate($perPage);
 
             $total = DB::table('ingredients')->whereNull('deleted_at')->count();
 
             $lastPage = $perPage == 0 ? 1 : (int) ceil($total / $perPage);
-            $pages = array_values(array_unique(array_merge(
-                range(1, max(1, min(3, $lastPage))),
-                range(max(1, $lastPage - 2), max(1, $lastPage))
-            )));
+            $pages = collect(range(
+                max(1, $ingredients->currentPage() - 2),
+                min($lastPage, $ingredients->currentPage() + 2)
+            ))->values();
+
+            $pages->push($lastPage);
+            $pages = $pages->unique()->sort()->values();
 
             return ApiResponse::success('Ingredients fetched successfully.', [
                 'current_page' => $ingredients->currentPage(),

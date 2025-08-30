@@ -4,8 +4,8 @@
 
     <main class="flex flex-col px-6 md:px-12" x-data="$store.mg">
 
+        {{-- Header Section --}}
         <div class="w-full h-6"></div>
-
         <section id="header" class="flex items-center justify-between relative">
             <div>
                 <h1 class="text-2xl">Manage Ingredients</h1>
@@ -20,7 +20,6 @@
                     </svg>
                     Insert
                 </button>
-
                 <button type="button" x-show="selected.length > 0" x-cloak x-transition x-on:click="bulkDelete.open()"
                     class="inline-flex justify-center items-center gap-2 whitespace-nowrap rounded-radius bg-danger border border-danger dark:border-danger px-4 py-2 text-sm font-medium tracking-wide text-on-danger transition hover:opacity-75 text-center focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-danger active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-danger dark:text-on-danger dark:focus-visible:outline-danger">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -40,9 +39,9 @@
             </div>
         </section>
 
+        {{-- Table Controls --}}
         <div class="w-full h-12"></div>
-
-        <div aria-label="table-info">
+        <div aria-label="table-info" class="w-full flex justify-between">
             <div class="relative flex w-full max-w-36 flex-col gap-1 text-on-surface dark:text-on-surface-dark">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
                     class="absolute pointer-events-none right-4 top-2 size-5">
@@ -51,52 +50,78 @@
                         clip-rule="evenodd" />
                 </svg>
                 <select id="perpage" name="perpage" x-model="nav.perPage" x-on:change="nav.changePerPage"
+                    :disabled="loading"
                     class="w-full appearance-none rounded-radius border border-outline bg-surface-alt px-4 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark">
                     <option value="" selected>Per Page</option>
-                    <option value="10">10</option>
+                    <option value="8">8</option>
                     @foreach (range(0, 100, 25) as $i)
                         <option value="{{ max(1, $i) }}">{{ max(1, $i) }}</option>
                     @endforeach
                 </select>
             </div>
+            <button type="button" x-on:click.debounce="fetchData" :disabled="loading" aria-label="Refresh Table"
+                title="Refresh Table"
+                class="whitespace-nowrap bg-transparent rounded-radius border border-outline px-4 py-2 text-sm font-medium tracking-wide text-on-surface transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-outline active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:border-outline-dark dark:text-on-surface-dark dark:focus-visible:outline-outline-dark"><svg
+                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                </svg></button>
         </div>
 
+        {{-- Table --}}
         <div class="w-full h-6"></div>
-
         <div x-init="fetchData" x-on:refresh.window="fetchData"
             class="overflow-hidden w-full overflow-x-auto rounded-radius border border-outline dark:border-outline-dark">
-            <table class="w-full text-left text-sm text-on-surface dark:text-on-surface-dark">
+            <table class="w-full text-left text-sm text-on-surface dark:text-on-surface-dark table-fixed">
                 <thead
                     class="border-b border-outline bg-surface-alt text-on-surface-strong dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark-strong">
                     <tr>
-                        <th scope="col" class="p-4">
-                            <label for="checkAll" class="flex items-center text-on-surface dark:text-on-surface-dark ">
-                                <div class="relative flex items-center">
-                                    <input type="checkbox" id="checkAll" x-model="checkAll" x-on:change="onCheckAll"
-                                        class="before:content[''] peer relative size-4 appearance-none overflow-hidden rounded border border-outline bg-surface before:absolute before:inset-0 checked:border-primary checked:before:bg-primary focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong checked:focus:outline-primary active:outline-offset-0 dark:border-outline-dark dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark dark:focus:outline-outline-dark-strong dark:checked:focus:outline-primary-dark" />
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"
-                                        stroke="currentColor" fill="none" stroke-width="4"
-                                        class="pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 text-on-primary peer-checked:visible dark:text-on-primary-dark">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M4.5 12.75l6 6 9-13.5" />
-                                    </svg>
-                                </div>
-                            </label>
-                        </th>
-                        <th scope="col" class="p-4">#</th>
-                        <th scope="col" class="p-4">Image</th>
-                        <th scope="col" class="p-4">Name</th>
-                        <th scope="col" class="p-4">Stock</th>
-                        <th scope="col" class="p-4">Action</th>
+                        <template x-for="col in cols" :key="col.name">
+                            <th scope="col" class="p-4" :class="col.class">
+                                <template x-if="col.name === 'CHECK_ALL'">
+                                    <label for="checkAll"
+                                        class="flex items-center text-on-surface dark:text-on-surface-dark">
+                                        <div class="relative flex items-center">
+                                            <input type="checkbox" id="checkAll" x-model="checkAll"
+                                                @change="onCheckAll"
+                                                class="before:content[''] peer relative size-4 appearance-none overflow-hidden rounded border border-outline bg-surface before:absolute before:inset-0 checked:border-primary checked:before:bg-primary focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong checked:focus:outline-primary active:outline-offset-0 dark:border-outline-dark dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark dark:focus:outline-outline-dark-strong dark:checked:focus:outline-primary-dark" />
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                aria-hidden="true" stroke="currentColor" fill="none" stroke-width="4"
+                                                class="pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 text-on-primary peer-checked:visible dark:text-on-primary-dark">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M4.5 12.75l6 6 9-13.5" />
+                                            </svg>
+                                        </div>
+                                    </label>
+                                </template>
+
+                                <template x-if="col.name !== 'CHECK_ALL'">
+                                    <button type="button" x-on:click="toggleSort(col.name)"
+                                        :disabled="!sortables.hasOwnProperty(col.name)"
+                                        class="flex items-center gap-2">
+                                        <span x-text="col.name"></span>
+                                        <svg x-show="sortables.hasOwnProperty(col.name) && sort === sortables[col.name]"
+                                            x-cloak :class="sortDesc ? 'size-4 rotate-180' : 'size-4'"
+                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                        </svg>
+                                    </button>
+                                </template>
+                            </th>
+                        </template>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-outline dark:divide-outline-dark">
                     <template data-name="when loading" x-if="loading">
                         <template x-for="(row, rowIndex) in loadSkeleton" :key="rowIndex">
                             <tr>
-                                <template x-for="(col, colIndex) in row" :key="colIndex">
+                                <template x-for="col in cols" :key="col.name">
                                     <td class="p-4">
-                                        <div class="h-8 w-full animate-pulse rounded bg-gray-300 dark:bg-gray-600">
+                                        <div
+                                            class="h-6 w-full animate-pulse rounded-radius bg-gray-300 dark:bg-gray-600">
                                         </div>
                                     </td>
                                 </template>
@@ -124,13 +149,19 @@
                                 </label>
                             </td>
                             <td class="p-4" x-text="rowIndex + 1"></td>
-                            <td class="p-4">
+                            <td class="p-2">
                                 <img src="https://placehold.co/400x300" :alt="row.name"
-                                    class="w-16 aspect-[4/3] rounded-radius object-cover cursor-pointer"
+                                    class="w-12 aspect-[4/3] rounded-radius object-cover cursor-pointer"
                                     draggable="false" />
                             </td>
-                            <td class="p-4" x-text="row.name"></td>
+                            <td class="p-4 truncate" x-text="row.name"></td>
                             <td class="p-4" x-text="`${row.stock_quantity} ${row.unit}`"></td>
+                            <td class="p-4">
+                                <div class="flex flex-col gap-1 justify-start">
+                                    <p x-text="row.updated_at"></p>
+                                    <p class="text-xs opacity-80" x-text="`Created ${row.created_at}`"></p>
+                                </div>
+                            </td>
                             <td class="p-4">
                                 <div class="flex gap-3 items-center">
                                     <button type="button" x-on:click="createUpdate.open(row)"
@@ -144,7 +175,7 @@
 
                     <template data-name="when empty" x-if="items.length < 1 && !loading">
                         <tr>
-                            <td :colspan="cols" class="p-4">
+                            <td :colspan="cols.length" class="p-4">
                                 <p class="text-center text-md font-semibold opacity-80">There's nothing to show.</p>
                             </td>
                         </tr>
@@ -153,8 +184,8 @@
             </table>
         </div>
 
+        {{-- Pagination --}}
         <div class="w-full h-6"></div>
-
         <div aria-label="table-info" class="flex flex-col md:flex-row justify-between items-center gap-2">
             <p class="text-sm leading-tight">Showing <span x-text="items.length"></span> of <span
                     x-text="nav.total"></span>
@@ -162,7 +193,7 @@
             <nav aria-label="pagination">
                 <ul class="flex shrink-0 items-center gap-2 text-sm font-medium">
                     <li>
-                        <button type="button" x-on:click="nav.prev()" :disabled="!nav.hasPreviousPage"
+                        <button type="button" x-on:click="nav.prev()" :disabled="!nav.hasPreviousPage || loading"
                             :inert="!nav.hasPreviousPage"
                             class="flex items-center rounded-radius p-1 text-on-surface hover:text-primary dark:text-on-surface-dark dark:hover:text-primary-dark disabled:opacity-60"
                             aria-label="previous page">
@@ -178,7 +209,8 @@
 
                     <template x-for="page in nav.pages" :key="page">
                         <li>
-                            <button type="button" x-on:click="nav.goTo(page)" :disabled="nav.currentPage === page"
+                            <button type="button" x-on:click="nav.goTo(page)"
+                                :disabled="nav.currentPage === page || loading"
                                 :class="nav.currentPage === page ?
                                     'flex size-6 items-center justify-center rounded-radius bg-primary p-1 font-bold text-on-primary dark:bg-primary-dark dark:text-on-primary-dark' :
                                     'flex size-6 items-center justify-center rounded-radius p-1 text-on-surface hover:text-primary dark:text-on-surface-dark dark:hover:text-primary-dark'"
@@ -188,7 +220,7 @@
                     </template>
 
                     <li>
-                        <button type="button" x-on:click="nav.next()" :disabled="!nav.hasNextPage"
+                        <button type="button" x-on:click="nav.next()" :disabled="!nav.hasNextPage || loading"
                             :inert="!nav.hasNextPage"
                             class="flex items-center rounded-radius p-1 text-on-surface hover:text-primary dark:text-on-surface-dark dark:hover:text-primary-dark disabled:opacity-60"
                             aria-label="next page">
@@ -330,7 +362,9 @@
 
                 <div class="w-full h-8"></div>
 
-                <div class="grid justify-end">
+                <div class="flex justify-end gap-4">
+                    <button type="button" x-on:click="$store.mg.createUpdate.hide()"
+                        class="whitespace-nowrap rounded-radius bg-surface-alt border border-surface-alt px-4 py-2 text-xs font-medium tracking-wide text-on-surface-strong transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-surface-alt active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark-strong dark:focus-visible:outline-surface-dark-alt">Cancel</button>
                     <button type="submit"
                         class="whitespace-nowrap rounded-radius bg-primary border border-primary px-4 py-2 text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-primary-dark dark:border-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark">Save</button>
                 </div>
@@ -354,9 +388,13 @@
 
             <div class="w-full h-8"></div>
 
-            <div class="w-full flex justify-center">
+            <div class="w-full flex justify-center gap-4">
                 <button type="button" x-on:click="window.location.reload()"
                     class="whitespace-nowrap rounded-radius bg-primary border border-primary px-6 py-2 text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-primary-dark dark:border-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark">Refresh</button>
+                <button type="button" x-on:click="$store.mg.error.hide()"
+                    class="whitespace-nowrap rounded-radius bg-surface-dark border border-surface-dark px-4 py-2 text-xs font-medium tracking-wide text-on-surface-dark transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-surface-dark active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-surface dark:border-surface dark:text-on-surface dark:focus-visible:outline-surface">Try
+                    Again</button>
+
             </div>
 
         </div>
@@ -419,7 +457,37 @@
     <script>
         document.addEventListener('alpine:init', () => {
             $.store('mg', {
-                cols: 6,
+                cols: [{
+                        name: 'CHECK_ALL',
+                        class: 'w-12'
+                    }, {
+                        name: '#',
+                        class: 'w-14'
+                    }, {
+                        name: 'Image',
+                        class: 'w-20'
+                    }, {
+                        name: 'Name',
+                        class: ''
+                    },
+                    {
+                        name: 'Stock',
+                        class: 'w-32'
+                    }, {
+                        name: 'Updated At',
+                        class: 'w-96'
+                    }, {
+                        name: 'Action',
+                        class: 'w-32'
+                    }
+                ],
+                sortables: {
+                    '#': 'id',
+                    'Name': 'name',
+                    'Stock': 'stock_quantity',
+                    'Updated At': 'created_at'
+                },
+
                 loadingRows: 3,
 
                 loading: true,
@@ -427,6 +495,9 @@
                 checkAll: false,
                 selected: [],
                 items: [],
+
+                sort: 'created_at',
+                sortDesc: true,
 
                 createUpdate: null,
                 confirm: null,
@@ -467,7 +538,8 @@
                                             ids: this.selected
                                         }
                                     }).then(res => {
-                                        this.updateItems(this.items.filter((item) => !this.selected.includes(item.id)));
+                                        this.updateItems(this.items.filter((item) => !this
+                                            .selected.includes(item.id)));
                                         this.selected = [];
                                         this.fetchData();
 
@@ -518,7 +590,6 @@
                         },
                         changePerPage: () => {
                             this.nav.currentPage = 1;
-                            this.loadingRows = Math.max(this.nav.perPage, 3);
                             this.fetchData();
                         }
                     };
@@ -555,7 +626,8 @@
                         hide: () => $.notifier.modal(this.createUpdate.element, 'hide'),
                         clearForm: () => {
                             const inputs = this.createUpdate.element.querySelectorAll(
-                                'input,select,textarea');
+                                'input,select,textarea'
+                            );
                             inputs.forEach(input => input.value = '');
                         },
                         open: (data = {}) => {
@@ -589,8 +661,10 @@
                                     if (found === -1) {
 
                                         if (this.items.length >= this.nav.perPage)
-                                            this.updateItems([updatedItem, ...this.items.slice(
-                                                0, -1)]);
+                                            this.updateItems([updatedItem, ...this.items
+                                                .slice(
+                                                    0, -1)
+                                            ]);
 
                                         else
                                             this.updateItems([updatedItem, ...this.items]);
@@ -604,7 +678,8 @@
 
                                 })
                                 .catch(err => {
-                                    const message = err?.response?.data?.message || err.message;
+                                    const message = err?.response?.data?.message || err
+                                        .message;
                                     $.notifier.toast({
                                         variant: 'danger',
                                         title: 'Error',
@@ -617,17 +692,14 @@
 
                 get loadSkeleton() {
                     return Array.from({
-                            length: this.loadingRows
-                        }, () =>
-                        Array.from({
-                            length: this.cols
-                        })
-                    );
+                        length: this.loadingRows
+                    }, () => this.cols);
                 },
 
                 updateItems(newItems = []) {
                     this.items = newItems;
                     this.checkAll = false;
+                    this.loadingRows = Math.max(this.nav.perPage, this.items.length, 1);
                 },
 
                 onCheckAll() {
@@ -646,13 +718,28 @@
                     if (this.selected.length < 1) this.checkAll = false;
                 },
 
+                toggleSort(colName) {
+                    if (!this.sortables.hasOwnProperty(colName)) return;
+
+                    const newSortColumn = this.sortables[colName];
+                    if (this.sort === newSortColumn) {
+                        this.sortDesc = !this.sortDesc;
+                    } else {
+                        this.sort = newSortColumn;
+                        this.sortDesc = false;
+                    }
+                    this.fetchData();
+                },
+
                 fetchData() {
                     this.loading = true;
                     this.updateItems([]);
                     axios.get(@js(route('ingredients.dataTable')), {
                             params: {
                                 page: this.nav.currentPage,
-                                perpage: this.nav.perPage || null,
+                                per_page: this.nav.perPage || null,
+                                sort: this.sort,
+                                sort_desc: this.sortDesc
                             }
                         })
                         .then(res => {

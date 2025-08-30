@@ -22,7 +22,7 @@
 
 </head>
 
-<body class="text-[#1b1b18] dark:text-[#fdfdfc] antialiased">
+<body class="bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark antialiased">
 
     {{ $slot }}
 

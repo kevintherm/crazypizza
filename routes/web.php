@@ -29,6 +29,6 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('ingredients/bulk-delete', [IngredientController::class, 'bulkDelete'])->name('ingredients.bulkDelete');
     });
 
-    Route::get('logout', [AuthController::class, 'logout'])->name('logout');
+    Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
 });
