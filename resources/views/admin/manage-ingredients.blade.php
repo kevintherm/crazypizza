@@ -6,7 +6,7 @@
 
         {{-- Header Section --}}
         <div class="h-6 w-full"></div>
-        <section id="header" class="relative flex items-center justify-between">
+        <section id="header" class="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
                 <h1 class="text-2xl">Manage Ingredients</h1>
                 <p class="opacity-90">Manage your ingredients here.</p>
@@ -31,7 +31,7 @@
                     Bulk Delete
                 </button>
             </div>
-            <div class="absolute left-0">
+            <div class="absolute right-0 md:left-0">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="stroke-primary size-24 opacity-20">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -39,6 +39,9 @@
                 </svg>
             </div>
         </section>
+
+        {{-- Search and Filtering --}}
+        <h-12 class="w-ful"></h-12>
 
         {{-- Table Controls --}}
         <div class="h-12 w-full"></div>
@@ -78,7 +81,7 @@
                 <thead
                     class="border-outline bg-surface-alt text-on-surface-strong dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark-strong border-b">
                     <tr>
-                        <template x-for="col in cols" :key="col.name">
+                        <template x-for="col in config.columns" :key="col.name">
                             <th scope="col" class="p-4" :class="col.class">
                                 <template x-if="col.name === 'CHECK_ALL'">
                                     <label for="checkAll"
@@ -99,10 +102,10 @@
 
                                 <template x-if="col.name !== 'CHECK_ALL'">
                                     <button type="button" x-on:click="toggleSort(col.name)"
-                                        :disabled="!sortables.hasOwnProperty(col.name)"
+                                        :disabled="!config.sortables.hasOwnProperty(col.name)"
                                         class="flex items-center gap-2">
                                         <span x-text="col.name"></span>
-                                        <svg x-show="sortables.hasOwnProperty(col.name) && sort === sortables[col.name]"
+                                        <svg x-show="config.sortables.hasOwnProperty(col.name) && sort === config.sortables[col.name]"
                                             x-cloak :class="sortDesc ? 'size-4 rotate-180' : 'size-4'"
                                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                             stroke-width="1.5" stroke="currentColor">
@@ -119,7 +122,7 @@
                     <template data-name="when loading" x-if="loading && items.length < 1">
                         <template x-for="(row, rowIndex) in loadSkeleton" :key="rowIndex">
                             <tr>
-                                <template x-for="col in cols" :key="col.name">
+                                <template x-for="col in config.columns" :key="col.name">
                                     <td class="p-4">
                                         <div
                                             class="rounded-radius h-6 w-full animate-pulse bg-gray-300 dark:bg-gray-600">
@@ -151,8 +154,8 @@
                             </td>
                             <td class="p-4" x-text="rowIndex + 1"></td>
                             <td class="p-2">
-                                <img :src="row.image || 'imagenotfound'" :alt="row.name"
-                                    x-on:click="viewImage.open(row.image, row.name)" x-on:error="$.when.imageError"
+                                <img :src="row.image || window.IMG_NOT_FOUND" :alt="row.name"
+                                    x-on:click="viewImage.open(row.image, row.name)" x-on:error="$store.when.imageError"
                                     :class="row.image ? 'w-12 aspect-[4/3] rounded-radius object-cover cursor-pointer' :
                                         'w-12 aspect-[4/3] rounded-radius object-cover'"
                                     draggable="false" />
@@ -277,8 +280,8 @@
                     <div class="col-span-12 md:col-span-9">
                         <img x-show="$store.mg.selectedItem.image" x-cloak
                             x-on:click="$store.mg.viewImage.open($store.mg.selectedItem.image, $store.mg.selectedItem.title)"
-                            :src="$store.mg.selectedItem.image" x-on:error="$.when.imageError"
-                            class="rounded-radius max-w-1/3 w-full cursor-pointer">
+                            :src="$store.mg.selectedItem.image" x-on:error="$store.when.imageError"
+                            class="rounded-radius sm:max-w-1/3 w-full cursor-pointer">
                         <div x-show="!$store.mg.selectedItem.image" x-cloak>
                             <x-file-uploader id="image" :allowedTypes="['image/jpg', 'image/jpeg', 'image/png', 'image/webp']" :maxSize="5 * MB_IN_BYTES" />
                         </div>
@@ -481,7 +484,7 @@
 
     <x-modal id="view-image-modal">
         <div class="rounded-radius bg-transparent">
-            <img src="" alt="" class="image w-full max-w-2xl" x-on:error="$.when.imageError"
+            <img src="" alt="" class="image w-full max-w-2xl" x-on:error="$store.when.imageError"
                 x-on:load="$refs.info.innerText = `${$el.naturalWidth}x${$el.naturalHeight}`" />
             <p class="my-2 text-center" x-ref="info"></p>
         </div>
@@ -490,396 +493,58 @@
     <x-toast />
 
     <script>
-        document.addEventListener('alpine:init', () => {
-            $.store('mg', {
-                cols: [{
-                        name: 'CHECK_ALL',
-                        class: 'w-12'
-                    },
-                    {
-                        name: '#',
-                        class: 'w-14'
-                    },
-                    {
-                        name: 'Image',
-                        class: 'w-20'
-                    },
-                    {
-                        name: 'Name',
-                        class: ''
-                    },
-                    {
-                        name: 'Stock',
-                        class: 'w-32'
-                    },
-                    {
-                        name: 'Updated At',
-                        class: 'w-96'
-                    },
-                    {
-                        name: 'Action',
-                        class: 'w-32'
-                    }
-                ],
-
-                sortables: {
-                    '#': 'id',
-                    'Name': 'name',
-                    'Stock': 'stock_quantity',
-                    'Updated At': 'created_at'
+        const config = {
+            columns: [{
+                    name: 'CHECK_ALL',
+                    class: 'w-12'
                 },
-
-                loadingRows: 3,
-                loading: true,
-                checkAll: false,
-                selectedIds: [],
-                items: [],
-                selectedItem: {},
-
-                sort: 'created_at',
-                sortDesc: true,
-
-                createUpdate: null,
-                confirm: null,
-                bulkDelete: null,
-                error: null,
-                nav: null,
-                viewImage: null,
-
-                init() {
-                    this.viewImage = {
-                        element: document.querySelector('#view-image-modal'),
-                        image: document.querySelector('#view-image-modal img'),
-                        show: () => $.notifier.modal(this.viewImage.element, 'show'),
-                        hide: () => $.notifier.modal(this.viewImage.element, 'hide'),
-                        setImage(source, title = "") {
-                            this.image.src = source;
-                            this.image.title = title;
-                            this.image.alt = title;
-                        },
-                        open(source, title = "") {
-                            if (!source) return;
-                            this.setImage(source, title);
-                            this.show();
-                        }
-                    };
-
-                    this.bulkDelete = {
-                        onConfirm: null,
-                        element: document.querySelector('#bulk-delete-modal'),
-                        show: () => $.notifier.modal(this.bulkDelete.element, 'show'),
-                        hide: () => $.notifier.modal(this.bulkDelete.element, 'hide'),
-                        setMessage: (message) => {
-                            this.bulkDelete.element.querySelector('.bulk-delete-message')
-                                .innerText = message;
-                        },
-                        handleConfirm(e) {
-                            e.preventDefault();
-                            if (this.onConfirm && typeof this.onConfirm === "function") {
-                                this.onConfirm(e);
-                            }
-                        },
-                        open: () => {
-                            const listString = this.items
-                                .filter(item => this.selectedIds.includes(item.id))
-                                .map(item => `[${item.id}] ${item.name}`)
-                                .join(',\n');
-
-                            this.bulkDelete.setMessage(
-                                `Are you sure you want to delete:\n${listString}?\n\nThis action cannot be undone!`
-                            );
-
-                            this.bulkDelete.onConfirm = () => {
-                                this.loading = true;
-
-                                axios.delete(@js(route('ingredients.bulkDelete')), {
-                                        data: {
-                                            ids: this.selected
-                                        }
-                                    })
-                                    .then(res => {
-                                        this.updateItems(
-                                            this.items.filter(item => !this.selectedIds
-                                                .includes(item.id))
-                                        );
-                                        this.selectedIds = [];
-                                        this.fetchData();
-
-                                        const message = res?.data?.message || 'Deleted';
-                                        $.notifier.toast({
-                                            variant: 'success',
-                                            title: 'Success',
-                                            message
-                                        });
-                                        this.bulkDelete.hide();
-                                    })
-                                    .catch(err => {
-                                        this.loading = false;
-                                        this.bulkDelete.hide();
-                                        const message = err?.response?.data?.message || err
-                                            .message;
-                                        $.notifier.toast({
-                                            variant: 'danger',
-                                            title: 'Oops...',
-                                            message
-                                        });
-                                    });
-                            };
-
-                            this.bulkDelete.show();
-                        }
-                    };
-
-                    this.nav = {
-                        currentPage: 1,
-                        pages: [],
-                        hasNextPage: false,
-                        hasPreviousPage: false,
-                        perPage: 0,
-                        total: 0,
-                        goTo: (page) => {
-                            if (this.nav.pages.includes(page)) {
-                                this.nav.currentPage = page;
-                                this.fetchData();
-                            }
-                        },
-                        prev: () => {
-                            this.nav.currentPage--;
-                            this.fetchData();
-                        },
-                        next: () => {
-                            this.nav.currentPage++;
-                            this.fetchData();
-                        },
-                        changePerPage: () => {
-                            this.nav.currentPage = 1;
-                            this.fetchData();
-                        }
-                    };
-
-                    this.confirm = {
-                        onConfirm: null,
-                        element: document.querySelector('#confirm-modal'),
-                        show: () => $.notifier.modal(this.confirm.element, 'show'),
-                        hide: () => $.notifier.modal(this.confirm.element, 'hide'),
-                        setMessage: (message) => {
-                            this.confirm.element.querySelector('.confirm-message').innerText =
-                                message;
-                        },
-                        handleConfirm(e) {
-                            e.preventDefault();
-                            if (this.onConfirm && typeof this.onConfirm === "function") {
-                                this.onConfirm(e);
-                                this.onConfirm = null;
-                            }
-                        }
-                    };
-
-                    this.error = {
-                        element: document.querySelector('#error-modal'),
-                        show: () => $.notifier.modal(this.error.element, 'show'),
-                        hide: () => $.notifier.modal(this.error.element, 'hide'),
-                        setMessage: (message) => {
-                            this.error.element.querySelector('.error-message').innerText = message;
-                        }
-                    };
-
-                    this.createUpdate = {
-                        element: document.querySelector('#create-update-modal'),
-                        show: () => $.notifier.modal(this.createUpdate.element, 'show'),
-                        hide: () => {
-                            $.notifier.modal(this.createUpdate.element, 'hide');
-                            this.selectedItem = {};
-                        },
-                        clearForm: () => {
-                            this.selectedItem = {};
-                            window.dispatchEvent(new CustomEvent("file-upload-clear"));
-                        },
-                        open: (data = {}) => {
-                            this.createUpdate.clearForm();
-                            Object.assign(this.selectedItem, data);
-                            this.createUpdate.show();
-                        },
-                        process: (e) => {
-                            this.loading = true;
-
-                            const formData = new FormData(e.target);
-                            axios.post(@js(route('ingredients.createUpdate')), formData)
-                                .then(res => {
-                                    const message = res?.data?.message || res.message ||
-                                        'Successful';
-                                    $.notifier.toast({
-                                        variant: 'success',
-                                        title: 'Success',
-                                        message
-                                    });
-
-                                    this.createUpdate.hide();
-
-                                    const updatedItem = res.data.data;
-                                    const found = this.items.findIndex(item => item.id ===
-                                        updatedItem.id);
-
-                                    if (found === -1) {
-                                        if (this.items.length >= this.nav.perPage) {
-                                            this.updateItems([
-                                                updatedItem,
-                                                ...this.items.slice(0, -1)
-                                            ]);
-                                        } else {
-                                            this.updateItems([updatedItem, ...this.items]);
-                                        }
-                                    } else {
-                                        const newItems = [...this.items];
-                                        newItems[found] = updatedItem;
-                                        this.updateItems(newItems);
-                                    }
-                                })
-                                .catch(err => {
-                                    const message = err?.response?.data?.message || err.message;
-                                    $.notifier.toast({
-                                        variant: 'danger',
-                                        title: 'Error',
-                                        message
-                                    });
-                                })
-                                .finally(() => {
-                                    this.loading = false;
-                                });
-                        }
-                    };
+                {
+                    name: '#',
+                    class: 'w-14'
                 },
-
-                get loadSkeleton() {
-                    return Array.from({
-                        length: this.loadingRows
-                    }, () => this.cols);
+                {
+                    name: 'Image',
+                    class: 'w-20'
                 },
-
-                updateItems(newItems = []) {
-                    this.loadingRows = this.items.length > 0 ?
-                        this.items.length :
-                        Math.max(this.nav.perPage, 1);
-                    this.items = newItems;
-                    this.checkAll = false;
+                {
+                    name: 'Name',
+                    class: ''
                 },
-
-                onCheckAll() {
-                    this.selectedIds = this.checkAll ?
-                        this.items.map(item => item.id) :
-                        [];
+                {
+                    name: 'Stock',
+                    class: 'w-32'
                 },
-
-                onCheckSingle(e) {
-                    if (!e.target.checked) {
-                        this.selectedIds = this.selectedIds.filter(id => id !== parseInt(e.target.id));
-                    } else {
-                        this.selectedIds = [parseInt(e.target.id), ...this.selectedIds];
-                    }
-
-                    if (this.selectedIds.length < 1) this.checkAll = false;
+                {
+                    name: 'Updated At',
+                    class: 'w-96'
                 },
-
-                toggleSort(colName) {
-                    if (!this.sortables.hasOwnProperty(colName)) return;
-
-                    const newSortColumn = this.sortables[colName];
-                    if (this.sort === newSortColumn) {
-                        this.sortDesc = !this.sortDesc;
-                    } else {
-                        this.sort = newSortColumn;
-                        this.sortDesc = false;
-                    }
-                    this.fetchData();
-                },
-
-                fetchData() {
-                    this.loading = true;
-                    this.updateItems([]);
-
-                    axios.get(@js(route('ingredients.dataTable')), {
-                            params: {
-                                page: this.nav.currentPage,
-                                per_page: this.nav.perPage || null,
-                                sort: this.sort,
-                                sort_desc: this.sortDesc
-                            }
-                        })
-                        .then(res => {
-                            const api = res.data.data;
-
-                            this.updateItems(api.data);
-                            Object.assign(this.nav, {
-                                currentPage: api.current_page,
-                                pages: api.pages,
-                                total: api.total,
-                                perPage: api.per_page,
-                                hasNextPage: api.has_next_page,
-                                hasPreviousPage: api.has_previous_page
-                            });
-                        })
-                        .catch(err => {
-                            this.error.show();
-                            const errorMessage = err?.response?.data?.message || err.message;
-                            this.error.setMessage(errorMessage);
-                        })
-                        .finally(() => {
-                            this.loading = false;
-                        });
-                },
-
-                deleteItem(id, name = '', column = null) {
-                    this.confirm.setMessage(
-                        `Are you sure you want to delete ${column || name || 'this item'}?`
-                    );
-
-                    this.confirm.onConfirm = () => {
-                        this.loading = true;
-
-                        axios.delete(@js(route('ingredients.delete')), {
-                                data: {
-                                    id,
-                                    column
-                                }
-                            })
-                            .then(res => {
-                                if (column) {
-                                    this.selectedItem[column] = null;
-                                    this.updateItems(
-                                        this.items.map(item =>
-                                            item.id === this.selectedItem.id ? this
-                                            .selectedItem : item
-                                        )
-                                    );
-                                } else {
-                                    this.updateItems(this.items.filter(item => item.id !== id));
-                                }
-
-                                const message = res?.data?.message || 'Deleted';
-                                $.notifier.toast({
-                                    variant: 'success',
-                                    title: 'Success',
-                                    message
-                                });
-                                this.confirm.hide();
-                            })
-                            .catch(err => {
-                                this.confirm.hide();
-                                const message = err?.response?.data?.message || err.message;
-                                $.notifier.toast({
-                                    variant: 'danger',
-                                    title: 'Oops...',
-                                    message
-                                });
-                            })
-                            .finally(() => {
-                                this.loading = false;
-                            });
-                    };
-
-                    this.confirm.show();
+                {
+                    name: 'Action',
+                    class: 'w-32'
                 }
-            });
+            ],
+
+            sortables: {
+                '#': 'id',
+                'Name': 'name',
+                'Stock': 'stock_quantity',
+                'Updated At': 'created_at'
+            },
+
+            routes: {
+                fetch: @js(route('ingredients.dataTable')),
+                createUpdate: @js(route('ingredients.createUpdate')),
+                delete: @js(route('ingredients.delete')),
+                bulkDelete: @js(route('ingredients.bulkDelete'))
+            },
+
+            itemName: 'ingredient',
+            itemIdentifier: 'name'
+        };
+
+        document.addEventListener('alpine:init', () => {
+            const createDataTableManager = $.store('dataTable');
+            $.store('mg', createDataTableManager(config));
         });
     </script>
 
