@@ -6,8 +6,8 @@
     <div class="h-12 w-full"></div>
     <div class="flex flex-col justify-between md:flex-row md:items-center gap-4">
         <div class="text-on-surface dark:text-on-surface-dark relative flex w-full flex-col gap-1">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                stroke="currentColor" aria-hidden="true"
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                aria-hidden="true"
                 class="text-on-surface/50 dark:text-on-surface-dark/50 absolute left-2.5 top-1/2 size-5 -translate-y-1/2">
                 <path stroke-linecap="round" stroke-linejoin="round"
                     d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
@@ -25,7 +25,7 @@
                 Clear
             </button>
         </div>
-        <button type="button" x-on:click="filters.show()"
+        <button type="button" x-show="availableFilters.length > 0" x-on:click="filters.show()"
             class="flex items-center gap-2 whitespace-nowrap rounded-radius bg-secondary border border-secondary px-4 py-2 text-sm font-medium tracking-wide text-on-secondary transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-secondary-dark dark:border-secondary-dark dark:text-on-secondary-dark dark:focus-visible:outline-secondary-dark">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                 stroke="currentColor" class="size-5">
@@ -143,46 +143,74 @@
 
                 <template data-name="when has data" x-for="(row, rowIndex) in items" :key="row.id + row.updated_at">
                     <tr>
-                        <td class="p-4">
-                            <label :for="row.id"
-                                class="text-on-surface dark:text-on-surface-dark flex items-center">
-                                <div class="relative flex items-center">
-                                    <input type="checkbox" :id="row.id" x-on:change="onCheckSingle"
-                                        class="before:content[''] border-outline bg-surface checked:border-primary checked:before:bg-primary focus:outline-outline-strong checked:focus:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark dark:focus:outline-outline-dark-strong dark:checked:focus:outline-primary-dark peer relative size-4 appearance-none overflow-hidden rounded border before:absolute before:inset-0 focus:outline-2 focus:outline-offset-2 active:outline-offset-0"
-                                        :checked="checkAll" />
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"
-                                        stroke="currentColor" fill="none" stroke-width="4"
-                                        class="text-on-primary dark:text-on-primary-dark pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 peer-checked:visible">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M4.5 12.75l6 6 9-13.5" />
-                                    </svg>
-                                </div>
-                            </label>
-                        </td>
-                        <td class="p-4" x-text="rowIndex + 1"></td>
-                        <td class="p-2">
-                            <img :src="row.image || window.IMG_NOT_FOUND" :alt="row.name"
-                                x-on:click="viewImage.open(row.image, row.name)" x-on:error="$store.when.imageError"
-                                :class="row.image ? 'w-12 aspect-[4/3] rounded-radius object-cover cursor-pointer' :
-                                    'w-12 aspect-[4/3] rounded-radius object-cover'"
-                                draggable="false" />
-                        </td>
-                        <td class="truncate p-4" x-text="row.name"></td>
-                        <td class="p-4" x-text="`${row.stock_quantity} ${row.unit}`"></td>
-                        <td class="p-4">
-                            <div class="flex flex-col justify-start gap-1">
-                                <p x-text="row.updated_at"></p>
-                                <p class="text-xs opacity-80" x-text="`Created ${row.created_at}`"></p>
-                            </div>
-                        </td>
-                        <td class="p-4">
-                            <div class="flex items-center gap-3">
-                                <button type="button" x-on:click="createUpdate.open(row)"
-                                    class="rounded-radius text-primary outline-primary dark:text-primary-dark dark:outline-primary-dark cursor-pointer whitespace-nowrap bg-transparent p-0.5 font-semibold hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0">Edit</button>
-                                <button type="button" x-on:click="deleteItem(row.id, row.name)"
-                                    class="rounded-radius text-danger outline-danger dark:text-danger dark:outline-danger cursor-pointer whitespace-nowrap bg-transparent p-0.5 font-semibold hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0">Delete</button>
-                            </div>
-                        </td>
+                        <template x-for="(col, colIndex) in config.columns" :key="colIndex">
+
+                            <td>
+                                <template x-if="col.name == 'CHECK_ALL'">
+                                    <div class="p-4">
+                                        <label :for="row.id"
+                                            class="text-on-surface dark:text-on-surface-dark flex items-center">
+                                            <div class="relative flex items-center">
+                                                <input type="checkbox" :id="row.id"
+                                                    x-on:change="onCheckSingle"
+                                                    class="before:content[''] border-outline bg-surface checked:border-primary checked:before:bg-primary focus:outline-outline-strong checked:focus:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark dark:focus:outline-outline-dark-strong dark:checked:focus:outline-primary-dark peer relative size-4 appearance-none overflow-hidden rounded border before:absolute before:inset-0 focus:outline-2 focus:outline-offset-2 active:outline-offset-0"
+                                                    :checked="checkAll" />
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                    aria-hidden="true" stroke="currentColor" fill="none"
+                                                    stroke-width="4"
+                                                    class="text-on-primary dark:text-on-primary-dark pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 peer-checked:visible">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M4.5 12.75l6 6 9-13.5" />
+                                                </svg>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </template>
+
+                                <template x-if="String(col.name).replace(' ', '_').toLowerCase() == 'updated_at'">
+                                    <div class="p-4 flex flex-col justify-start gap-1">
+                                        <p x-text="row.updated_at"></p>
+                                        <p class="text-xs opacity-80" x-text="`Created ${row.created_at}`"></p>
+                                    </div>
+                                </template>
+
+                                <template x-if="col.type == 'image'">
+                                    <div class="p-2">
+                                        <img :src="row.image || window.IMG_NOT_FOUND" :alt="row.name"
+                                            x-on:click="viewImage.open(row.image, row.name)"
+                                            x-on:error="$store.when.imageError"
+                                            :class="row.image ? 'w-12 aspect-[4/3] rounded-radius object-cover cursor-pointer' :
+                                                'w-12 aspect-[4/3] rounded-radius object-cover'"
+                                            draggable="false" />
+                                    </div>
+                                </template>
+
+                                <template x-if="['action', 'actions'].includes(String(col.name).toLowerCase())">
+                                    <div class="p-4 flex items-center gap-3">
+                                        <button type="button"
+                                            x-show="$store.mg.config.actions.edit || $store.mg.actions.view"
+                                            x-text="$store.mg.config.actions.edit ? 'Edit' : 'View'"
+                                            x-on:click="createUpdate.open(row)"
+                                            class="rounded-radius text-primary outline-primary dark:text-primary-dark dark:outline-primary-dark cursor-pointer whitespace-nowrap bg-transparent p-0.5 font-semibold hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0">Edit</button>
+                                        <button type="button" x-show="$store.mg.config.actions.delete"
+                                            x-on:click="deleteItem(row.id, row.name)"
+                                            class="rounded-radius text-danger outline-danger dark:text-danger dark:outline-danger cursor-pointer whitespace-nowrap bg-transparent p-0.5 font-semibold hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0">Delete</button>
+                                    </div>
+                                </template>
+
+                                <template x-if="col.name == '#'">
+                                    <p class="p-4" x-text="rowIndex + 1"></p>
+                                </template>
+
+                                <template
+                                    x-if="col.name !== 'CHECK_ALL' && String(col.name).replace(' ', '_').toLowerCase() !== 'updated_at' && col.name !== '#' && col.type !== 'image' && !['action', 'actions'].includes(String(col.name).toLowerCase())">
+                                    <p class="p-4 wrap-break-word truncate cursor-pointer" x-on:click="$el.classList.toggle('truncate')"
+                                        x-text="col.data ? row[col.data] : row[col.name.toLowerCase().replaceAll(' ', '')]">
+                                    </p>
+                                </template>
+                            </td>
+
+                        </template>
                     </tr>
                 </template>
 

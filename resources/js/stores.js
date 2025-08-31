@@ -180,6 +180,11 @@ export const dataTableStore = (config) => ({
             appliedFilters: [],
             availableFilters: [],
         },
+        actions: {
+            view: true,
+            edit: true,
+            delete: true
+        },
         itemName: 'item',
         itemIdentifier: 'name',
         ...config
@@ -293,10 +298,12 @@ export const dataTableStore = (config) => ({
             handleConfirm: (e) => {
                 e.preventDefault();
                 if (this.bulkDelete.onConfirm && typeof this.bulkDelete.onConfirm === "function") {
+                    if (!this.config.actions.delete) return;
                     this.bulkDelete.onConfirm(e);
                 }
             },
             open: () => {
+                if (!this.config.actions.delete) return;
                 const listString = this.items
                     .filter(item => this.selectedIds.includes(item.id))
                     .map(item => `[${item.id}] ${item[this.config.itemIdentifier]}`)
@@ -347,6 +354,7 @@ export const dataTableStore = (config) => ({
                 this.createUpdate.show();
             },
             process: (e) => {
+                if (!this.config.actions.create && !this.config.actions.edit) return;
                 const formData = new FormData(e.target);
                 this.handleApiCall(
                     axios.post(this.config.routes.createUpdate, formData),
@@ -464,6 +472,8 @@ export const dataTableStore = (config) => ({
     },
 
     deleteItem(id, name = '', column = null) {
+        if (!this.config.actions.delete) return;
+
         const itemName = column || name || `this ${this.config.itemName}`;
         this.confirm.setMessage(`Are you sure you want to delete ${itemName}?`, '.confirm-message');
 

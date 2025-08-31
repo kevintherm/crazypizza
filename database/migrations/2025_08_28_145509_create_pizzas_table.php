@@ -13,6 +13,7 @@ return new class extends Migration {
     {
         Schema::create('pizzas', function (Blueprint $table) {
             $table->id();
+            $table->string('image')->nullable();
             $table->string('name');
             $table->text('description')->nullable();
             $table->integer('price');

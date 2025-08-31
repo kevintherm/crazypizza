@@ -193,7 +193,8 @@
                     },
                     {
                         name: 'Image',
-                        class: 'w-20'
+                        class: 'w-20',
+                        type: 'image',
                     },
                     {
                         name: 'Name',
@@ -201,7 +202,12 @@
                     },
                     {
                         name: 'Stock',
-                        class: 'w-32'
+                        class: 'w-32',
+                        data: 'stock_quantity'
+                    },
+                    {
+                        name: 'Unit',
+                        class: 'w-24',
                     },
                     {
                         name: 'Updated At',

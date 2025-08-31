@@ -47,11 +47,11 @@
                 </a>
             </li>
             <li class="px-1 py-0.5 first:mt-2">
-                <a href="/products/inventory"
-                    x-bind:class="currentRoute === '/products/inventory' ?
+                <a href="/products/pizzas"
+                    x-bind:class="currentRoute === '/products/pizzas' ?
                         'flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm text-on-surface-strong bg-primary/5 dark:text-on-surface-dark-strong dark:bg-primary-dark/5 underline-offset-2 focus:outline-hidden focus-visible:underline' :
                         'flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm text-on-surface underline-offset-2 hover:bg-primary/5 hover:text-on-surface-strong focus:outline-hidden focus-visible:underline dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong'">
-                    Inventory
+                    Pizzas
                 </a>
             </li>
             <li class="px-1 py-0.5 first:mt-2">
