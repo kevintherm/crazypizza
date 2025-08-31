@@ -2,82 +2,39 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IngredientRequest;
+use App\Services\CrudService;
 use DB;
 use Helper;
 use Validator;
-use App\Http\Resources\DataTableResource;
 use App\Models\Ingredient;
 use Illuminate\Http\Request;
+use App\Services\DataTableService;
 use App\Http\Responses\ApiResponse;
-use Illuminate\Support\Facades\Schema;
+use App\Http\Resources\DataTableResource;
 
 class IngredientController extends Controller
 {
+
     public function dataTable(Request $request)
     {
         try {
-
-            $search = $request->input('search');
-            $filters = $request->input('filters', []);
-            $sort = $request->input('sort', 'created_at');
-            $sortDesc = $request->boolean('sort_desc', true);
-            $perPage = max(1, $request->integer('per_page', 8));
-
-            $ingredients = Ingredient::query()
-                ->whereNull('deleted_at')
-                ->when($search, fn($q) => $q->where('name', 'like', "%{$search}%"))
-                ->when($filters, function ($q) use ($filters) {
-                    foreach ($filters as $filter) {
-                        // Validate column
-                        if (!Schema::hasColumn('ingredients', $filter['column'])) return;
-
-                        switch ($filter['type']) {
-                            case 'range':
-                                $q->whereBetween($filter['column'], [$filter['min'] || 0, $filter['max']]);
-                                break;
-
-                            default:
-                                $q->where($filter['column'], $filter['value']);
-                                break;
-                        }
-                    }
-                })
-                ->orderBy($sort, $sortDesc ? 'desc' : 'asc')
-                ->paginate($perPage);
-
+            $ingredients = DataTableService::make(Ingredient::class, $request, ['name']);
             return ApiResponse::success('Ingredients fetched successfully.', new DataTableResource($ingredients));
-
         } catch (\Throwable $e) {
             Helper::LogThrowable($request, __FILE__, $e);
             return ApiResponse::error($e->getMessage(), status: 500);
         }
     }
 
-    public function createUpdate(Request $request)
+    public function createUpdate(IngredientRequest $request)
     {
         try {
-
             DB::beginTransaction();
-
-            $validator = Validator::make($request->all(), [
-                'id' => 'nullable|integer|exists:ingredients,id',
-                'name' => 'required|string|max:255',
-                'description' => 'nullable|string|max:1000',
-                'image' => 'nullable|image|max:2048',
-                'calories_per_unit' => 'nullable|integer|min:0',
-                'unit' => 'nullable|in:' . implode(',', array_keys(Ingredient::UNITS)),
-                'is_vegan' => 'nullable|boolean',
-                'is_gluten_free' => 'nullable|boolean',
-                'stock_quantity' => 'nullable|integer|min:0',
-            ]);
-
-            if ($validator->fails()) {
-                return ApiResponse::error($validator->errors()->first(), errors: $validator->errors(), status: 400);
-            }
 
             $ingredient = Ingredient::updateOrCreate(
                 ['id' => $request->input('id')],
-                $validator->validated()
+                $request->validated()
             );
 
             if ($request->hasFile('image')) {
@@ -86,10 +43,10 @@ class IngredientController extends Controller
             }
 
             DB::commit();
-
-            return ApiResponse::success("{$ingredient->name} saved successfully.", $ingredient, 200);
+            return ApiResponse::success("{$ingredient->name} saved successfully.", $ingredient);
 
         } catch (\Throwable $e) {
+            DB::rollBack();
             Helper::LogThrowable($request, __FILE__, $e);
             return ApiResponse::error($e->getMessage(), status: 500);
         }
@@ -98,44 +55,10 @@ class IngredientController extends Controller
     public function delete(Request $request)
     {
         try {
-
-            DB::beginTransaction();
-
-            $validator = Validator::make($request->all(), [
-                'id' => 'required|integer|exists:ingredients,id',
-                'column' => 'nullable|string',
-            ]);
-
-            if ($validator->fails()) {
-                return ApiResponse::error($validator->errors()->first(), errors: $validator->errors(), status: 400);
-            }
-
-            $ingredient = Ingredient::find($request->input('id'));
-
-            $deletingColumn = $request->input('column', null);
-
-            if ($deletingColumn) {
-
-                if ($deletingColumn == 'image') {
-                    Helper::deleteFile($ingredient->image);
-                    $ingredient->update(['image' => null]);
-                }
-
-            } else {
-                $ingredient->delete();
-            }
-
-            DB::commit();
-
-            return ApiResponse::success(
-                message: ucfirst($deletingColumn ?? $ingredient->name) . " deleted successfully.",
-                data: $ingredient,
-                status: 200
-            );
-
+            $ingredient = CrudService::delete(Ingredient::class, $request->id, $request->column);
+            return ApiResponse::success("Deleted successfully.", $ingredient);
         } catch (\Throwable $e) {
-            Helper::LogThrowable($request, __FILE__, $e);
-            return ApiResponse::error($e->getMessage(), status: 500);
+            return ApiResponse::error($e->getMessage(), 500);
         }
     }
 
@@ -154,7 +77,7 @@ class IngredientController extends Controller
                 return ApiResponse::error($validator->errors()->first(), errors: $validator->errors(), status: 400);
             }
 
-            Ingredient::destroy($request->input('ids'));
+            CrudService::bulkDelete(Ingredient::class, $request->ids);
 
             DB::commit();
 
