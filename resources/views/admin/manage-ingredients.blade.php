@@ -1,6 +1,6 @@
 @use('App\Models\Ingredient')
 
-<x-admin.layout>
+<x-admin.layout title="Manage Ingredients">
 
     <main class="flex flex-col px-6 md:px-12" x-data="$store.mg">
 

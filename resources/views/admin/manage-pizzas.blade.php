@@ -1,6 +1,6 @@
 @use('App\Models\Ingredient')
 
-<x-admin.layout>
+<x-admin.layout title="Manage Pizzas">
 
     <main class="flex flex-col px-6 md:px-12" x-data="$store.mg">
 
@@ -32,10 +32,16 @@
                 </button>
             </div>
             <div class="absolute right-0 md:left-0">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="stroke-primary size-24 opacity-20">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" />
+                <!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+                <svg class="stroke-primary size-24 opacity-20" viewBox="0 0 24 24" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                    <g id="SVGRepo_iconCarrier">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M8.18092 2.56556C7.90392 3.05195 7.65396 3.65447 7.416 4.36507C5.57795 9.34447 2.73476 16.6246 1.36225 20.12C0.73894 21.7073 2.25721 23.2963 3.87117 22.7465C7.38796 21.5484 14.6626 19.0869 19.6353 17.5194L19.6504 17.5145C20.3639 17.277 20.9659 17.0333 21.4491 16.7641C21.9273 16.4977 22.3551 16.1704 22.6426 15.7347C23.2987 14.7406 22.9351 13.6998 22.5012 12.8954C19.7712 7.83439 16.3585 4.2775 12.0968 1.5703C11.6898 1.31179 11.2341 1.09226 10.7418 1.02286C10.2141 0.948472 9.69595 1.05467 9.22968 1.36307C8.79315 1.65181 8.45686 2.08103 8.18092 2.56556ZM15.0912 9.09151C13.5105 7.4048 11.7893 5.97947 9.55526 4.3325C9.6817 4.01505 9.80284 3.75901 9.91885 3.55532C10.1115 3.21703 10.2575 3.08115 10.333 3.03119C10.3788 3.0009 10.4025 2.99481 10.4626 3.00327C10.5579 3.01672 10.7358 3.07517 11.0244 3.25848C14.994 5.78016 18.1714 9.08132 20.741 13.8449C21.0989 14.5085 20.9833 14.6233 20.9739 14.6325L20.9734 14.6331C20.9318 14.696 20.8089 14.8313 20.4757 15.017C20.2861 15.1226 20.0491 15.2333 19.7558 15.3501C18.0975 12.7134 16.6772 10.7839 15.0912 9.09151ZM13.6318 10.4591C15.0211 11.9415 16.2981 13.6452 17.8022 16.0033C12.9009 17.5716 6.46194 19.751 3.22621 20.8533L3.22459 20.8538L3.22391 20.8531L3.22329 20.8525L3.22387 20.851C4.48689 17.6345 7.00299 11.1934 8.83498 6.28876C10.7878 7.75003 12.2738 9.00998 13.6318 10.4591ZM10 13C11.1046 13 12 12.1046 12 11C12 9.89545 11.1046 9.00002 10 9.00002C8.89543 9.00002 8 9.89545 8 11C8 12.1046 8.89543 13 10 13ZM10 16C10 17.1046 9.10457 18 8 18C6.89543 18 6 17.1046 6 16C6 14.8954 6.89543 14 8 14C9.10457 14 10 14.8954 10 16ZM13 17C14.1046 17 15 16.1046 15 15C15 13.8954 14.1046 13 13 13C11.8954 13 11 13.8954 11 15C11 16.1046 11.8954 17 13 17Z"
+                            fill="#000000"></path>
+                    </g>
                 </svg>
             </div>
         </section>
@@ -94,87 +100,30 @@
                     </div>
 
                     <div class="col-span-12 md:col-span-3">
-                        <label for="unit" class="w-fit pl-0.5 text-sm capitalize">Unit</label>
+                        <label for="price" class="w-fit pl-0.5 text-sm capitalize">Price</label>
                     </div>
                     <div class="col-span-12 md:col-span-9">
                         <div class="relative">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                class="pointer-events-none absolute right-4 top-2 size-5">
-                                <path fill-rule="evenodd"
-                                    d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            <select id="unit" x-model="$store.mg.selectedItem.unit"
-                                class="rounded-radius border-outline bg-surface-alt focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark w-full appearance-none border px-4 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-75"
-                                name="unit" placeholder="Unit" autocomplete="off" required>
-                                <option value="" hidden>Select option</option>
-                                @foreach (Ingredient::UNITS as $abbr => $unit)
-                                    <option value="{{ $abbr }}">{{ ucfirst($unit) }}</option>
-                                @endforeach
-                            </select>
+                            <div class="pointer-events-none absolute right-4 top-0 bottom-0 inline-flex items-center ">
+                                <p class="text-sm" x-text="$store.when.displayMoney(69).split(/\d/)[0]"></p>
+                            </div>
+                            <input id="price" type="text" x-model="$store.mg.selectedItem.price"
+                                x-mask:dynamic="$money($input)"
+                                class="rounded-radius border-outline bg-surface-alt text-md focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark w-full border pl-3 pr-12 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-75"
+                                name="price" placeholder="Price" autocomplete="off" required />
                         </div>
                     </div>
 
                     <div class="col-span-12 md:col-span-3">
-                        <label for="calories_per_unit" class="w-fit pl-0.5 text-sm capitalize">Calories Per
-                            Unit</label>
+                        <label for="is_available" class="w-fit pl-0.5 text-sm capitalize">Is Available</label>
                     </div>
                     <div class="col-span-12 md:col-span-9">
-                        <input type="number" id="calories_per_unit"
-                            x-model="$store.mg.selectedItem.calories_per_unit"
-                            class="rounded-radius border-outline bg-surface-alt text-md focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark w-full border px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-75"
-                            name="calories_per_unit" placeholder="Calories per unit" autocomplete="off" required />
-                    </div>
-
-                    <div class="col-span-12 md:col-span-3">
-                        <label for="is_vegan" class="w-fit pl-0.5 text-sm capitalize">Is Vegan</label>
-                    </div>
-                    <div class="col-span-12 md:col-span-9">
-                        <div class="relative">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                class="pointer-events-none absolute right-4 top-2 size-5">
-                                <path fill-rule="evenodd"
-                                    d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            <select id="is_vegan" x-model="$store.mg.selectedItem.is_vegan"
-                                class="rounded-radius border-outline bg-surface-alt focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark w-full appearance-none border px-4 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-75"
-                                name="is_vegan" placeholder="Is Vegan" autocomplete="off" required>
-                                <option value="" hidden>Select option</option>
-                                <option value="1">Yes</option>
-                                <option value="0">No</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="col-span-12 md:col-span-3">
-                        <label for="is_gluten_free" class="w-fit pl-0.5 text-sm capitalize">Is Gluten Free</label>
-                    </div>
-                    <div class="col-span-12 md:col-span-9">
-                        <div class="relative">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                class="pointer-events-none absolute right-4 top-2 size-5">
-                                <path fill-rule="evenodd"
-                                    d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            <select id="is_gluten_free" x-model="$store.mg.selectedItem.is_gluten_free"
-                                class="rounded-radius border-outline bg-surface-alt focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark w-full appearance-none border px-4 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-75"
-                                name="is_gluten_free" placeholder="Is Gluten Free" autocomplete="off" required>
-                                <option value="" hidden>Select option</option>
-                                <option value="1">Yes</option>
-                                <option value="0">No</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="col-span-12 md:col-span-3">
-                        <label for="stock_quantity" class="w-fit pl-0.5 text-sm capitalize">Stock Quantity</label>
-                    </div>
-                    <div class="col-span-12 md:col-span-9">
-                        <input type="number" id="stock_quantity" x-model="$store.mg.selectedItem.stock_quantity"
-                            class="rounded-radius border-outline bg-surface-alt text-md focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark w-full border px-3 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-75"
-                            name="stock_quantity" placeholder="Stock Quantity" autocomplete="off" required />
+                        <label for="is_available" class="inline-flex items-center gap-3">
+                            <input id="is_available" type="checkbox" x-model="$store.mg.selectedItem.is_available"
+                                class="peer sr-only" role="switch" checked />
+                            <div class="relative h-6 w-11 after:h-5 after:w-5 peer-checked:after:translate-x-5 rounded-full border border-outline bg-surface-alt after:absolute after:bottom-0 after:left-[0.0625rem] after:top-0 after:my-auto after:rounded-full after:bg-on-surface after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:bg-on-primary peer-focus:outline-2 peer-focus:outline-offset-2 peer-focus:outline-outline-strong peer-focus:peer-checked:outline-primary peer-active:outline-offset-0 peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:border-outline-dark dark:bg-surface-dark-alt dark:after:bg-on-surface-dark dark:peer-checked:bg-primary-dark dark:peer-checked:after:bg-on-primary-dark dark:peer-focus:outline-outline-dark-strong dark:peer-focus:peer-checked:outline-primary-dark"
+                                aria-hidden="true"></div>
+                        </label>
                     </div>
                 </div>
             </x-slot>
@@ -183,7 +132,8 @@
 
         <script>
             const config = {
-                columns: [{
+                columns: [
+                    {
                         name: 'CHECK_ALL',
                         class: 'w-12',
                     },
@@ -199,22 +149,23 @@
                     },
                     {
                         name: 'Name',
-                        class: 'w-64',
+                        class: 'w-40',
                         data: 'name'
                     },
                     {
                         name: 'Description',
-                        class: '',
+                        class: 'w-64',
                         data: 'description'
                     },
                     {
                         name: 'Price',
                         class: 'w-64',
-                        data: 'price'
+                        data: 'price',
+                        type: 'money'
                     },
                     {
                         name: 'Updated At',
-                        class: 'w-96'
+                        class: 'w-64'
                     },
                     {
                         name: 'Action',
@@ -225,7 +176,6 @@
                 sortables: {
                     '#': 'id',
                     'Name': 'name',
-                    'Stock': 'stock_quantity',
                     'Updated At': 'created_at'
                 },
 
@@ -235,10 +185,10 @@
                 },
 
                 routes: {
-                    fetch: '{{ route('ingredients.dataTable') }}',
-                    createUpdate: '{{ route('ingredients.createUpdate') }}',
-                    delete: '{{ route('ingredients.delete') }}',
-                    bulkDelete: '{{ route('ingredients.bulkDelete') }}',
+                    fetch: "{{ route('pizzas.dataTable') }}",
+                    createUpdate: "{{ route('pizzas.createUpdate') }}",
+                    delete: "{{ route('pizzas.delete') }}",
+                    bulkDelete: "{{ route('pizzas.bulkDelete') }}",
                 },
 
                 itemName: 'ingredient',

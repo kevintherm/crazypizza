@@ -1,4 +1,4 @@
-<x-app>
+<x-app title="Login">
     <div class="flex h-svh items-center justify-center">
         <form method="POST" action="{{ route('login') }}"
             class="md:rounded-radius border-outline bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark group flex w-full flex-col overflow-hidden md:max-w-sm md:border">

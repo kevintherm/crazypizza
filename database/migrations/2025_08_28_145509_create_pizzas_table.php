@@ -16,9 +16,10 @@ return new class extends Migration {
             $table->string('image')->nullable();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->integer('price');
+            $table->decimal('price', 10, 2);
             $table->boolean('is_available')->default(false);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

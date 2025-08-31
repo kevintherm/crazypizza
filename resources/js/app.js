@@ -13,8 +13,11 @@ import { combobox } from './components';
 const IMAGE_NOT_FOUND = "https://placehold.co/300";
 window.IMAGE_NOT_FOUND = IMAGE_NOT_FOUND;
 
-const DEFAULT_SELECT_OPTION = {label: 'All', value: 'All'};
+const DEFAULT_SELECT_OPTION = { label: 'All', value: 'All' };
 window.DEFAULT_SELECT_OPTION = DEFAULT_SELECT_OPTION;
+
+const CURRENCY_CODE = "usd";
+window.CURRENCY_CODE = CURRENCY_CODE;
 
 Alpine.plugin(grow);
 Alpine.plugin(anchor);
@@ -39,7 +42,11 @@ Alpine.store('when', {
     inputNumber: (e) => {
         const input = e.target;
         input.value = input.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
-    }
+    },
+    displayMoney: new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: CURRENCY_CODE,
+    }).format
 });
 
 Alpine.data('combobox', combobox);

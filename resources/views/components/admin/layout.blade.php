@@ -1,4 +1,4 @@
-<x-app>
+<x-app :title="$title">
 
     @if (isset($head))
         <x-slot name="head">

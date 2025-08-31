@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PizzaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -23,10 +24,10 @@ Route::middleware(['web', 'auth:sanctum'])->group(function () {
         });
 
         Route::prefix('pizzas')->group(function () {
-            Route::get('data-table', [IngredientController::class, 'dataTable'])->name('pizzas.dataTable');
-            Route::post('/', [IngredientController::class, 'createUpdate'])->name('pizzas.createUpdate');
-            Route::delete('/', [IngredientController::class, 'delete'])->name('pizzas.delete');
-            Route::delete('/bulk-delete', [IngredientController::class, 'bulkDelete'])->name('pizzas.bulkDelete');
+            Route::get('data-table', [PizzaController::class, 'dataTable'])->name('pizzas.dataTable');
+            Route::post('/', [PizzaController::class, 'createUpdate'])->name('pizzas.createUpdate');
+            Route::delete('/', [PizzaController::class, 'delete'])->name('pizzas.delete');
+            Route::delete('/bulk-delete', [PizzaController::class, 'bulkDelete'])->name('pizzas.bulkDelete');
         });
 
     });
