@@ -8,7 +8,7 @@ import anchor from '@alpinejs/anchor';
 
 import { alpineBanner as banner, alpineModal as modal, alpineToast as toast } from './notifiers';
 import { fileUploaderStore, dataTableStore } from './stores';
-import { combobox } from './components';
+import { combobox, comboboxV2 } from './components';
 
 const IMAGE_NOT_FOUND = "https://placehold.co/300";
 window.IMAGE_NOT_FOUND = IMAGE_NOT_FOUND;
@@ -50,6 +50,7 @@ Alpine.store('when', {
 });
 
 Alpine.data('combobox', combobox);
+Alpine.data('comboboxV2', comboboxV2);
 
 window.$ = Alpine;
 
