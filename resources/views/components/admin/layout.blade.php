@@ -1,4 +1,11 @@
 <x-app>
+
+    @if (isset($head))
+        <x-slot name="head">
+            {{ $head }}
+        </x-slot>
+    @endif
+
     <div x-data="{ showSidebar: true }" class="relative flex w-full flex-col md:flex-row h-screen">
         <!-- This allows screen readers to skip the sidebar and go directly to the main content. -->
         <a class="sr-only" href="#main-content">skip to the main content</a>
@@ -78,4 +85,11 @@
             <span class="sr-only">sidebar toggle</span>
         </button>
     </div>
+
+    @if (isset($foot))
+        <x-slot name="foot">
+            {{ $foot }}
+        </x-slot>
+    @endif
+
 </x-app>

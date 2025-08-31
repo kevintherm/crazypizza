@@ -23,6 +23,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('products')->group(function () {
         Route::view('ingredients', 'admin.manage-ingredients');
+        Route::view('pizzas', 'admin.manage-pizzas');
     });
 
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');

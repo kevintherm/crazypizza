@@ -26,6 +26,9 @@
 
     {{ $slot }}
 
+    @if (isset($foot))
+        {{ $foot }}
+    @endif
 </body>
 
 </html>

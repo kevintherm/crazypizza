@@ -406,7 +406,7 @@ export const dataTableStore = (config) => ({
     },
 
     onCheckSingle(e) {
-        const id = parseInt(e.target.value);
+        const id = parseInt(e.target.id);
         if (e.target.checked) {
             this.selectedIds.push(id);
         } else {
