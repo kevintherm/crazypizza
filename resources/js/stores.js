@@ -111,9 +111,13 @@ export const fileUploaderStore = (options = {}) => ({
         }
 
     }
-})
+});
+
 /**
  * Creates a reusable Alpine.js store for managing a data table.
+ * Usage:
+ * On Element: $store.{manager}, direct access if you set it to x-data.
+ * On Script: Alpine.store('{manager}')
  * @param {object} config - Configuration object for the data table.
  * @param {Array<object>} config.columns - Column definitions. E.g., [{ name: 'Name', class: 'w-64' }]
  * @param {object} config.sortables - Mapping of column display names to database fields. E.g., { 'Name': 'name' }
@@ -136,11 +140,16 @@ export const dataTableStore = (config) => ({
             bulkDelete: '#bulk-delete-modal',
             confirm: '#confirm-modal',
             error: '#error-modal',
-            createUpdate: '#create-update-modal'
+            createUpdate: '#create-update-modal',
+            filters: '#filters-modal'
         },
         initialSort: {
             column: 'created_at',
             desc: true
+        },
+        initialFilters: {
+            appliedFilters: [],
+            availableFilters: [],
         },
         itemName: 'item',
         itemIdentifier: 'name',
@@ -159,6 +168,11 @@ export const dataTableStore = (config) => ({
     sort: config.initialSort?.column || 'created_at',
     sortDesc: config.initialSort?.desc === true,
 
+    // Search & Filtering State
+    searchTerm: '',
+    appliedFilters: config.initialFilters?.appliedFilters || [],
+    availableFilters: config.initialFilters?.availableFilters || [],
+
     // Component Modules
     createUpdate: null,
     confirm: null,
@@ -166,10 +180,69 @@ export const dataTableStore = (config) => ({
     error: null,
     nav: null,
     viewImage: null,
+    filters: null,
 
     // Initialization
     init() {
         // Modal Handlers
+        this.filters = this.createModalHandler(this.config.selectors.filters, {
+            remove: (appliedFilter) => {
+                this.appliedFilters = this.appliedFilters.filter(filter => !this.compareObjects(filter, appliedFilter));
+                this.fetchData();
+            },
+            process: (event) => {
+
+                const formData = new FormData(event.target);
+                const obj = Object.fromEntries(formData.entries());
+
+                // Group key and values
+                const grouped = Object.entries(obj).reduce((acc, [fullKey, value]) => {
+                    const [group, subKey] = fullKey.split('.');
+                    if (!acc[group]) acc[group] = { column: group };
+
+                    if (subKey) {
+                        acc[group][subKey] = value;
+                        acc[group].type = 'range';
+                    } else {
+                        acc[group].value = value;
+                        acc[group].type = 'input';
+                    }
+
+                    return acc;
+                }, {});
+
+                // Build result with updated filter
+                const result = Object.values(grouped)
+                    .filter(f => {
+                        if (f.type === 'input') return !(f.value === '' || f.value == null || String(f.value).toLowerCase() === 'all');
+                        else if (f.type === 'range') return f.min != null && f.min !== '' || f.max != null && f.max !== '';
+                        return true;
+                    })
+                    .map(f => {
+
+                        const found = this.availableFilters.find(i => i.column === f.column) || {};
+                        f.name = found.name ?? this.snakeToCapitalized(f.column);
+                        f.accept = found.accept ?? 'string';
+
+                        if (f.type === 'input' && f.accept === 'bool') {
+                            f.displayedValue = Boolean(Number(f.value));
+                        } else if (f.type === 'range') {
+                            f.displayedValue = `${f.min ?? ''} - ${f.max ?? ''}`;
+                        } else {
+                            f.displayedValue = String(f.value);
+                        }
+
+                        return f;
+                    });
+
+                this.appliedFilters = result;
+
+                if (result.length) this.fetchData();
+                this.filters.hide();
+
+            }
+        });
+
         this.viewImage = this.createModalHandler(this.config.selectors.viewImage, {
             image: document.querySelector(`${this.config.selectors.viewImage} img`),
             setImage(source, title = "") {
@@ -334,7 +407,9 @@ export const dataTableStore = (config) => ({
                 page: this.nav.currentPage,
                 per_page: this.nav.perPage || null,
                 sort: this.sort,
-                sort_desc: this.sortDesc
+                sort_desc: this.sortDesc,
+                search: this.searchTerm,
+                filters: this.appliedFilters
             }
         })
             .then(res => {
@@ -382,6 +457,28 @@ export const dataTableStore = (config) => ({
     },
 
     // Helpers
+    compareObjects(obj1, obj2) {
+        // Same reference or primitive equality
+        if (obj1 === obj2) return true;
+
+        // Check if both are objects
+        if (typeof obj1 !== 'object' || obj1 === null ||
+            typeof obj2 !== 'object' || obj2 === null) {
+            return false;
+        }
+
+        const keys1 = Object.keys(obj1);
+        const keys2 = Object.keys(obj2);
+
+        // Different number of keys
+        if (keys1.length !== keys2.length) return false;
+
+        // Compare each key recursively
+        return keys1.every(key => this.compareObjects(obj1[key], obj2[key]));
+    },
+
+    snakeToCapitalized: str => str.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+
     createModalHandler(selector, customMethods = {}) {
         const element = document.querySelector(selector);
         if (!element) {

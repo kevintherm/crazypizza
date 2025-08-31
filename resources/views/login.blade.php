@@ -1,33 +1,33 @@
 <x-app>
-    <div class="flex justify-center items-center h-svh">
+    <div class="flex h-svh items-center justify-center">
         <form method="POST" action="{{ route('login') }}"
-            class="group flex md:rounded-radius md:max-w-sm flex-col overflow-hidden md:border border-outline bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark w-full">
+            class="md:rounded-radius border-outline bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark group flex w-full flex-col overflow-hidden md:max-w-sm md:border">
             @csrf
             <div class="flex flex-col gap-4 p-6">
                 <span class="text-sm font-medium">{{ config('app.name') }}</span>
-                <h3 class="text-balance text-xl lg:text-2xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong"
+                <h3 class="text-on-surface-strong dark:text-on-surface-dark-strong text-balance text-xl font-bold lg:text-2xl"
                     aria-describedby="featureDescription">Login</h3>
 
-                <div class="flex w-full flex-col gap-1 text-on-surface dark:text-on-surface-dark">
+                <div class="text-on-surface dark:text-on-surface-dark flex w-full flex-col gap-1">
                     <label for="email" class="w-fit pl-0.5 text-sm">Email</label>
                     <input x-data id="email" type="email"
-                        class="w-full rounded-radius border border-outline bg-surface-alt px-2 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark"
+                        class="rounded-radius border-outline bg-surface-alt focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark w-full border px-2 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-75"
                         :value="'{{ old('email') }}'" name="email" placeholder="Enter your email"
                         autocomplete="email" required />
                 </div>
 
-                <div class="flex w-full flex-col gap-1 text-on-surface dark:text-on-surface-dark">
+                <div class="text-on-surface dark:text-on-surface-dark flex w-full flex-col gap-1">
                     <label for="passwordInput" class="w-fit pl-0.5 text-sm">Password</label>
                     <div x-data="{ showPassword: false }" class="relative">
                         <input x-bind:type="showPassword ? 'text' : 'password'" id="passwordInput"
-                            class="w-full rounded-radius border border-outline bg-surface-alt px-2 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark"
+                            class="rounded-radius border-outline bg-surface-alt focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark w-full border px-2 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-75"
                             name="password" autocomplete="current-password" placeholder="Enter your password"
                             required />
 
                         <button type="button" x-on:click="showPassword = !showPassword"
-                            class="absolute right-2.5 top-1/2 -translate-y-1/2 text-on-surface dark:text-on-surface-dark"
+                            class="text-on-surface dark:text-on-surface-dark absolute right-2.5 top-1/2 -translate-y-1/2"
                             aria-label="Show password">
-                            <svg x-show="!showPassword" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            <svg x-cloak x-show="!showPassword" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"
                                 class="size-5">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -35,7 +35,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                             </svg>
-                            <svg x-show="showPassword" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            <svg x-cloak x-show="showPassword" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true"
                                 class="size-5">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -47,14 +47,14 @@
 
                 <div class="flex w-full justify-between">
                     <label for="rememberMe"
-                        class="flex items-center gap-2 text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed has-disabled:opacity-75">
+                        class="text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed has-disabled:opacity-75 flex items-center gap-2 text-sm font-medium">
                         <span class="relative flex items-center">
                             <input id="rememberMe" type="checkbox"
-                                class="before:content[''] peer relative size-4 appearance-none overflow-hidden rounded-sm border border-outline bg-surface-alt before:absolute before:inset-0 checked:border-primary checked:before:bg-primary focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong checked:focus:outline-primary active:outline-offset-0 disabled:cursor-not-allowed dark:border-outline-dark dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark dark:focus:outline-outline-dark-strong dark:checked:focus:outline-primary-dark"
+                                class="before:content[''] border-outline bg-surface-alt checked:border-primary checked:before:bg-primary focus:outline-outline-strong checked:focus:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark dark:focus:outline-outline-dark-strong dark:checked:focus:outline-primary-dark peer relative size-4 appearance-none overflow-hidden rounded-sm border before:absolute before:inset-0 focus:outline-2 focus:outline-offset-2 active:outline-offset-0 disabled:cursor-not-allowed"
                                 name="remember" />
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"
                                 stroke="currentColor" fill="none" stroke-width="4"
-                                class="pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 text-on-primary peer-checked:visible dark:text-on-primary-dark">
+                                class="text-on-primary dark:text-on-primary-dark pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 peer-checked:visible">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                             </svg>
                         </span>
@@ -62,13 +62,13 @@
                     </label>
 
                     <a href="#"
-                        class="font-medium text-primary underline-offset-2 hover:underline focus:underline focus:outline-hidden dark:text-primary-dark">
+                        class="text-primary focus:outline-hidden dark:text-primary-dark font-medium underline-offset-2 hover:underline focus:underline">
                         Forgot Password?
                     </a>
                 </div>
 
                 <button type="submit"
-                    class="whitespace-nowrap rounded-radius bg-primary border border-primary px-4 py-2 text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-primary-dark dark:border-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark">Login</button>
+                    class="rounded-radius bg-primary border-primary text-on-primary focus-visible:outline-primary dark:bg-primary-dark dark:border-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark whitespace-nowrap border px-4 py-2 text-center text-sm font-medium tracking-wide transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-75">Login</button>
 
             </div>
         </form>
@@ -78,12 +78,14 @@
 
     @error('message')
         <script>
-            window.addEventListener('DOMContentLoaded', () => {
-                $.notifier.toast({
-                    variant: 'danger',
-                    title: 'Oops...',
-                    message: @js($message)
-                });
+            window.addEventListener('alpine:init', () => {
+                document.addEventListener('DOMContentLoaded', () => {
+                    $.store('notifiers').toast({
+                        variant: 'danger',
+                        title: 'Oops...',
+                        message: @js($message)
+                    });
+                })
             });
         </script>
     @enderror

@@ -18,6 +18,7 @@ class IngredientController extends Controller
         try {
 
             $search = $request->input('search');
+            $filters = $request->input('filters', []);
             $sort = $request->input('sort', 'created_at');
             $sortDesc = $request->boolean('sort_desc', true);
             $perPage = max(1, $request->integer('per_page', 8));
@@ -25,6 +26,22 @@ class IngredientController extends Controller
             $ingredients = Ingredient::query()
                 ->whereNull('deleted_at')
                 ->when($search, fn($q) => $q->where('name', 'like', "%{$search}%"))
+                ->when($filters, function ($q) use ($filters) {
+                    foreach ($filters as $filter) {
+                        // Validate column
+                        if (!Schema::hasColumn('ingredients', $filter['column'])) return;
+
+                        switch ($filter['type']) {
+                            case 'range':
+                                $q->whereBetween($filter['column'], [$filter['min'] || 0, $filter['max']]);
+                                break;
+
+                            default:
+                                $q->where($filter['column'], $filter['value']);
+                                break;
+                        }
+                    }
+                })
                 ->orderBy($sort, $sortDesc ? 'desc' : 'asc')
                 ->paginate($perPage);
 

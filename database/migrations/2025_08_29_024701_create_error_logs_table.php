@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->text('stack_trace')->nullable();
             $table->string('file')->nullable();
             $table->string('line')->nullable();
-            $table->string('url')->nullable();
+            $table->text('url')->nullable();
             $table->timestamp('created_at')->default(now());
 
             $table->index('created_at');
