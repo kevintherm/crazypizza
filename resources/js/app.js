@@ -8,6 +8,7 @@ import anchor from '@alpinejs/anchor';
 
 import { alpineBanner as banner, alpineModal as modal, alpineToast as toast } from './notifiers';
 import { fileUploaderStore, dataTableStore } from './stores';
+import { combobox } from './components';
 
 const IMAGE_NOT_FOUND = "https://placehold.co/300";
 window.IMAGE_NOT_FOUND = IMAGE_NOT_FOUND;
@@ -41,37 +42,7 @@ Alpine.store('when', {
     }
 });
 
-Alpine.data('combobox', (comboboxData = {
-    allOptions: [], selectedOption: null
-},) => ({
-    options: comboboxData.allOptions,
-    isOpen: false,
-    openedWithKeyboard: false,
-    selectedOption: comboboxData.selectedOption,
-    setSelectedOption(option) {
-        this.selectedOption = option
-        this.isOpen = false
-        this.openedWithKeyboard = false
-        this.$refs.hiddenTextField.value = option.value
-    },
-    getFilteredOptions(query) {
-        this.options = comboboxData.allOptions.filter((option) =>
-            option.label.toLowerCase().includes(query.toLowerCase()),
-        )
-        if (this.options.length === 0) {
-            this.$refs.noResultsMessage.classList.remove('hidden')
-        } else {
-            this.$refs.noResultsMessage.classList.add('hidden')
-        }
-    },
-    // if the user presses backspace or the alpha-numeric keys, focus on the search field
-    handleKeydownOnOptions(event) {
-        if ((event.keyCode >= 65 && event.keyCode <= 90) || (event.keyCode >= 48 && event
-            .keyCode <= 57) || event.keyCode === 8) {
-            this.$refs.searchField.focus()
-        }
-    },
-}))
+Alpine.data('combobox', combobox);
 
 window.$ = Alpine;
 

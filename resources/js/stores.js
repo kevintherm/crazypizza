@@ -1,5 +1,34 @@
 import { alpineModal as modal, alpineToast as toast } from './notifiers';
 
+/**
+ * Creates a file uploader store with configurable options and methods for file validation and management.
+ *
+ * @param {Object} [options={}] - Optional overrides for default store properties.
+ * @param {HTMLInputElement} [options.fileInputElement=null] - The file input DOM element.
+ * @param {string[]} [options.allowedTypes=['image/jpeg', 'image/png', 'image/webp']] - Allowed MIME types.
+ * @param {number} [options.maxFiles=1] - Maximum number of files allowed.
+ * @param {number} [options.maxSize=3145728] - Maximum file size in bytes.
+ * @param {Object} [options.maxDimensions={width: 9999, height: 9999}] - Maximum image dimensions.
+ * @returns {{
+ *   fileInputElement: HTMLInputElement|null,
+ *   allowedTypes: string[],
+ *   maxFiles: number,
+ *   maxSize: number,
+ *   maxDimensions: {width: number, height: number},
+ *   files: Array<{file: File, type: string}>,
+ *   dragActive: boolean,
+ *   errors: Object,
+ *   dropFile(event: DragEvent): void,
+ *   handleFiles(fileList: FileList): void,
+ *   removeFile(index: number): void,
+ *   clearFiles(): void,
+ *   dragOver(): void,
+ *   dragLeave(): void,
+ *   validateAndAddFiles(newFiles: FileList|File[]): Promise<void>,
+ *   updateFileInput(): void
+ * }}
+ * Store object for managing file uploads, validation, and drag-and-drop events.
+ */
 export const fileUploaderStore = (options = {}) => ({
     // Overrideable by options
     fileInputElement: null,
