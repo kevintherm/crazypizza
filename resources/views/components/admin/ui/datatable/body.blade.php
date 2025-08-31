@@ -1,5 +1,7 @@
 @props(['id'])
 
+{{-- Requires DataTableStore! --}}
+
 <section id="{{ $id }}" aria-label="Data Table">
 
     {{-- Search and Filtering --}}

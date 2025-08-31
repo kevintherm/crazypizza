@@ -143,23 +143,64 @@ export const fileUploaderStore = (options = {}) => ({
 });
 
 /**
- * Creates a reusable Alpine.js store for managing a data table.
- * Usage:
- * On Element: $store.{manager}, direct access if you set it to x-data.
- * On Script: Alpine.store('{manager}')
- * @param {object} config - Configuration object for the data table.
- * @param {Array<object>} config.columns - Column definitions. E.g., [{ name: 'Name', class: 'w-64' }]
- * @param {object} config.sortables - Mapping of column display names to database fields. E.g., { 'Name': 'name' }
- * @param {object} config.routes - API endpoints for CRUD operations.
- * @param {string} config.routes.fetch - URL for fetching paginated data.
- * @param {string} config.routes.createUpdate - URL for creating/updating an item.
- * @param {string} config.routes.delete - URL for deleting a single item.
- * @param {string} config.routes.bulkDelete - URL for deleting multiple items.
- * @param {object} [config.selectors] - CSS selectors for modals.
- * @param {object} [config.initialSort] - Default sorting configuration.
- * @param {string} [config.itemName='item'] - Singular name for items (e.g., 'ingredient').
- * @param {string} [config.itemIdentifier='name'] - Property of the item to use in display messages.
- * @returns {object} An Alpine.js store object.
+ * Creates a reactive data table store with state, actions, sorting, filtering,
+ * pagination, and modal handlers.
+ *
+ * @param {Object} config - User configuration to override defaults.
+ * @param {Object} [config.selectors] - CSS selectors for modal elements.
+ * @param {string} [config.selectors.viewImage] - Selector for the view image modal.
+ * @param {string} [config.selectors.bulkDelete] - Selector for the bulk delete modal.
+ * @param {string} [config.selectors.confirm] - Selector for the confirm modal.
+ * @param {string} [config.selectors.error] - Selector for the error modal.
+ * @param {string} [config.selectors.createUpdate] - Selector for the create/update modal.
+ * @param {string} [config.selectors.filters] - Selector for the filters modal.
+ *
+ * @param {Object} [config.initialSort] - Default sort settings.
+ * @param {string} [config.initialSort.column="created_at"] - Column to sort by.
+ * @param {boolean} [config.initialSort.desc=true] - Sort descending flag.
+ *
+ * @param {Object} [config.initialFilters] - Default filter settings.
+ * @param {Array<Object>} [config.initialFilters.appliedFilters=[]] - Pre-applied filters.
+ * @param {Array<Object>} [config.initialFilters.availableFilters=[]] - Available filters.
+ *
+ * @param {Object} [config.actions] - Available table actions.
+ * @param {boolean} [config.actions.view=true] - Enable "view" action.
+ * @param {boolean} [config.actions.edit=true] - Enable "edit" action.
+ * @param {boolean} [config.actions.delete=true] - Enable "delete" action.
+ *
+ * @param {string} [config.itemName="item"] - Singular name of the item.
+ * @param {string} [config.itemIdentifier="name"] - Field used to identify items.
+ * @param {Object} [config.routes] - API routes for CRUD operations.
+ * @param {string} [config.routes.fetch] - API endpoint for fetching data.
+ * @param {string} [config.routes.createUpdate] - API endpoint for create/update.
+ * @param {string} [config.routes.delete] - API endpoint for delete.
+ * @param {string} [config.routes.bulkDelete] - API endpoint for bulk delete.
+ * @param {Object<string,string>} [config.sortables] - Mapping of column names to DB fields.
+ *
+ * @returns {Object} DataTable store instance with state and methods.
+ * @returns {Array<Object>} return.items - Current table items.
+ * @returns {Array<number>} return.selectedIds - Selected item IDs.
+ * @returns {Object} return.selectedItem - Currently selected item for edit/view.
+ * @returns {boolean} return.loading - Loading state.
+ * @returns {boolean} return.checkAll - Whether "select all" is checked.
+ * @returns {number} return.loadingRows - Number of skeleton rows shown while loading.
+ * @returns {string} return.sort - Current sort column.
+ * @returns {boolean} return.sortDesc - Whether sort is descending.
+ * @returns {string} return.searchTerm - Current search string.
+ * @returns {Array<Object>} return.appliedFilters - Currently applied filters.
+ * @returns {Array<Object>} return.availableFilters - Available filter definitions.
+ *
+ * @returns {Function} return.init - Initializes modal handlers & pagination.
+ * @returns {Function} return.updateItems - Updates table items.
+ * @returns {Function} return.onCheckAll - Toggles "select all" checkbox.
+ * @returns {Function} return.onCheckSingle - Handles single row selection.
+ * @returns {Function} return.toggleSort - Toggles sort column/direction.
+ * @returns {Function} return.fetchData - Fetches data from API.
+ * @returns {Function} return.deleteItem - Deletes a single item (with confirmation).
+ * @returns {Function} return.compareObjects - Deep compares two objects.
+ * @returns {Function} return.snakeToCapitalized - Converts snake_case to Capitalized Words.
+ * @returns {Function} return.createModalHandler - Creates modal handler with show/hide/message.
+ * @returns {Function} return.handleApiCall - Wraps API call with success/error handling.
  */
 export const dataTableStore = (config) => ({
     // Merge user config with defaults

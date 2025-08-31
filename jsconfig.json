@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "baseUrl": "./resources/js",
+        "paths": {
+            "@/*": ["*"]
+        },
+        "types": ["vite/client", "@types/alpinejs"]
+    },
+    "include": ["resources/js/**/*"]
+}

@@ -1,4 +1,4 @@
-<x-admin.layout>
+<x-admin.layout title="Dashboard">
 
     <main class="flex flex-col">
 
