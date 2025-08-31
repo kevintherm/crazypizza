@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use DB;
 use Helper;
-use Storage;
 use Validator;
 use App\Models\Ingredient;
 use Illuminate\Http\Request;
@@ -89,7 +88,7 @@ class IngredientController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return ApiResponse::error($validator->errors()->first(), status: 400);
+                return ApiResponse::error($validator->errors()->first(), errors: $validator->errors(), status: 400);
             }
 
             $ingredient = Ingredient::updateOrCreate(
@@ -124,14 +123,14 @@ class IngredientController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return ApiResponse::error($validator->errors()->first(), status: 400);
+                return ApiResponse::error($validator->errors()->first(), errors: $validator->errors(), status: 400);
             }
 
             $ingredient = Ingredient::find($request->input('id'));
 
             $deletingColumn = $request->input('column', null);
 
-            if ($request->has('column') && $request->filled('column')) {
+            if ($deletingColumn) {
 
                 if ($deletingColumn == 'image') {
                     Helper::deleteFile($ingredient->image);
@@ -168,7 +167,7 @@ class IngredientController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return ApiResponse::error($validator->errors()->first(), status: 400);
+                return ApiResponse::error($validator->errors()->first(), errors: $validator->errors(), status: 400);
             }
 
             Ingredient::destroy($request->input('ids'));
