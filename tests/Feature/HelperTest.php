@@ -1,6 +1,5 @@
 <?php
 
-use Helper;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
