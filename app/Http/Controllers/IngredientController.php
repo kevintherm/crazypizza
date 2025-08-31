@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use DB;
 use Helper;
 use Validator;
+use App\Http\Resources\DataTableResource;
 use App\Models\Ingredient;
 use Illuminate\Http\Request;
 use App\Http\Responses\ApiResponse;
@@ -44,24 +45,7 @@ class IngredientController extends Controller
                 ->orderBy($sort, $sortDesc ? 'desc' : 'asc')
                 ->paginate($perPage);
 
-            $lastPage = $ingredients->lastPage();
-            $current = $ingredients->currentPage();
-
-            $pages = collect(range(max(1, $current - 2), min($lastPage, $current + 2)))
-                ->push($lastPage)
-                ->unique()
-                ->sort()
-                ->values();
-
-            return ApiResponse::success('Ingredients fetched successfully.', [
-                'current_page' => $current,
-                'per_page' => $ingredients->perPage(),
-                'total' => $ingredients->total(),
-                'pages' => $pages,
-                'has_next_page' => $ingredients->hasMorePages(),
-                'has_previous_page' => $current > 1,
-                'data' => $ingredients->items(),
-            ]);
+            return ApiResponse::success('Ingredients fetched successfully.', new DataTableResource($ingredients));
 
         } catch (\Throwable $e) {
             Helper::LogThrowable($request, __FILE__, $e);
