@@ -27,6 +27,9 @@ class PizzaRequest extends FormRequest
             'description' => 'nullable|string|max:1000',
             'price' => ['required', new Money()],
             'image' => 'nullable|image|max:2048',
+            'ingredients' => 'nullable|array',
+            'ingredients.*.0' => 'integer|exists:ingredients,id', // id
+            'ingredients.*.1' => 'integer|min:1', // quantity
         ];
     }
 }

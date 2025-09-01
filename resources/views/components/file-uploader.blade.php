@@ -12,7 +12,7 @@
 <div x-data="$store.fileUploader({
     fileInputElement: $refs.fileInput,
     ...@js(compact('maxFiles', 'allowedTypes', 'maxSize', 'maxDimensions'))
-})" {{ $attributes }} @file-upload-clear.window="clearFiles">
+})" {{ $attributes }} @form-clear.window="clearFiles">
     <input x-ref="fileInput" class="hidden" type="file" id="{{ $id }}" name="{{ $id }}"
         x-on:change="handleFiles($event.target.files)" multiple>
     <label

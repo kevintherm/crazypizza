@@ -417,8 +417,7 @@
             };
 
             document.addEventListener('alpine:init', () => {
-                const createDataTableManager = $.store('dataTable');
-                $.store('mg', createDataTableManager(config));
+                $.store('mg', createDataTableStore(config));
             });
         </script>
     </x-slot>

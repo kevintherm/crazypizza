@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 
 class DataTableService
 {
-    public static function make($modelClass, Request $request, array $searchable = ['name'])
+    public static function make($modelClass, Request $request, array $searchable = ['name'], array $with = [])
     {
         $search   = $request->input('search');
         $filters  = $request->input('filters', []);
@@ -16,6 +16,10 @@ class DataTableService
         $perPage  = max(1, $request->integer('per_page', 8));
 
         $query = $modelClass::query()->whereNull('deleted_at');
+
+        if ($with) {
+            $query->with($with);
+        }
 
         if ($search) {
             $query->where(function($q) use ($searchable, $search) {

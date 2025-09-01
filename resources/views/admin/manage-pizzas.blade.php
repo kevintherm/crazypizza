@@ -1,6 +1,7 @@
 @use('App\Models\Ingredient')
 
 <x-admin.layout title="Manage Pizzas">
+
     <main x-data="$store.mg" class="flex flex-col px-6 md:px-12">
         {{-- Header Section --}}
         <div class="h-8 w-full"></div>
@@ -29,7 +30,6 @@
                 </button>
             </div>
             <div class="absolute right-0 md:left-0">
-                <!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
                 <svg class="stroke-primary size-24 opacity-20" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                     <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -117,27 +117,136 @@
                             </div>
                         </label>
                     </div>
-{{-- TODO: ADD PIZZA_INGREDIENTS RELATIONSHIP COLUMN --}}
+
+                    <div class="col-span-12 border-t border-t-outline dark:border-t-outline-dark"></div>
+
                     <div class="col-span-12 md:col-span-3">
-                        <label class="w-fit pl-0.5 text-sm capitalize" for="is_available">Is Available</label>
+                        <label class="w-fit pl-0.5 text-sm capitalize">Ingredients</label>
                     </div>
                     <div class="col-span-12 md:col-span-9">
-                        <x-combobox-v2 x-data="comboboxV2({
-                            name: 'share_with',
-                            placeholder: 'Share with...',
-                            options: [
-                                { value: 'aiden-walker', label: 'Aiden Walker', description: 'aiden.walker@example.com', image: 'https://res.cloudinary.com/ds8pgw1pf/image/upload/penguinui/component-assets/avatars/avatar-1.webp' },
-                                { value: 'alex-martinez', label: 'Alex Martinez', description: 'alex.martinez@example.com', image: 'https://res.cloudinary.com/ds8pgw1pf/image/upload/penguinui/component-assets/avatars/avatar-6.webp' },
-                                { value: 'ava-collins', label: 'Ava Collins', description: 'ava.collins@example.com', image: 'https://res.cloudinary.com/ds8pgw1pf/image/upload/penguinui/component-assets/avatars/avatar-8.webp' },
-                                { value: 'bob-johnson', label: 'Bob Johnson', description: 'bob.johnson@example.com', image: 'https://res.cloudinary.com/ds8pgw1pf/image/upload/penguinui/component-assets/avatars/avatar-2.webp' }
-                            ],
-                            multiple: true,
-                            withAvatar: true,
-                            searchable: true,
-                            initialValue: ['aiden-walker', 'ava-collins']
-                        })" />
-                    </div>
+                        <div x-data="selectIngredients" x-effect="selectedOptionsChanged($store.mg.selectedItem.ingredients);">
+                            <div class="relative">
+                                <button x-ref="comboboxTrigger"
+                                        class="inline-flex w-full items-center justify-between gap-2 whitespace-nowrap border-outline bg-surface-alt px-4 py-2 text-sm font-medium tracking-wide text-on-surface transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:text-on-surface-dark dark:focus-visible:outline-primary-dark rounded-radius border"
+                                        type="button" role="combobox" aria-haspopup="listbox" :aria-controls="name + 'List'" @click="isOpen = !isOpen" @keydown.down.prevent="openedWithKeyboard = true"
+                                        @keydown.enter.prevent="openedWithKeyboard = true" @keydown.space.prevent="openedWithKeyboard = true" :aria-expanded="isOpen || openedWithKeyboard" :aria-label="getButtonLabel()">
+                                    <span x-text="getButtonLabel()" class="text-sm w-full font-normal text-start overflow-hidden text-ellipsis whitespace-nowrap"></span>
+                                    <svg class="size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                        <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
 
+                                <input x-ref="hiddenInput" type="text" hidden />
+
+                                <div x-cloak x-show="isOpen || openedWithKeyboard" x-anchor.bottom-start.offset.4.width="$refs.comboboxTrigger" x-transition x-trap.noscroll="openedWithKeyboard"
+                                     class="z-10 flex flex-col overflow-hidden rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt" :id="name + 'List'" role="listbox"
+                                     aria-label="options list" @click.outside="closeDropdown()" @keydown.escape.window="closeDropdown()" @keydown.down.prevent="$focus.wrap().next()" @keydown.up.prevent="$focus.wrap().previous()"
+                                     @keydown="handleListKeydown($event)">
+                                    <template x-if="searchable">
+                                        <div class="relative border-b border-outline dark:border-outline-dark">
+                                            <svg class="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-on-surface/50 dark:text-on-surface-dark/50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor"
+                                                 fill="none" stroke-width="1.5" aria-hidden="true">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                                            </svg>
+                                            <input x-ref="searchField" x-model.debounce.200ms="searchQuery"
+                                                   class="w-full bg-transparent py-2.5 pl-11 pr-4 text-sm text-on-surface focus:outline-none disabled:cursor-not-allowed disabled:opacity-75 dark:text-on-surface-dark" type="text"
+                                                   placeholder="Search..." aria-label="Search" />
+                                        </div>
+                                    </template>
+
+                                    <ul x-ref="listbox" class="flex max-h-44 flex-col overflow-y-auto py-1.5">
+                                        <li x-show="filteredOptions.length === 0" class="px-4 py-2 text-sm text-center text-on-surface/70 dark:text-on-surface-dark/70">
+                                            <span>No matches found</span>
+                                        </li>
+                                        <template x-for="(option, index) in filteredOptions" :key="option.value">
+                                            <li class="combobox-option text-sm focus-visible:outline-none" :id="name + '-option-' + index" role="option" :aria-selected="isSelected(option)" tabindex="0" @click="selectOption(option)"
+                                                @keydown.enter.prevent="selectOption(option)" @keydown.space.prevent="selectOption(option)">
+                                                <template x-if="multiple">
+                                                    <div class="flex items-center gap-3 px-4 py-2 cursor-pointer text-on-surface dark:text-on-surface-dark hover:bg-surface-dark-alt/5 dark:hover:bg-surface-alt/5 focus-visible:bg-surface-dark-alt/5 dark:focus-visible:bg-surface-alt/10"
+                                                         :class="{ 'text-on-surface-strong dark:text-on-surface-dark-strong': isSelected(option) }">
+                                                        <div class="relative flex items-center">
+                                                            <input class="pointer-events-none before:content[''] peer relative size-4 appearance-none overflow-hidden border border-outline bg-surface-alt before:absolute before:inset-0 checked:border-primary checked:before:bg-primary focus:outline-none checked:focus:outline-none dark:border-outline-dark rounded-sm dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark"
+                                                                   type="checkbox" :checked="isSelected(option)" :name="name" :value="option.value" readonly tabindex="-1" />
+                                                            <svg class="pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 text-on-primary peer-checked:visible dark:text-on-primary-dark"
+                                                                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="4" aria-hidden="true">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                                            </svg>
+                                                        </div>
+                                                        <template x-if="withAvatar">
+                                                            <div class="flex items-center gap-2">
+                                                                <img x-on:error="$store.when.imageError" class="size-8 rounded-full object-cover" :src="option.image || 'a'" alt="" aria-hidden="true" />
+                                                                <div class="flex flex-col">
+                                                                    <span x-text="option.label" :class="{ 'font-bold': isSelected(option) }"></span>
+                                                                    <span x-text="option.description" class="text-xs"></span>
+                                                                </div>
+                                                            </div>
+                                                        </template>
+                                                        <template x-if="!withAvatar">
+                                                            <span x-text="option.label"></span>
+                                                        </template>
+                                                    </div>
+                                                </template>
+
+                                                <template x-if="!multiple">
+                                                    <div
+                                                         class="inline-flex w-full justify-between items-center gap-6 px-4 py-2 cursor-pointer text-on-surface dark:text-on-surface-dark hover:bg-surface-dark-alt/5 dark:hover:bg-surface-alt/5 focus-visible:bg-surface-dark-alt/5 dark:focus-visible:bg-surface-alt/10">
+                                                        <template x-if="withAvatar">
+                                                            <div class="flex items-center gap-2">
+                                                                <img x-on:error="$store.when.imageError" class="size-8 rounded-full" :src="option.image || 'a'" alt="" aria-hidden="true" />
+                                                                <div class="flex flex-col text-left">
+                                                                    <span x-text="option.label" :class="{ 'font-bold': isSelected(option) }"></span>
+                                                                    <span x-text="option.description" class="text-xs"></span>
+                                                                </div>
+                                                            </div>
+                                                        </template>
+                                                        <template x-if="!withAvatar">
+                                                            <span x-text="option.label" :class="{ 'font-bold': isSelected(option) }"></span>
+                                                        </template>
+                                                        <svg x-cloak x-show="isSelected(option)" class="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2"
+                                                             aria-hidden="true">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                                        </svg>
+                                                    </div>
+                                                </template>
+                                            </li>
+                                        </template>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="mt-4">
+                                <template x-for="ing in selectedOptions" :key="`${$store.mg.selectedItem.id}-${ing.value}`">
+                                    <div class="w-full grid grid-cols-12 gap-2 md:gap-4 mb-2">
+                                        <div class="col-span-12 md:col-span-3">
+                                            <label x-text="ing.label" class="w-fit pl-0.5 text-sm capitalize" :for="`qty-${ing.value}`"></label>
+                                            <span class="w-fit pl-0.5 text-sm">Qty <span x-text="`(${ing.unit})`"></span></span>
+                                        </div>
+                                        <div x-data="{ currentVal: (ing.pivot && ing.pivot.quantity) || 1, minVal: 0, maxVal: ing.stock_quantity, incrementAmount: 1 }" class="col-span-12 md:col-span-9">
+                                            <div x-on:dblclick.prevent class="flex items-center">
+                                                <button x-on:click="currentVal = Math.max(minVal, currentVal - incrementAmount)"
+                                                        class="flex h-10 items-center justify-center rounded-l-radius border border-outline bg-surface-alt px-4 py-2 text-on-surface hover:opacity-75 focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark dark:focus-visible:outline-primary-dark"
+                                                        type="button" aria-label="subtract">
+                                                    <svg class="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12h-15" />
+                                                    </svg>
+                                                </button>
+                                                <input x-model="currentVal"
+                                                       class="border-x-none h-10 max-w-24 w-full rounded-none border-y border-outline bg-surface-alt/50 text-center text-on-surface-strong focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:text-on-surface-dark-strong dark:focus-visible:outline-primary-dark"
+                                                       :id="`qty-${ing.value}`" :name="`ingredients[${ing.value}]`" type="text" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+                                                <button x-on:click="currentVal = Math.min(maxVal, currentVal + incrementAmount)"
+                                                        class="flex h-10 items-center justify-center rounded-r-radius border border-outline bg-surface-alt px-4 py-2 text-on-surface hover:opacity-75 focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark dark:focus-visible:outline-primary-dark"
+                                                        type="button" aria-label="add">
+                                                    <svg class="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </x-slot>
         </x-admin.ui.datatable.modals>
@@ -207,9 +316,121 @@
                 itemIdentifier: "name",
             };
 
+            const mapOptions = (ing) => {
+                return {
+                    label: ing.name,
+                    value: ing.id,
+                    image: ing.image,
+                    description: ing.description,
+                    unit: ing.unit,
+                    stock_quantity: ing.stock_quantity,
+                    pivot: ing.pivot,
+                }
+            };
+
+            const ingredientOptions = @js(Ingredient::query()->take(100)->get())
+                .map(mapOptions);
+
             document.addEventListener("alpine:init", () => {
-                const createDataTableManager = $.store("dataTable");
-                $.store("mg", createDataTableManager(config));
+                const store = createDataTableStore(config);
+                $.store('mg', store);
+
+                $.data('selectIngredients', () => ({
+                    name: '_ingredients',
+                    placeholder: 'Select ingredients',
+                    allOptions: ingredientOptions,
+                    selectedOptions: [],
+                    filteredOptions: [],
+                    isOpen: false,
+                    openedWithKeyboard: false,
+                    searchQuery: '',
+                    selectedOption: null,
+                    multiple: true,
+                    searchable: true,
+                    withAvatar: true,
+
+                    init() {
+                        this.filteredOptions = [...this.allOptions];
+
+                        this.$watch('isOpen', isOpen => {
+                            if (isOpen && this.searchable) {
+                                this.$nextTick(() => this.$refs.searchField.focus());
+                            }
+                        });
+                        this.$watch('searchQuery', () => {
+                            this.filterOptions();
+                        });
+                    },
+
+                    getButtonLabel() {
+                        if (this.multiple) {
+                            if (this.selectedOptions.length === 0) return this.placeholder;
+                            return this.selectedOptions
+                                .map(value => value.label)
+                                .join(', ');
+                        }
+                        return this.selectedOption ? this.selectedOption.label : this.placeholder;
+                    },
+
+                    isSelected(option) {
+                        if (this.multiple) {
+                            return this.selectedOptions.some(selected => selected.value === option.value);
+                        }
+                        return this.selectedOption ? this.selectedOption.value === option.value : false;
+                    },
+
+                    closeDropdown() {
+                        this.isOpen = false;
+                        this.openedWithKeyboard = false;
+                    },
+
+                    selectOption(option) {
+                        if (this.multiple) {
+                            const index = this.selectedOptions.findIndex(selected => selected.value === option.value);
+
+                            if (index > -1) {
+                                this.selectedOptions.splice(index, 1);
+                            } else {
+                                this.selectedOptions.push(option);
+                            }
+
+                            this.$refs.hiddenInput.value = this.selectedOptions.map(opt => opt.value).join(',');
+                        } else {
+                            this.selectedOption = option;
+                            this.$refs.hiddenInput.value = option.value;
+                            this.closeDropdown();
+                        }
+                    },
+
+                    filterOptions() {
+                        if (!this.searchQuery) {
+                            this.filteredOptions = [...this.allOptions];
+                            return;
+                        }
+                        this.filteredOptions = this.allOptions.filter(option =>
+                            option.label.toLowerCase().includes(this.searchQuery.toLowerCase())
+                        );
+                    },
+
+                    selectedOptionsChanged(ingredientsFromServer) {
+                        const serverIngredients = ingredientsFromServer || [];
+                        this.selectedOptions = serverIngredients.map(mapOptions);
+                    },
+
+                    handleListKeydown(event) {
+                        if (!this.searchable && /^[a-zA-Z0-9]$/.test(event.key)) {
+                            event.preventDefault();
+                            const firstMatch = this.filteredOptions.find(opt =>
+                                opt.label.toLowerCase().startsWith(event.key.toLowerCase())
+                            );
+                            if (firstMatch) {
+                                const index = this.filteredOptions.indexOf(firstMatch);
+                                this.$refs.listbox.children[index + 1]?.focus();
+                            }
+                        }
+                    },
+                }));
+
             });
         </script>
     </x-slot>

@@ -18,7 +18,7 @@ class PizzaController extends Controller
     public function dataTable(Request $request)
     {
         return $this->safe(function () use ($request) {
-            $pizzas = DataTableService::make(Pizza::class, $request, ['name']);
+            $pizzas = DataTableService::make(Pizza::class, $request, ['name'], ['ingredients']);
             return ApiResponse::success('Pizzas fetched successfully.', new DataTableResource($pizzas));
         });
     }
@@ -32,10 +32,20 @@ class PizzaController extends Controller
                 $request->validated()
             );
 
+            $ingredients = $request->input('ingredients', []);
+
+            foreach ($ingredients as $id => $quantity) {
+                $pizza->ingredients()->updateExistingPivot($id, ['quantity' => $quantity]);
+            }
+
+            $pizza->ingredients()->sync(array_keys($ingredients), detaching: true);
+
             if ($request->hasFile('image')) {
                 $pizza->image = Helper::uploadFile($request->file('image'), 'pizzas');
                 $pizza->save();
             }
+
+            $pizza->refresh()->load('ingredients');
 
             return ApiResponse::success("{$pizza->name} saved successfully.", $pizza);
         });
