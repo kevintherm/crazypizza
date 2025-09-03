@@ -1,6 +1,6 @@
 <div class="data-table-modals">
     <x-modal id="create-update-modal">
-        <form x-on:submit.prevent="$store.mg.createUpdate.process($event)" id="create-update-form">
+        <form x-on:submit.prevent="$store.mg.createUpdate.process($event)" x-on:keydown.enter="$event.preventDefault()" id="create-update-form">
             <input x-model="$store.mg.selectedItem.id" name="id" type="hidden">
 
             <div class="p-6">

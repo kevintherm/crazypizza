@@ -261,6 +261,7 @@ export const createDataTableStore = (userConfig) => {
                 .then(res => {
                     const api = res.data.data;
                     this.updateItems(api.data);
+                    this.checkAll = false;
                     Object.assign(this.nav, {
                         currentPage: api.current_page,
                         pages: api.pages,
@@ -329,8 +330,6 @@ export const createDataTableStore = (userConfig) => {
             } else {
                 this.selectedIds = this.selectedIds.filter((selectedId) => selectedId !== id);
             }
-
-            this.checkAll = this.items.length > 0 && value.length === this.items.length;
         },
 
         toggleSort(colName) {
@@ -459,12 +458,12 @@ export const createDataTableStore = (userConfig) => {
 
         getViewImageMethods() {
             return {
-                image: document.querySelector(`${this.config.selectors.viewImage} img`),
                 open(source, title = "") {
-                    if (!source || !this.image) return;
-                    this.image.src = source;
-                    this.image.alt = this.image.title = title;
-                    this.show();
+                    const image = document.querySelector(`${this.config.selectors.viewImage} img`);
+                    if (!source || !image) return;
+                    image.src = source;
+                    image.alt = image.title = title;
+                    this.viewImage.show();
                 }
             };
         },

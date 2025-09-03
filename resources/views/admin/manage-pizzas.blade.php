@@ -300,6 +300,10 @@
                     "Updated At": "created_at",
                 },
 
+                selectors: {
+                    viewImage: '#view-image-modal'
+                },
+
                 initialFilters: {
                     appliedFilters: [],
                     availableFilters: [],
