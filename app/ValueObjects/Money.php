@@ -3,15 +3,18 @@
 namespace App\ValueObjects;
 
 use JsonSerializable;
+use NumberFormatter;
 
 class Money implements JsonSerializable
 {
     private string $amount;
+    private string $currency;
 
-    public function __construct(string $amount)
+    public function __construct(string $amount, string $currency = 'USD')
     {
         // normalize to 2 decimals
         $this->amount = number_format((float) $amount, 2, '.', '');
+        $this->currency = $currency;
     }
 
     public function add(string $value): self
@@ -60,6 +63,12 @@ class Money implements JsonSerializable
     public function jsonSerialize(): string
     {
         return $this->toString();
+    }
+
+    public function format(string $locale = 'en_US'): string
+    {
+        $formatter = new NumberFormatter($locale, NumberFormatter::CURRENCY);
+        return $formatter->formatCurrency($this->toFloat(), $this->currency);
     }
 
     public static function sum(iterable $items): self

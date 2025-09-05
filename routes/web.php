@@ -1,12 +1,13 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GuestController;
 use App\Http\Controllers\IngredientController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['guest'])->group(function () {
 
-    Route::view('/', 'welcome');
+    Route::get('', [GuestController::class, 'welcome'])->name('welcome');
 
     Route::name('login')->group(function () {
         Route::get('login', [AuthController::class, 'login']);

@@ -84,6 +84,9 @@ return [
 
     'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
 
+    // Currency for Money Value Object
+    'currency' => env('APP_CURRENCY', 'USD'),
+
     /*
     |--------------------------------------------------------------------------
     | Encryption Key
