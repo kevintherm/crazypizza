@@ -122,7 +122,7 @@
     </x-modal>
 
     <x-modal id="filters-modal">
-        <form x-on:submit.prevent="$store.mg.filters.process">
+        <form x-on:submit.prevent="$store.mg.filters.process" x-ref="form">
             <div class="p-6">
                 <div class="flex items-center justify-between">
                     <h1 class="text-lg font-semibold">Filters</h1>

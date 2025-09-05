@@ -342,8 +342,6 @@
                             name: 'Created At',
                             column: 'created_at',
                             type: 'date-range',
-                            min: new Date(),
-                            max: new Date('2030-01-31 00:00:00')
                         }
                     ],
                 },
