@@ -578,3 +578,121 @@ export const createDataTableStore = (userConfig) => {
         }
     };
 };
+
+export const prefs = {
+    _key: 'user:prefs:v1',
+
+    defaults: {
+        theme: 'system', // 'dark' | 'light' | 'system'
+        locale: 'en',
+        compact: false,
+    },
+
+    state: {},
+
+    init() {
+        this.state = Object.assign({}, this.defaults);
+
+        try {
+            const raw = localStorage.getItem(this._key);
+            if (raw) {
+                const stored = JSON.parse(raw);
+                Object.assign(this.state, stored);
+            }
+        } catch (e) {
+            console.warn('prefs: failed to load from localStorage', e);
+        }
+
+        this.applyTheme();
+
+        if (this.state.theme === 'system') {
+            this._setupSystemWatcher();
+        }
+    },
+
+    effectiveTheme() {
+        if (this.state.theme === 'dark') return 'dark';
+        if (this.state.theme === 'light') return 'light';
+        return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+            ? 'dark'
+            : 'light';
+    },
+
+    applyTheme() {
+        const theme = this.effectiveTheme();
+        const html = document.documentElement;
+        if (theme === 'dark') {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
+    },
+
+    setTheme(value) {
+        if (!['dark', 'light', 'system'].includes(value)) return;
+
+        if (this.state.theme === 'system' && value !== 'system') {
+            this._removeSystemWatcher();
+        }
+        this.state.theme = value;
+        this.applyTheme();
+        if (value === 'system') {
+            this._setupSystemWatcher();
+        }
+        this._save();
+    },
+
+    toggleTheme() {
+        const eff = this.effectiveTheme();
+        const next = eff === 'dark' ? 'light' : 'dark';
+        this.setTheme(next);
+    },
+
+    set(key, value) {
+        this.state[key] = value;
+        this._save();
+    },
+    get(key) {
+        return this.state[key];
+    },
+
+    reset() {
+        this.state = Object.assign({}, this.defaults);
+        this.applyTheme();
+        this._save();
+    },
+
+    _save() {
+        try {
+            localStorage.setItem(this._key, JSON.stringify(this.state));
+        } catch (e) {
+            console.warn('prefs: failed to save to localStorage', e);
+        }
+    },
+
+    _mq: null,
+    _setupSystemWatcher() {
+        if (!window.matchMedia) return;
+        if (this._mq) return; // already set
+        this._mq = window.matchMedia('(prefers-color-scheme: dark)');
+        const handler = (e) => {
+            this.applyTheme();
+        };
+        if ('addEventListener' in this._mq) {
+            this._mq.addEventListener('change', handler);
+        } else {
+            this._mq.addListener(handler);
+        }
+        this._mq._handler = handler;
+    },
+    _removeSystemWatcher() {
+        if (!this._mq) return;
+        const handler = this._mq._handler;
+        if ('removeEventListener' in this._mq) {
+            this._mq.removeEventListener('change', handler);
+        } else {
+            this._mq.removeListener(handler);
+        }
+        this._mq = null;
+    }
+}

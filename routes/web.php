@@ -6,9 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['guest'])->group(function () {
 
-    Route::get('/', function () {
-        return 'welcome';
-    });
+    Route::view('/', 'welcome');
 
     Route::name('login')->group(function () {
         Route::get('login', [AuthController::class, 'login']);

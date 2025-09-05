@@ -4,7 +4,8 @@
         "paths": {
             "@/*": ["*"]
         },
-        "types": ["vite/client", "@types/alpinejs"]
+        "types": ["vite/client", "@types/alpinejs"],
+        "lib": ["es2015"]
     },
     "include": ["resources/js/**/*"]
 }

@@ -10,7 +10,7 @@ import grow from 'alpinejs-textarea-grow';
 import anchor from '@alpinejs/anchor';
 
 import { alpineBanner as banner, alpineModal as modal, alpineToast as toast } from './notifiers';
-import { createDataTableStore, fileUploaderStore } from './stores';
+import { createDataTableStore, fileUploaderStore, prefs } from './stores';
 import { combobox } from './components';
 import AirDatepicker from 'air-datepicker';
 
@@ -78,6 +78,8 @@ window.DatePicker = (el, options = {}) => new AirDatepicker(el, {
     timeFormat: 'HH:mm:00',
     ...options
 });
+
+Alpine.store('prefs', prefs);
 
 window.$ = Alpine;
 Alpine.start();
