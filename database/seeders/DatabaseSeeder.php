@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'Admin',
             'email' => 'admin@test.com',
-            'password' => bcrypt('password')
+            'password' => bcrypt('123')
         ]);
 
         Pizza::factory(2)->create();

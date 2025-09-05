@@ -1,9 +1,10 @@
 <?php
 
-use App\Http\Controllers\PizzaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PizzaController;
 use App\Http\Controllers\IngredientController;
 
 Route::get('/user', function (Request $request) {
@@ -28,6 +29,13 @@ Route::middleware(['web', 'auth:sanctum'])->group(function () {
             Route::post('/', [PizzaController::class, 'createUpdate'])->name('pizzas.createUpdate');
             Route::delete('/', [PizzaController::class, 'delete'])->name('pizzas.delete');
             Route::delete('/bulk-delete', [PizzaController::class, 'bulkDelete'])->name('pizzas.bulkDelete');
+        });
+
+        Route::prefix('orders')->group(function () {
+            Route::get('data-table', [OrderController::class, 'dataTable'])->name('orders.dataTable');
+            Route::post('/', [OrderController::class, 'createUpdate'])->name('orders.createUpdate');
+            Route::delete('/', [OrderController::class, 'delete'])->name('orders.delete');
+            Route::delete('/bulk-delete', [OrderController::class, 'bulkDelete'])->name('orders.bulkDelete');
         });
 
     });

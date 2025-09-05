@@ -22,6 +22,7 @@ return new class extends Migration {
             $table->boolean('is_gluten_free')->default(false);
             $table->integer('stock_quantity')->default(0);
             $table->boolean('available_as_topping')->default(false);
+            $table->decimal('price_per_unit', 10, 2)->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

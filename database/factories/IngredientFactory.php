@@ -19,6 +19,7 @@ class IngredientFactory extends Factory
     {
         return [
             'name' => $this->faker->word(),
+            'image' => 'https://placehold.co/400',
             'description' => $this->faker->sentence(),
             'calories_per_unit' => $this->faker->numberBetween(1, 100),
             'unit' => $this->faker->randomElement(array_keys(Ingredient::UNITS)),

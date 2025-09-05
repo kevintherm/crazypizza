@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\MoneyCast;
 use App\Models\Ingredient;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,6 +18,7 @@ class Pizza extends Model
     protected $casts = [
         'created_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
+        'price' => MoneyCast::class,
     ];
 
     public const SIZE = [

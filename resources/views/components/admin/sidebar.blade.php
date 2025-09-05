@@ -91,45 +91,20 @@
         </button>
 
         <ul x-cloak x-collapse x-show="isExpanded" aria-labelledby="orders-btn" id="orders">
+
             <li class="px-1 py-0.5 first:mt-2">
-                <a href="/orders/pending"
-                    x-bind:class="currentRoute === '/orders/pending' ?
+                <a href="/orders"
+                    x-bind:class="currentRoute === '/orders' ?
                         'flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm text-on-surface-strong bg-primary/5 dark:text-on-surface-dark-strong dark:bg-primary-dark/5 underline-offset-2 focus:outline-hidden focus-visible:underline' :
                         'flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm text-on-surface underline-offset-2 hover:bg-primary/5 hover:text-on-surface-strong focus:outline-hidden focus-visible:underline dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong'">
-                    <span>Pending</span>
-                    <span class="ml-auto font-bold">3</span>
+                    <span>Orders</span>
+                    {{-- <span class="ml-auto font-bold">3</span> --}}
                 </a>
             </li>
-            <li class="px-1 py-0.5 first:mt-2">
-                <a href="/orders/shipped"
-                    x-bind:class="currentRoute === '/orders/shipped' ?
-                        'flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm text-on-surface-strong bg-primary/5 dark:text-on-surface-dark-strong dark:bg-primary-dark/5 underline-offset-2 focus:outline-hidden focus-visible:underline' :
-                        'flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm text-on-surface underline-offset-2 hover:bg-primary/5 hover:text-on-surface-strong focus:outline-hidden focus-visible:underline dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong'">
-                    <span>Shipped</span>
-                    <span class="ml-auto font-bold">12</span>
-                </a>
-            </li>
-            <li class="px-1 py-0.5 first:mt-2">
-                <a href="/orders/completed"
-                    x-bind:class="currentRoute === '/orders/completed' ?
-                        'flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm text-on-surface-strong bg-primary/5 dark:text-on-surface-dark-strong dark:bg-primary-dark/5 underline-offset-2 focus:outline-hidden focus-visible:underline' :
-                        'flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm text-on-surface underline-offset-2 hover:bg-primary/5 hover:text-on-surface-strong focus:outline-hidden focus-visible:underline dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong'">
-                    <span>Completed</span>
-                    <span class="ml-auto font-bold">38</span>
-                </a>
-            </li>
-            <li class="px-1 py-0.5 first:mt-2">
-                <a href="/orders/returns"
-                    x-bind:class="currentRoute === '/orders/returns' ?
-                        'flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm text-on-surface-strong bg-primary/5 dark:text-on-surface-dark-strong dark:bg-primary-dark/5 underline-offset-2 focus:outline-hidden focus-visible:underline' :
-                        'flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm text-on-surface underline-offset-2 hover:bg-primary/5 hover:text-on-surface-strong focus:outline-hidden focus-visible:underline dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong'">
-                    <span>Returns</span>
-                    <span class="ml-auto font-bold">2</span>
-                </a>
-            </li>
+
         </ul>
     </div>
-
+{{--
     <!-- Settings -->
     <a href="/settings"
         x-bind:class="currentRoute === '/settings' ?
@@ -142,7 +117,7 @@
                 clip-rule="evenodd" />
         </svg>
         <span>Settings</span>
-    </a>
+    </a> --}}
 
     <div x-data="{ isExpanded: currentRoute.includes('/orders') }" class="flex flex-col mt-auto">
         <button type="button" x-on:click="isExpanded = !isExpanded" id="orders-btn" aria-controls="orders"
@@ -171,14 +146,6 @@
         </button>
 
         <ul x-cloak x-collapse x-show="isExpanded" aria-labelledby="orders-btn" id="orders">
-            <li class="px-1 py-0.5 first:mt-2">
-                <a href="/profile"
-                    x-bind:class="currentRoute === '/profile' ?
-                        'flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm text-on-surface-strong bg-primary/5 dark:text-on-surface-dark-strong dark:bg-primary-dark/5 underline-offset-2 focus:outline-hidden focus-visible:underline' :
-                        'flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm text-on-surface underline-offset-2 hover:bg-primary/5 hover:text-on-surface-strong focus:outline-hidden focus-visible:underline dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong'">
-                    <span>Profile</span>
-                </a>
-            </li>
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
                 <li class="px-1 py-0.5 first:mt-2">

@@ -26,6 +26,11 @@ Route::middleware(['auth'])->group(function () {
         Route::view('pizzas', 'admin.manage-pizzas');
     });
 
+    Route::prefix('orders')->group(function () {
+        Route::view('/', 'admin.manage-orders');
+    });
+
+
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
 });

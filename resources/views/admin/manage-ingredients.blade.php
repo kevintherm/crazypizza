@@ -299,6 +299,20 @@
                     </div>
 
                     <div class="col-span-12 md:col-span-3">
+                        <label class="w-fit pl-0.5 text-sm capitalize" for="price_per_unit">Available as Topping</label>
+                    </div>
+                    <div class="col-span-12 md:col-span-9">
+                        <div class="relative">
+                            <div class="pointer-events-none absolute right-4 top-0 bottom-0 inline-flex items-center">
+                                <p x-text="$store.when.displayMoney(69).split(/\d/)[0]" class="text-sm"></p>
+                            </div>
+                            <input x-mask:dynamic="$money($input)" x-model="$store.mg.selectedItem.price_per_unit" id="price_per_unit" name="price_per_unit"
+                                   class="rounded-radius border-outline bg-surface-alt text-md focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark w-full border pl-3 pr-12 py-2 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-75"
+                                   type="text" autocomplete="off" placeholder="Price" required />
+                        </div>
+                    </div>
+
+                    <div class="col-span-12 md:col-span-3">
                         <label class="w-fit pl-0.5 text-sm capitalize" for="available_as_topping">Available as Topping</label>
                     </div>
                     <div class="col-span-12 md:col-span-9">

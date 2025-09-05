@@ -16,7 +16,8 @@ class DataTableService
         $sortDesc = $request->boolean('sort_desc', true);
         $perPage  = max(1, $request->integer('per_page', 8));
 
-        $query = $modelClass::query();
+        $query = $modelClass::query()
+            ->select('*');
 
         if ($with) {
             $query->with($with);
