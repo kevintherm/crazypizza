@@ -1,3 +1,6 @@
+import 'air-datepicker/air-datepicker.css';
+import localeEn from 'air-datepicker/locale/en';
+
 import './bootstrap';
 import Alpine from 'alpinejs';
 import mask from '@alpinejs/mask';
@@ -9,6 +12,7 @@ import anchor from '@alpinejs/anchor';
 import { alpineBanner as banner, alpineModal as modal, alpineToast as toast } from './notifiers';
 import { createDataTableStore, fileUploaderStore } from './stores';
 import { combobox } from './components';
+import AirDatepicker from 'air-datepicker';
 
 const IMAGE_NOT_FOUND = "https://placehold.co/300";
 window.IMAGE_NOT_FOUND = IMAGE_NOT_FOUND;
@@ -51,6 +55,29 @@ Alpine.store('when', {
 
 Alpine.data('combobox', combobox);
 
-window.$ = Alpine;
+window.DatePicker = (el, options = {}) => new AirDatepicker(el, {
+    locale: localeEn,
+    timepicker: true,
+    buttons: [
+        {
+            content: 'Today',
+            onClick(dp) {
+                let today = new Date()
+                dp.selectDate(today)
+                dp.setViewDate(today)
+            }
+        },
+        {
+            content: 'Clear',
+            onClick(dp) {
+                dp.clear()
+            }
+        }
+    ],
+    dateFormat: 'yyyy-MM-dd',
+    timeFormat: 'HH:mm:00',
+    ...options
+});
 
+window.$ = Alpine;
 Alpine.start();

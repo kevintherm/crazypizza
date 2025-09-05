@@ -137,8 +137,6 @@
 
                 <div class="h-8 w-full"></div>
 
-                {{-- TODO --}}
-
                 <div class="flex flex-col gap-2 md:gap-4">
                     <template x-for="(filter, index) in $store.mg.availableFilters" :key="filter.name">
                         <div>
@@ -160,6 +158,40 @@
                                     <input x-on:input="$store.when.inputNumber"
                                            class="w-full rounded-radius border border-outline bg-surface-alt px-2 py-2 text-sm transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark"
                                            type="text" :name="`${filter.column}.max`" placeholder="Max" autocomplete="off">
+                                </div>
+                            </template>
+
+                            <template x-if="filter.type == 'date-range'">
+                                <div x-data="{
+                                    minDp: null,
+                                    maxDp: null,
+                                    init() {
+                                        this.minDp = DatePicker($refs.minDate, {
+                                            position: 'top left',
+                                            onSelect: ({ date }) => {
+                                                this.maxDp.update({
+                                                    minDate: date
+                                                });
+                                            }
+                                        });
+
+                                        this.maxDp = DatePicker($refs.maxDate, {
+                                            position: 'top right',
+                                            onSelect: ({ date }) => {
+                                                this.minDp.update({
+                                                    maxDate: date
+                                                });
+                                            }
+                                        });
+                                    }
+                                }" class="flex items-center gap-2">
+                                    <input x-ref="minDate"
+                                           class="w-full rounded-radius border border-outline bg-surface-alt px-2 py-2 text-sm transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark"
+                                           type="text" :name="`${filter.column}.min`" placeholder="Min Date" autocomplete="off">
+                                    <span>-</span>
+                                    <input x-ref="maxDate"
+                                           class="w-full rounded-radius border border-outline bg-surface-alt px-2 py-2 text-sm transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark"
+                                           type="text" :name="`${filter.column}.max`" placeholder="Max Date" autocomplete="off">
                                 </div>
                             </template>
 

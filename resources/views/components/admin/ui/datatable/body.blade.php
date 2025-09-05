@@ -211,6 +211,13 @@
                                     </p>
                                 </template>
 
+                                <template x-if="typeof col.data === 'function'">
+                                    <p class="p-4 wrap-break-word truncate cursor-pointer"
+                                        x-on:click="$el.classList.toggle('truncate')"
+                                        x-html="() => col.data(row, rowIndex)">
+                                    </p>
+                                </template>
+
                                 <template
                                     x-if="col.type != 'money' && col.name !== 'CHECK_ALL' && String(col.name).replace(' ', '_').toLowerCase() !== 'updated_at' && col.name !== '#' && col.type !== 'image' && !['action', 'actions'].includes(String(col.name).toLowerCase())">
                                     <p class="p-4 wrap-break-word truncate cursor-pointer"

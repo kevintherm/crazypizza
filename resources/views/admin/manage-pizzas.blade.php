@@ -111,7 +111,7 @@
                     </div>
                     <div class="col-span-12 md:col-span-9">
                         <label class="inline-flex items-center gap-3" for="is_available">
-                            <input x-model="$store.mg.selectedItem.is_available" id="is_available" class="peer sr-only" type="checkbox" role="switch" checked />
+                            <input x-model="$store.mg.selectedItem.is_available" id="is_available" class="peer sr-only" :checked="$store.mg.selectedItem.is_available" type="checkbox" role="switch" />
                             <div class="relative h-6 w-11 after:h-5 after:w-5 peer-checked:after:translate-x-5 rounded-full border border-outline bg-surface-alt after:absolute after:bottom-0 after:left-[0.0625rem] after:top-0 after:my-auto after:rounded-full after:bg-on-surface after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:bg-on-primary peer-focus:outline-2 peer-focus:outline-offset-2 peer-focus:outline-outline-strong peer-focus:peer-checked:outline-primary peer-active:outline-offset-0 peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:border-outline-dark dark:bg-surface-dark-alt dark:after:bg-on-surface-dark dark:peer-checked:bg-primary-dark dark:peer-checked:after:bg-on-primary-dark dark:peer-focus:outline-outline-dark-strong dark:peer-focus:peer-checked:outline-primary-dark"
                                  aria-hidden="true">
                             </div>
@@ -279,9 +279,16 @@
                     },
                     {
                         name: "Price",
-                        class: "w-64",
+                        class: "w-32",
                         data: "price",
                         type: "money",
+                    },
+                    {
+                        name: "Available",
+                        class: "w-32",
+                        data: (row, index) => {
+                            return row.is_available ? 'Yes' : 'No';
+                        },
                     },
                     {
                         name: "Updated At",
@@ -297,6 +304,7 @@
                     "#": "id",
                     Name: "name",
                     Price: "price",
+                    Available: 'is_available',
                     "Updated At": "created_at",
                 },
 
@@ -306,7 +314,38 @@
 
                 initialFilters: {
                     appliedFilters: [],
-                    availableFilters: [],
+                    availableFilters: [
+                        {
+                            name: 'Available',
+                            column: 'is_available',
+                            type: 'select',
+                            accept: 'bool',
+                            options: [{
+                                    label: 'All',
+                                    value: ''
+                                },
+                                {
+                                    label: 'Yes',
+                                    value: '1'
+                                },
+                                {
+                                    label: 'No',
+                                    value: '0'
+                                },
+                            ],
+                            selectedOption: {
+                                label: 'All',
+                                value: ''
+                            }
+                        },
+                        {
+                            name: 'Created At',
+                            column: 'created_at',
+                            type: 'date-range',
+                            min: new Date(),
+                            max: new Date('2030-01-31 00:00:00')
+                        }
+                    ],
                 },
 
                 routes: {
@@ -314,6 +353,15 @@
                     createUpdate: "{{ route('pizzas.createUpdate') }}",
                     delete: "{{ route('pizzas.delete') }}",
                     bulkDelete: "{{ route('pizzas.bulkDelete') }}",
+                },
+
+                listeners: {
+                    onBeforeUpdate: (formData, model) => {
+                        formData.set('is_available', model.is_available ? 1 : 0);
+                    },
+                    onBeforeCreate: (formData, model) => {
+                        formData.set('is_available', model.is_available ? 1 : 0);
+                    },
                 },
 
                 itemName: "pizza",

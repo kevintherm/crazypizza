@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 
@@ -15,7 +16,7 @@ class DataTableService
         $sortDesc = $request->boolean('sort_desc', true);
         $perPage  = max(1, $request->integer('per_page', 8));
 
-        $query = $modelClass::query()->whereNull('deleted_at');
+        $query = $modelClass::query();
 
         if ($with) {
             $query->with($with);

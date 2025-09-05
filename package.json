@@ -21,6 +21,7 @@
         "@alpinejs/collapse": "^3.14.9",
         "@alpinejs/focus": "^3.14.9",
         "@alpinejs/mask": "^3.14.9",
+        "air-datepicker": "^3.6.0",
         "alpinejs": "^3.14.9"
     }
 }

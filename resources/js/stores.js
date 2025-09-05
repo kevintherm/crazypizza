@@ -390,8 +390,8 @@ export const createDataTableStore = (userConfig) => {
                     const eventPrefix = isUpdate ? 'Update' : 'Create';
                     if (!this.config.actions[eventPrefix.toLowerCase()]) return;
 
-                    if (_trigger.call(this, `onBefore${eventPrefix}`, e) === false) return;
                     const formData = new FormData(e.target);
+                    if (_trigger.call(this, `onBefore${eventPrefix}`, formData, this.selectedItem) === false) return;
                     this.handleApiCall(
                         axios.post(this.config.routes.createUpdate, formData),
                         (res) => {
@@ -470,14 +470,55 @@ export const createDataTableStore = (userConfig) => {
 
         getFiltersMethods() {
             return {
-                // Simplified for brevity, original logic can be placed here.
                 process: (e) => {
                     const formData = new FormData(e.target);
-                    // ... processing logic from original code ...
-                    const newFilters = []; // Replace with actual processed filters
-                    this.appliedFilters = newFilters;
-                    _trigger.call(this, 'onFilterChange', newFilters);
-                    if (newFilters.length > 0) this.fetchData();
+                    const obj = Object.fromEntries(formData.entries());
+
+                    // Group key and values
+                    const grouped = Object.entries(obj).reduce((acc, [fullKey, value]) => {
+                        const [group, subKey] = fullKey.split('.');
+                        if (!acc[group]) acc[group] = { column: group };
+
+                        if (subKey) {
+                            acc[group][subKey] = value;
+                            acc[group].type = 'range';
+                        } else {
+                            acc[group].value = value;
+                            acc[group].type = 'input';
+                        }
+
+                        return acc;
+                    }, {});
+
+                    // Build result with updated filter
+                    const result = Object.values(grouped)
+                        .filter(f => {
+                            if (f.type === 'input') return !(f.value === '' || f.value == null || String(f.value).toLowerCase() === 'all');
+                            else if (f.type === 'range') return f.min != null && f.min !== '' || f.max != null && f.max !== '';
+                            return true;
+                        })
+                        .map(f => {
+
+                            const found = this.availableFilters.find(i => i.column === f.column) || {};
+                            f.name = found.name ?? this.snakeToCapitalized(f.column);
+                            f.accept = found.accept ?? 'string';
+
+                            if (f.type === 'input' && f.accept === 'bool') {
+                                f.displayedValue = Boolean(Number(f.value));
+                            } else if (f.type === 'range') {
+                                f.displayedValue = `${f.min ?? ''} - ${f.max ?? ''}`;
+                            } else {
+                                f.displayedValue = String(f.value);
+                            }
+
+                            return f;
+                        });
+
+                    this.appliedFilters = result;
+
+                    this.filters.hide();
+                    _trigger.call(this, 'onFilterChange', result);
+                    if (result.length) this.fetchData();
                     this.filters.hide();
                 },
                 remove: (filterToRemove) => {
