@@ -16,9 +16,9 @@ class InitCartMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $cart = Cart::createOrFirst([
+        $cart = Cart::firstOrCreate([
             'id' => $request->session()->get('cart_id')
-        ]);
+        ], []);
 
         $request->session()->put('cart_id', $cart->id);
 

@@ -56,6 +56,11 @@
                 document.documentElement.classList.remove('dark');
             }
         })();
+
+        const money = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+        }).format;
     </script>
 
 </head>

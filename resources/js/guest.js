@@ -48,10 +48,5 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     })
 })
 
-window.money = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-}).format;
-
 delete Alpine.version;
 window.$ = Alpine;

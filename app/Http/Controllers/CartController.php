@@ -6,6 +6,7 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Ingredient;
 use App\Models\Pizza;
+use App\ValueObjects\Money;
 use Illuminate\Http\Request;
 use App\Http\Responses\ApiResponse;
 use Illuminate\Support\Str;
@@ -27,14 +28,15 @@ class CartController extends Controller
     {
         return $this->safe(function () use ($request) {
 
-            $cart = $request->session()->get('cart_id');
+            $cart = Cart::find($request->session()->get('cart_id'));
 
             $pizza = Pizza::find($request->input('pizza_id'));
-            if (!$pizza) return ApiResponse::error('The item does not exists.');
+            if (!$pizza)
+                return ApiResponse::error('The item does not exists.');
 
             $inserted = CartItem::insertOrIgnore([
                 'id' => Str::uuid7(),
-                'cart_id' => $cart,
+                'cart_id' => $cart->id,
                 'pizza_id' => $pizza->id,
                 'quantity' => 1,
                 'created_at' => now(),
@@ -51,23 +53,30 @@ class CartController extends Controller
     public function updateCart(Request $request)
     {
         return $this->safe(function () use ($request) {
-            $cart = $request->session()->get('cart_id');
+            $cart = Cart::find($request->session()->get('cart_id'));
 
-            $toUpdateId = $request->input('cart_item_id');
+            if (!$cart) {
+                return ApiResponse::error('Cart not found.');
+            }
 
-            $cartItem = CartItem::where('cart_id', $cart)->where('id', $toUpdateId)->first();
+            $updates = $request->input('items', []);
 
-            if (!$cartItem) return ApiResponse::error('The item does not exists.');
+            foreach ($updates as $update) {
+                $cartItem = $cart->items()->find($update['id']);
 
-            $updated = collect($request->input('updated', []));
+                if ($cartItem) {
+                    $cartItem->quantity = $update['quantity'];
+                    $cartItem->size = $update['size'];
+                    $cartItem->ingredients = $update['ingredients'] ?? [];
+                    $cartItem->save();
+                }
+            }
 
-            if ($updated->quantity) $cartItem->quantity = $updated->quantity;
-            if ($updated->size) $cartItem->size = $updated->size;
-            if ($updated->ingredients) $cartItem->ingredients = $updated->ingredients;
+            $this->calculateSubtotal($cart);
 
-            $cartItem->save();
-
-            return ApiResponse::success("Cart updated successfully.", $cart);
+            return ApiResponse::success("Cart updated successfully.", [
+                'subtotal' => $cart->total,
+            ]);
         }, __FILE__);
     }
 
@@ -80,5 +89,26 @@ class CartController extends Controller
 
             return ApiResponse::success("Pizza removed from cart successfully.", $cart);
         }, __FILE__);
+    }
+
+    private function calculateSubtotal(Cart $cart)
+    {
+        $subtotal = new Money('0');
+
+        foreach ($cart->items as $item) {
+            // pizza price
+            $subtotal = $subtotal->add($item->pizza->price->mul($item->quantity));
+
+            // toppings price
+            if (isset($item->ingredients)) {
+                $ingredients = Ingredient::find(collect($item->ingredients)->pluck('id'));
+                foreach ($ingredients as $ingredient) {
+                    $subtotal = $subtotal->add($ingredient->price_per_unit->mul(collect($item->ingredients)->firstWhere('id', $ingredient->id)['quantity']));
+                }
+            }
+        }
+
+        $cart->total = $subtotal;
+        $cart->save();
     }
 }

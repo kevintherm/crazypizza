@@ -26,11 +26,31 @@
             window.addEventListener('alpine:init', () => {
                 document.addEventListener('DOMContentLoaded', () => {
                     $.store('mg', {
+                        subtotal: 0,
+                        cartTotal: 0,
                         cartItems: @js($cart->items),
                         availableToppings: @js(Ingredient::where('available_as_topping', true)->get(['id', 'name', 'price_per_unit'])),
                         appliedCoupon: null,
                         updateItem(itemId) {
-                            // TODO: update cart item, remove item, and checkout
+                            axios.post(@js(route('cart.update')), {
+                                    items: this.cartItems,
+                                })
+                                .then(res => {
+                                    this.subtotal = res.data.data.subtotal;
+                                })
+                                .catch(err => {
+                                    $.store('notifiers').toast({
+                                        variant: err.response?.status == 400 ? 'warning' : 'danger',
+                                        title: 'Oops...',
+                                        message: err.response?.data?.message || 'Something went wrong.'
+                                    });
+                                });
+                        },
+                        reloadItems() {
+                            this.updateItem(this.cartItems[0]);
+                        },
+                        init() {
+                            this.reloadItems();
                         }
                     });
                 })
@@ -81,6 +101,9 @@
                             <div x-data="{
                                 showToppings: false,
                                 selectedToppings: [],
+                                debouncedUpdateItem: $.debounce((val) => {
+                                    $store.mg.updateItem(item.id);
+                                }, 500),
                                 addOrUpdate(topping) {
                                     const index = this.selectedToppings.findIndex(top => top.id == topping.id);
                                     if (index == -1) {
@@ -91,11 +114,12 @@
                                         toUpdate.quantity++;
                                     }
 
-                                    item.ingredients = this.selectedToppings.map(e => ({ id: e.id, quantity: e.quantity }));
-                                    console.log($store.mg.cartItems)
+                                    item.ingredients = this.selectedToppings.map(e => ({ id: e.id, quantity: e.quantity }));;
+                                    this.debouncedUpdateItem();
                                 },
                                 remove(topping) {
                                     this.selectedToppings = this.selectedToppings.filter(t => t.id != topping.id);
+                                    $store.mg.updateItem(item.id);
                                 }
                             }" class="border-b border-zinc-500 px-4 py-2">
 
@@ -109,7 +133,7 @@
                                         <div x-data="{ minVal: 1, maxVal: 100, decimalPoints: 0, incrementAmount: 1 }" class="flex justify-between md:justify-start items-center gap-2">
                                             <label class="text-xl md:border-e pe-2" for="quantity">Quantity</label>
                                             <div x-on:dblclick.prevent class="flex items-center">
-                                                <button x-on:click="item.quantity = Math.max(minVal, item.quantity - incrementAmount)"
+                                                <button x-on:click="item.quantity = Math.max(minVal, item.quantity - incrementAmount);" x-on:click.debounce.500ms="$store.mg.updateItem(item.id)"
                                                         class="flex h-10 items-center justify-center rounded-l-2xl border border-neutral-300 bg-neutral-50 px-4 py-2 text-neutral-600 hover:opacity-75 focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black active:opacity-100 active:outline-offset-0 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300 dark:focus-visible:outline-white"
                                                         aria-label="subtract">
                                                     <svg class="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="2">
@@ -119,7 +143,7 @@
                                                 <input x-model="item.quantity" id="quantity"
                                                        class="border-x-none h-10 w-full md:w-20 rounded-none border-y border-neutral-300 bg-neutral-50/50 text-center text-neutral-900 focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-black dark:border-neutral-700 dark:bg-neutral-900/50 dark:text-white dark:focus-visible:outline-white"
                                                        type="text" readonly />
-                                                <button x-on:click="item.quantity = Math.min(maxVal, item.quantity + incrementAmount)"
+                                                <button x-on:click="item.quantity = Math.min(maxVal, item.quantity + incrementAmount);" x-on:click.debounce.500ms="$store.mg.updateItem(item.id)"
                                                         class="flex h-10 items-center justify-center rounded-r-2xl border border-neutral-300 bg-neutral-50 px-4 py-2 text-neutral-600 hover:opacity-75 focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black active:opacity-100 active:outline-offset-0 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300 dark:focus-visible:outline-white"
                                                         aria-label="add">
                                                     <svg class="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="2">
@@ -133,7 +157,7 @@
 
                                         <div class="flex justify-between md:justify-start items-center gap-2">
                                             <label class="text-lg md:border-e pe-2" :for="'item-' + item.id">Size</label>
-                                            <select x-model="item.size" class="text-xl text-black pe-2" :id="'item-' + item.id">
+                                            <select x-model="item.size" x-on:change="$store.mg.updateItem(item.id)" class="text-xl text-black pe-2" :id="'item-' + item.id">
                                                 @foreach (Pizza::SIZE as $i => $size)
                                                     <option value="{{ $i }}">{{ ucfirst($size) }}</option>
                                                 @endforeach
@@ -207,7 +231,7 @@
 
                         <div class="px-4 py-2 flex justify-between items-center">
                             <p class="text-xl font-semibold leading-tight">Subtotal</p>
-                            <p class="text-xl font-semibold leading-tight text-black">$180.00</p>
+                            <p x-text="money($store.mg?.subtotal)" class="text-xl font-semibold leading-tight text-black"></p>
                         </div>
 
                         <div class="px-4 py-2 flex justify-between items-center">
@@ -255,7 +279,7 @@
 
                         <div class="px-4 py-4 flex justify-between items-center">
                             <p class="text-xl font-semibold leading-tight">TOTAL</p>
-                            <p class="text-xl font-semibold leading-tight text-black">$180.00</p>
+                            <p x-text="money($store.mg?.cartTotal)" class="text-xl font-semibold leading-tight text-black"></p>
                         </div>
 
                         <div class="p-4 pt-0">
