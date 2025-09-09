@@ -88,7 +88,7 @@ class CartController extends Controller
                 $cart->coupon_code = $coupon->code;
                 $cart->save();
 
-                $discount = new Money($coupon->discount);
+                $discount = $coupon->discount;
             }
 
             foreach ($updates as $update) {
@@ -102,11 +102,15 @@ class CartController extends Controller
                 }
             }
 
-            $this->calculateSubtotal($cart);
+            $cart->refresh();
+
+            $subtotal = $this->calculateSubtotal($cart->items);
+
+            $cart->total = $subtotal;
+            $cart->save();
 
             $shipping = new Money('0');
             $tax = new Money('0');
-            $subtotal = $cart->total;
 
             $total = Money::sum([$shipping, $tax, $subtotal])->sub($discount);
 
@@ -123,19 +127,22 @@ class CartController extends Controller
     public function removeFromCart(Request $request)
     {
         return $this->safe(function () use ($request) {
+            $validated = $request->validate([
+                'item_id' => 'required|uuid|exists:cart_items,id',
+            ]);
             $cart = Cart::find($request->session()->get('cart_id'));
 
-            $cart->items()->where('pizza_id', $request->pizza_id)->delete();
+            $cart->items()->where('id', $validated['item_id'])->delete();
 
             return ApiResponse::success("Pizza removed from cart successfully.", $cart);
         }, __FILE__);
     }
 
-    private function calculateSubtotal(Cart $cart)
+    private function calculateSubtotal($items)
     {
         $subtotal = new Money('0');
 
-        foreach ($cart->items as $item) {
+        foreach ($items as $item) {
             // pizza price
             $subtotal = $subtotal->add($item->pizza->price->mul($item->quantity));
 
@@ -148,7 +155,6 @@ class CartController extends Controller
             }
         }
 
-        $cart->total = $subtotal;
-        $cart->save();
+        return $subtotal;
     }
 }
