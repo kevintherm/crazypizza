@@ -1,13 +1,23 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\IngredientController;
-use Illuminate\Support\Facades\Route;
 
-Route::middleware(['guest'])->group(function () {
+Route::middleware(['guest', 'init-cart'])->group(function () {
 
     Route::get('', [GuestController::class, 'welcome'])->name('welcome');
+    Route::get('pizzas', [GuestController::class, 'pizzas'])->name('pizzas');
+    Route::get('cart', [GuestController::class, 'cart'])->name('cart');
+
+    Route::prefix('cart')->middleware('limit:15,30')->group(function () {
+        Route::get('count', [CartController::class, 'getCount'])->name('cart.count');
+        Route::post('add', [CartController::class, 'addToCart'])->name('cart.add');
+        Route::post('update', [CartController::class, 'updateCart'])->name('cart.update');
+        Route::post('remove', [CartController::class, 'removeFromCart'])->name('cart.remove');
+    });
 
     Route::name('login')->group(function () {
         Route::get('login', [AuthController::class, 'login']);

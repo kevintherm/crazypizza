@@ -9,12 +9,14 @@ class Money implements JsonSerializable
 {
     private string $amount;
     private string $currency;
+    private string $locale;
 
-    public function __construct(string $amount, string $currency = 'USD')
+    public function __construct(string $amount, ?string $currency = null, ?string $locale = null)
     {
         // normalize to 2 decimals
         $this->amount = number_format((float) $amount, 2, '.', '');
-        $this->currency = $currency;
+        $this->currency = $currency ?? config('app.currency');
+        $this->locale = $locale ?? config('app.currency_locale');
     }
 
     public function add(string $value): self
@@ -65,9 +67,9 @@ class Money implements JsonSerializable
         return $this->toString();
     }
 
-    public function format(string $locale = 'en_US'): string
+    public function format(): string
     {
-        $formatter = new NumberFormatter($locale, NumberFormatter::CURRENCY);
+        $formatter = new NumberFormatter($this->locale, NumberFormatter::CURRENCY);
         return $formatter->formatCurrency($this->toFloat(), $this->currency);
     }
 
@@ -76,11 +78,7 @@ class Money implements JsonSerializable
         $total = "0.00";
 
         foreach ($items as $money) {
-            if ($money instanceof self) {
-                $total = bcadd($total, $money->toString(), 2);
-            } else {
-                $total = bcadd($total, (string) $money, 2);
-            }
+            $total = ($money instanceof self) ? bcadd($total, $money->toString(), 2) : bcadd($total, (string) $money, 2);
         }
 
         return new self($total);

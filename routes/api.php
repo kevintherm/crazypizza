@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CartController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -7,13 +8,15 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PizzaController;
 use App\Http\Controllers\IngredientController;
 
+Route::post('login', [AuthController::class, 'authenticate']);
+
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::post('login', [AuthController::class, 'authenticate']);
-
 Route::middleware(['web', 'auth:sanctum'])->group(function () {
+
+
 
     Route::prefix('products')->group(function () {
 

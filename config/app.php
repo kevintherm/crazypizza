@@ -86,6 +86,7 @@ return [
 
     // Currency for Money Value Object
     'currency' => env('APP_CURRENCY', 'USD'),
+    'currency_locale' => env('APP_CURRENCY_LOCALE', 'en_US'),
 
     /*
     |--------------------------------------------------------------------------

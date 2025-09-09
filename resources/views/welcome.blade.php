@@ -17,47 +17,7 @@
         </style>
     </x-slot>
 
-    <nav x-init="window.addEventListener('scroll', () => {
-        scrolled = window.scrollY > 200
-    })" x-data="{ mobileMenuIsOpen: false, scrolled: false }" x-on:click.away="mobileMenuIsOpen = false" class=" z-50 fixed top-0 w-full" aria-label="navbar">
-        <div class="flex items-center justify-between px-8 py-6 rounded-b-2xl md:rounded-full md:m-4 transition-all duration-500" :class="scrolled ? 'bg-[#E53935]/85 backdrop-blur-sm' : 'bg-transparent'">
-            <a class="flex items-center" href="/">
-                <svg class="size-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                    <g id="SVGRepo_iconCarrier">
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                              d="M8.18092 2.56556C7.90392 3.05195 7.65396 3.65447 7.416 4.36507C5.57795 9.34447 2.73476 16.6246 1.36225 20.12C0.73894 21.7073 2.25721 23.2963 3.87117 22.7465C7.38796 21.5484 14.6626 19.0869 19.6353 17.5194L19.6504 17.5145C20.3639 17.277 20.9659 17.0333 21.4491 16.7641C21.9273 16.4977 22.3551 16.1704 22.6426 15.7347C23.2987 14.7406 22.9351 13.6998 22.5012 12.8954C19.7712 7.83439 16.3585 4.2775 12.0968 1.5703C11.6898 1.31179 11.2341 1.09226 10.7418 1.02286C10.2141 0.948472 9.69595 1.05467 9.22968 1.36307C8.79315 1.65181 8.45686 2.08103 8.18092 2.56556ZM15.0912 9.09151C13.5105 7.4048 11.7893 5.97947 9.55526 4.3325C9.6817 4.01505 9.80284 3.75901 9.91885 3.55532C10.1115 3.21703 10.2575 3.08115 10.333 3.03119C10.3788 3.0009 10.4025 2.99481 10.4626 3.00327C10.5579 3.01672 10.7358 3.07517 11.0244 3.25848C14.994 5.78016 18.1714 9.08132 20.741 13.8449C21.0989 14.5085 20.9833 14.6233 20.9739 14.6325L20.9734 14.6331C20.9318 14.696 20.8089 14.8313 20.4757 15.017C20.2861 15.1226 20.0491 15.2333 19.7558 15.3501C18.0975 12.7134 16.6772 10.7839 15.0912 9.09151ZM13.6318 10.4591C15.0211 11.9415 16.2981 13.6452 17.8022 16.0033C12.9009 17.5716 6.46194 19.751 3.22621 20.8533L3.22459 20.8538L3.22391 20.8531L3.22329 20.8525L3.22387 20.851C4.48689 17.6345 7.00299 11.1934 8.83498 6.28876C10.7878 7.75003 12.2738 9.00998 13.6318 10.4591ZM10 13C11.1046 13 12 12.1046 12 11C12 9.89545 11.1046 9.00002 10 9.00002C8.89543 9.00002 8 9.89545 8 11C8 12.1046 8.89543 13 10 13ZM10 16C10 17.1046 9.10457 18 8 18C6.89543 18 6 17.1046 6 16C6 14.8954 6.89543 14 8 14C9.10457 14 10 14.8954 10 16ZM13 17C14.1046 17 15 16.1046 15 15C15 13.8954 14.1046 13 13 13C11.8954 13 11 13.8954 11 15C11 16.1046 11.8954 17 13 17Z"
-                              fill="#ffffff"></path>
-                    </g>
-                </svg>
-                <p class="text-xl text-white font-extrabold leading-tight">{{ config('app.name') }}</p>
-            </a>
-            <ul class="hidden items-center gap-6 md:flex">
-                <li><a class="font-medium underline-offset-2 focus:outline-hidden focus:underline text-white" href="/track">Track</a></li>
-                <li><a class="font-medium underline-offset-2 focus:outline-hidden focus:underline text-white" href="/menu">Menu</a></li>
-                <li><a class="font-medium underline-offset-2 focus:outline-hidden focus:underline text-white" href="/about">About</a></li>
-                <li><a class="font-medium underline-offset-2 focus:outline-hidden focus:underline text-white" href="/login">Login</a></li>
-            </ul>
-            <button x-on:click="mobileMenuIsOpen = !mobileMenuIsOpen" x-bind:aria-expanded="mobileMenuIsOpen" x-bind:class="mobileMenuIsOpen ? 'fixed top-6 right-6 z-20' : null" class="flex text-white md:hidden" type="button"
-                    aria-label="mobile menu" aria-controls="mobileMenu">
-                <svg x-cloak x-show="!mobileMenuIsOpen" class="size-6" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                </svg>
-                <svg x-cloak x-show="mobileMenuIsOpen" class="size-6" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                </svg>
-            </button>
-            <ul x-cloak x-show="mobileMenuIsOpen" x-transition:enter="transition motion-reduce:transition-none ease-out duration-300" x-transition:enter-start="-translate-y-full" x-transition:enter-end="translate-y-0"
-                x-transition:leave="transition motion-reduce:transition-none ease-out duration-300" x-transition:leave-start="translate-y-0" x-transition:leave-end="-translate-y-full" id="mobileMenu"
-                class="fixed max-h-svh overflow-y-auto inset-x-0 top-0 z-50 flex flex-col divide-y divide-zinc-300 rounded-b-2xl border-b border-zinc-300 bg-zinc-50 px-6 pb-6 pt-20 dark:divide-zinc-700 dark:border-zinc-700 dark:bg-zinc-900 md:hidden">
-                <li class="py-4"><a class="w-full text-lg font-medium text-zinc-800 focus:underline" href="/track">Track</a></li>
-                <li class="py-4"><a class="w-full text-lg font-medium text-zinc-800 focus:underline" href="/menu">Menu</a></li>
-                <li class="py-4"><a class="w-full text-lg font-medium text-zinc-800 focus:underline" href="/about">About</a></li>
-                <li class="py-4"><a class="w-full text-lg font-medium text-zinc-800 focus:underline" href="/login">Login</a></li>
-            </ul>
-        </div>
-    </nav>
+    <x-navbar />
 
     <main x-init="$store.prefs.setTheme('light')" x-init="$watch('$store.prefs.state.theme', () => $store.prefs.setTheme('light'))" id="main" class="flex flex-col min-h-[80vh] relative overflow-hidden">
 
@@ -108,7 +68,7 @@
                     </div>
 
                     <div class="max-w-1/2 mx-auto py-8 relative z-10">
-                        <img class="object-cover transition duration-700 ease-out group-hover:rotate-180 rounded-full aspect-square" src="{{ $pizza->image }}" alt="{{ $pizza->name }}" />
+                        <img class="object-cover transition duration-700 ease-out group-hover:rotate-180 rounded-full aspect-square" src="{{ $pizza->image }}" alt="{{ $pizza->name }}" draggable="false" />
                     </div>
                     <div class="flex flex-col gap-4 p-6">
                         <div class="flex flex-col md:flex-row gap-4 md:gap-12 justify-between">

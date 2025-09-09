@@ -1,5 +1,7 @@
 // JS bundle for guest
 
+import './bootstrap';
+
 import Alpine from 'alpinejs';
 import mask from '@alpinejs/mask';
 import focus from '@alpinejs/focus';
@@ -11,6 +13,8 @@ import intersect from '@alpinejs/intersect'
 import { prefs } from './stores';
 import Lenis from 'lenis';
 
+import { alpineToast as toast, alpineModal as modal } from './notifiers';
+
 Alpine.plugin(intersect)
 Alpine.plugin(grow);
 Alpine.plugin(anchor);
@@ -19,6 +23,8 @@ Alpine.plugin(focus);
 Alpine.plugin(mask);
 
 Alpine.store('prefs', prefs);
+
+Alpine.store('notifiers', { toast, modal });
 
 Alpine.start();
 
@@ -41,3 +47,11 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         }
     })
 })
+
+window.money = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+}).format;
+
+delete Alpine.version;
+window.$ = Alpine;

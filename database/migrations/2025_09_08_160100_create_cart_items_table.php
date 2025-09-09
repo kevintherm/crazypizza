@@ -11,15 +11,16 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('pizzas', function (Blueprint $table) {
+        Schema::create('cart_items', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('image')->nullable();
-            $table->string('name');
-            $table->text('description')->nullable();
-            $table->decimal('price', 10, 2);
-            $table->boolean('is_available')->default(false);
+            $table->uuid('cart_id')->index();
+            $table->uuid('pizza_id')->index();
+            $table->json('ingredients')->nullable();
+            $table->integer('quantity')->default(1);
+            $table->enum('size', array_values(Pizza::SIZE))->default(Pizza::SIZE['small']);
             $table->timestamps();
-            $table->softDeletes();
+
+            $table->unique(['cart_id', 'pizza_id']);
         });
     }
 
@@ -28,6 +29,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('pizzas');
+        Schema::dropIfExists('cart_items');
     }
 };

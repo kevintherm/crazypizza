@@ -12,8 +12,8 @@ return new class extends Migration {
     {
         Schema::create('pizza_ingredients', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pizza_id')->constrained()->onDelete('cascade');
-            $table->foreignId('ingredient_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('pizza_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('ingredient_id')->constrained()->onDelete('cascade');
             $table->integer('quantity')->default(1);
         });
     }

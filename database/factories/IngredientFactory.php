@@ -25,6 +25,7 @@ class IngredientFactory extends Factory
             'unit' => $this->faker->randomElement(array_keys(Ingredient::UNITS)),
             'is_vegan' => $this->faker->boolean(),
             'is_gluten_free' => $this->faker->boolean(),
+            'available_as_topping' => $this->faker->boolean(),
             'stock_quantity' => $this->faker->numberBetween(0, 1000),
         ];
     }

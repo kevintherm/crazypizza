@@ -9,7 +9,7 @@ use App\Http\Responses\ApiResponse;
 
 abstract class Controller
 {
-    protected function safe(callable $callback)
+    protected function safe(callable $callback, string $file = __FILE__)
     {
         try {
             DB::beginTransaction();
@@ -20,7 +20,7 @@ abstract class Controller
             return $result;
         } catch (Throwable $e) {
             DB::rollBack();
-            Helper::LogThrowable(request(), __FILE__, $e);
+            Helper::LogThrowable(request(), $file, $e);
             return ApiResponse::error($e->getMessage(), 500);
         }
     }
