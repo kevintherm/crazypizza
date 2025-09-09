@@ -256,11 +256,27 @@
                                                                 </label>
                                                                 <span x-text="money(topping.price_per_unit)" class="text-sm text-gray-500"></span>
                                                             </div>
-                                                            <div x-show="isToppingSelected(topping.id)" class="flex items-center gap-2 mt-2">
-                                                                <label class="text-sm" :for="'topping-qty-' + item.id + '-' + topping.id">Qty:</label>
-                                                                <input class="w-full md:w-16 text-lg text-center border-gray-300 rounded-md shadow-sm focus:border-red-300 focus:ring focus:ring-red-200 focus:ring-opacity-50"
-                                                                       :id="'topping-qty-' + item.id + '-' + topping.id" type="number" min="1" max="20" :value="getToppingQuantity(topping.id)"
-                                                                       @input="updateToppingQuantity(topping.id, $event.target.value)">
+                                                            <div x-show="isToppingSelected(topping.id)" x-collapse x-data="{ currentVal: getToppingQuantity(topping.id), minVal: 0, maxVal: 20, decimalPoints: 0, incrementAmount: 1 }" class="flex flex-col gap-1 mt-2">
+                                                                <label class="pl-1 text-sm text-on-surface dark:text-on-surface-dark sr-only" :for="'topping-qty-' + item.id + '-' + topping.id">Qty</label>
+                                                                <div x-on:dblclick.prevent class="flex items-center">
+                                                                    <button x-on:click="currentVal = Math.max(minVal, currentVal - incrementAmount);updateToppingQuantity(topping.id, currentVal);"
+                                                                            class="flex h-10 items-center justify-center rounded-l-2xl border border-neutral-300 bg-neutral-50 px-4 py-2 text-neutral-600 hover:opacity-75 focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black active:opacity-100 active:outline-offset-0 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300 dark:focus-visible:outline-white"
+                                                                            aria-label="subtract">
+                                                                        <svg class="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="2">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12h-15" />
+                                                                        </svg>
+                                                                    </button>
+                                                                    <input x-model="currentVal"
+                                                                           class="border-x-none h-10 w-full md:w-10 text-center rounded-none border-y border-neutral-300 bg-neutral-50/50 text-center text-neutral-900 focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-black dark:border-neutral-700 dark:bg-neutral-900/50 dark:text-white dark:focus-visible:outline-white"
+                                                                           :id="'topping-qty-' + item.id + '-' + topping.id" min="1" max="20" :value="getToppingQuantity(topping.id)" type="text" readonly />
+                                                                    <button x-on:click="currentVal = Math.min(maxVal, currentVal + incrementAmount);updateToppingQuantity(topping.id, currentVal);"
+                                                                            class="flex h-10 items-center justify-center rounded-r-2xl border border-neutral-300 bg-neutral-50 px-4 py-2 text-neutral-600 hover:opacity-75 focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black active:opacity-100 active:outline-offset-0 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300 dark:focus-visible:outline-white"
+                                                                            aria-label="add">
+                                                                        <svg class="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="2">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                                                        </svg>
+                                                                    </button>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </template>
