@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\Money;
 use Illuminate\Foundation\Http\FormRequest;
 
 class IngredientRequest extends FormRequest
@@ -22,7 +23,7 @@ class IngredientRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => 'nullable|integer|exists:ingredients,id',
+            'id' => 'nullable|exists:ingredients,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
             'image' => 'nullable|image|max:2048',
@@ -31,6 +32,8 @@ class IngredientRequest extends FormRequest
             'is_vegan' => 'nullable|boolean',
             'is_gluten_free' => 'nullable|boolean',
             'stock_quantity' => 'nullable|integer|min:0',
+            'price_per_unit' => ['required', new Money()],
+            'available_as_topping' => 'required|boolean'
         ];
     }
 }

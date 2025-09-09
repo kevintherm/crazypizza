@@ -299,7 +299,7 @@
                     </div>
 
                     <div class="col-span-12 md:col-span-3">
-                        <label class="w-fit pl-0.5 text-sm capitalize" for="price_per_unit">Available as Topping</label>
+                        <label class="w-fit pl-0.5 text-sm capitalize" for="price_per_unit">Price per unit</label>
                     </div>
                     <div class="col-span-12 md:col-span-9">
                         <div class="relative">

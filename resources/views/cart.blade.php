@@ -27,16 +27,27 @@
                 document.addEventListener('DOMContentLoaded', () => {
                     $.store('mg', {
                         subtotal: 0,
+                        shipping: 0,
+                        tax: 0,
                         cartTotal: 0,
+
                         cartItems: @js($cart->items),
                         availableToppings: @js(Ingredient::where('available_as_topping', true)->get(['id', 'name', 'price_per_unit'])),
                         appliedCoupon: null,
+                        couponDiscount: 0,
                         updateItem(itemId) {
                             axios.post(@js(route('cart.update')), {
                                     items: this.cartItems,
+                                    coupon: this.appliedCoupon
                                 })
                                 .then(res => {
-                                    this.subtotal = res.data.data.subtotal;
+                                    const data = res.data.data;
+
+                                    this.shipping = data.shipping;
+                                    this.tax = data.tax;
+                                    this.subtotal = data.subtotal;
+                                    this.couponDiscount = data.discount;
+                                    this.cartTotal = data.total;
                                 })
                                 .catch(err => {
                                     $.store('notifiers').toast({
@@ -236,12 +247,12 @@
 
                         <div class="px-4 py-2 flex justify-between items-center">
                             <p class="text-xl font-semibold leading-tight">Shipping</p>
-                            <p class="text-xl font-semibold leading-tight text-black">FREE</p>
+                            <p x-text="money($store.mg?.shipping)" class="text-xl font-semibold leading-tight text-black"></p>
                         </div>
 
                         <div class="px-4 py-2 flex justify-between items-center">
                             <p class="text-xl font-semibold leading-tight">Tax</p>
-                            <p class="text-xl font-semibold leading-tight text-black">FREE</p>
+                            <p x-text="money($store.mg?.tax)" class="text-xl font-semibold leading-tight text-black">FREE</p>
                         </div>
 
                         <div class="w-full">
@@ -250,27 +261,22 @@
 
                         <div class="px-4 py-2 flex justify-between items-center">
                             <p class="text-xl font-semibold leading-tight">Coupon</p>
-                            <div x-data="{ showPassword: false }" class="relative">
-                                <input id="coupon" name="coupon"
+                            <div class="relative">
+                                <input x-on:input="$store.mg.appliedCoupon = $el.value" id="coupon" name="coupon"
                                        class="w-full rounded-2xl border border-neutral-300 bg-neutral-50 px-2 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black disabled:cursor-not-allowed disabled:opacity-75 dark:border-neutral-700 dark:bg-neutral-900/50 dark:focus-visible:outline-white"
                                        type="text" autocomplete="current-password" placeholder="Enter your coupon" />
-                                <button x-on:click="showPassword = !showPassword" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-600 dark:text-neutral-300" type="button" aria-label="Show password">
-                                    <svg x-show="!showPassword" class="size-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                <button x-on:click.debounce.500ms="$store.mg?.reloadItems()" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-600 dark:text-neutral-300" type="button" aria-label="Show password">
+                                    <svg class="size-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round"
-                                              d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                    </svg>
-                                    <svg x-show="showPassword" class="size-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                              d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
+                                              d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
                                     </svg>
                                 </button>
                             </div>
                         </div>
 
-                        <div class="px-4 py-2 flex justify-between items-center">
+                        <div x-show="$store.mg?.appliedCoupon" x-cloak class="px-4 py-2 flex justify-between items-center">
                             <p class="text-xl font-semibold leading-tight">Discount</p>
-                            <p class="text-xl font-semibold leading-tight text-black">-$50.00</p>
+                            <p x-text="`-${money($store.mg?.couponDiscount)}`" class="text-xl font-semibold leading-tight text-black"></p>
                         </div>
 
                         <div class="w-full">
@@ -283,7 +289,7 @@
                         </div>
 
                         <div class="p-4 pt-0">
-                            <button class="w-full whitespace-nowrap rounded-2xl bg-black border border-black px-4 py-2 text-sm font-medium tracking-wide text-neutral-100 transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-white dark:border-white dark:text-black dark:focus-visible:outline-white"
+                            <button x-on:click="$store.mg?.reloadItems()" class="w-full whitespace-nowrap rounded-2xl bg-black border border-black px-4 py-2 text-sm font-medium tracking-wide text-neutral-100 transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-white dark:border-white dark:text-black dark:focus-visible:outline-white"
                                     type="button">Pay</button>
                         </div>
 

@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Ingredient;
+use App\ValueObjects\Money;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -26,6 +27,7 @@ class IngredientFactory extends Factory
             'is_vegan' => $this->faker->boolean(),
             'is_gluten_free' => $this->faker->boolean(),
             'available_as_topping' => $this->faker->boolean(),
+            'price_per_unit' => new Money((string) $this->faker->randomDigit()),
             'stock_quantity' => $this->faker->numberBetween(0, 1000),
         ];
     }

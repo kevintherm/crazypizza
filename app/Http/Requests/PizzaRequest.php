@@ -23,7 +23,7 @@ class PizzaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => 'sometimes|integer|exists:pizzas,id',
+            'id' => 'nullable|exists:pizzas,id',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
             'price' => ['required', new Money()],

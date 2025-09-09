@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\CartItem;
+use App\Models\Coupon;
 use App\Models\Ingredient;
 use App\Models\Pizza;
 use App\ValueObjects\Money;
@@ -53,29 +54,68 @@ class CartController extends Controller
     public function updateCart(Request $request)
     {
         return $this->safe(function () use ($request) {
-            $cart = Cart::find($request->session()->get('cart_id'));
 
+            $validated = $request->validate([
+                'items' => 'array',
+                'items.*.id' => 'required|uuid|exists:cart_items,id',
+                'items.*.quantity' => 'required|integer|min:1|max:100',
+                'items.*.size' => 'nullable|string|max:50',
+                'items.*.ingredients' => 'nullable|array',
+                'items.*.ingredients.*.id' => 'required|uuid|exists:ingredients,id',
+                'items.*.ingredients.*.quantity' => 'required|integer|min:1|max:20',
+                'coupon' => 'nullable|string|max:50',
+            ]);
+
+            $cartId = $request->session()->get('cart_id');
+            $cart = Cart::with('items')->find($cartId);
             if (!$cart) {
                 return ApiResponse::error('Cart not found.');
             }
 
-            $updates = $request->input('items', []);
+            $updates = $validated['items'] ?? [];
+            $couponCode = $validated['coupon'] ?? null;
+
+            $discount = new Money('0');
+            if ($couponCode) {
+                $coupon = Coupon::where('code', $couponCode)
+                    ->where('is_active', true)
+                    ->first();
+
+                if (!$coupon) {
+                    return ApiResponse::error('Invalid coupon.');
+                }
+
+                $cart->coupon_code = $coupon->code;
+                $cart->save();
+
+                $discount = new Money($coupon->discount);
+            }
 
             foreach ($updates as $update) {
-                $cartItem = $cart->items()->find($update['id']);
+                $cartItem = $cart->items()->where('id', $update['id'])->first();
 
                 if ($cartItem) {
                     $cartItem->quantity = $update['quantity'];
-                    $cartItem->size = $update['size'];
-                    $cartItem->ingredients = $update['ingredients'] ?? [];
+                    $cartItem->size = $update['size'] ?? $cartItem->size;
+                    $cartItem->ingredients = $update['ingredients'] ?? $cartItem->ingredients;
                     $cartItem->save();
                 }
             }
 
             $this->calculateSubtotal($cart);
 
+            $shipping = new Money('0');
+            $tax = new Money('0');
+            $subtotal = $cart->total;
+
+            $total = Money::sum([$shipping, $tax, $subtotal])->sub($discount);
+
             return ApiResponse::success("Cart updated successfully.", [
-                'subtotal' => $cart->total,
+                'shipping' => $shipping,
+                'tax' => $tax,
+                'subtotal' => $subtotal,
+                'discount' => $discount,
+                'total' => $total,
             ]);
         }, __FILE__);
     }
