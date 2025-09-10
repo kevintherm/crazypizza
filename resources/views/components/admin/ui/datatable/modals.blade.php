@@ -17,11 +17,13 @@
 
                 <div class="h-8 w-full"></div>
 
-                {{ $form }}
+                @if (isset($form))
+                    {{ $form }}
+                @endif
 
                 <div class="h-8 w-full"></div>
 
-                <div class="flex justify-end gap-4">
+                <div x-show="$store.mg.config.actions.update || $store.mg.config.actions.create" class="flex justify-end gap-4">
                     <button x-on:click="$store.mg.createUpdate.hide()"
                             class="rounded-radius bg-surface-alt border-surface-alt text-on-surface-strong focus-visible:outline-surface-alt dark:bg-surface-dark-alt dark:border-surface-dark-alt dark:text-on-surface-dark-strong dark:focus-visible:outline-surface-dark-alt whitespace-nowrap border px-4 py-2 text-center text-xs font-medium tracking-wide transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-75"
                             type="button">Cancel</button>

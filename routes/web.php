@@ -44,6 +44,7 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('products')->group(function () {
         Route::view('ingredients', 'admin.manage-ingredients');
         Route::view('pizzas', 'admin.manage-pizzas');
+        Route::view('reviews', 'admin.manage-reviews');
     });
 
     Route::prefix('orders')->group(function () {

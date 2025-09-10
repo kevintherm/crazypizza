@@ -190,7 +190,7 @@
                                 <template x-if="['action', 'actions'].includes(String(col.name).toLowerCase())">
                                     <div class="p-4 flex items-center gap-3">
                                         <button type="button"
-                                            x-show="$store.mg.config.actions.update || $store.mg.actions.view"
+                                            x-show="$store.mg.config.actions.update || $store.mg.config.actions.view"
                                             x-text="$store.mg.config.actions.update ? 'Edit' : 'View'"
                                             x-on:click="createUpdate.open(row)"
                                             class="rounded-radius text-primary outline-primary dark:text-primary-dark dark:outline-primary-dark cursor-pointer whitespace-nowrap bg-transparent p-0.5 font-semibold hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0">Update</button>

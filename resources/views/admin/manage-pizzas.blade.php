@@ -291,6 +291,11 @@
                         },
                     },
                     {
+                        name: "Rating",
+                        class: "w-32",
+                        data: (row, index) => `${row.rating} &#9733;`,
+                    },
+                    {
                         name: "Updated At",
                         class: "w-64",
                     },
@@ -304,6 +309,7 @@
                     "#": "id",
                     Name: "name",
                     Price: "price",
+                    Rating: 'rating',
                     Available: 'is_available',
                     "Updated At": "created_at",
                 },
@@ -314,8 +320,7 @@
 
                 initialFilters: {
                     appliedFilters: [],
-                    availableFilters: [
-                        {
+                    availableFilters: [{
                             name: 'Available',
                             column: 'is_available',
                             type: 'select',

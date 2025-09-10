@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\CartController;
+use App\Http\Controllers\ReviewController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -32,6 +32,12 @@ Route::middleware(['web', 'auth:sanctum'])->group(function () {
             Route::post('/', [PizzaController::class, 'createUpdate'])->name('pizzas.createUpdate');
             Route::delete('/', [PizzaController::class, 'delete'])->name('pizzas.delete');
             Route::delete('/bulk-delete', [PizzaController::class, 'bulkDelete'])->name('pizzas.bulkDelete');
+        });
+
+        Route::prefix('reviews')->group(function () {
+            Route::get('data-table', [ReviewController::class, 'dataTable'])->name('reviews.dataTable');
+            Route::delete('/', [ReviewController::class, 'delete'])->name('reviews.delete');
+            Route::delete('/bulk-delete', [ReviewController::class, 'bulkDelete'])->name('reviews.bulkDelete');
         });
 
         Route::prefix('orders')->group(function () {
