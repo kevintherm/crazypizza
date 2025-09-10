@@ -1,6 +1,8 @@
+@props(['scrolled' => false])
+
 <nav x-init="window.addEventListener('scroll', () => {
     scrolled = window.scrollY > 200
-})" x-data="{ mobileMenuIsOpen: false, scrolled: false }" x-on:click.away="mobileMenuIsOpen = false" class=" z-30 fixed top-0 w-full" aria-label="navbar">
+})" x-data="{ mobileMenuIsOpen: false, scrolled: @js($scrolled) }" x-on:click.away="mobileMenuIsOpen = false" class=" z-30 fixed top-0 w-full" aria-label="navbar">
     <div class="flex items-center justify-between px-8 py-6 rounded-b-2xl md:rounded-full md:m-4 transition-all duration-500" :class="scrolled ? 'bg-[#E53935]/85 backdrop-blur-sm' : 'bg-transparent'">
         <a class="flex items-center" href="/">
             <svg class="size-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

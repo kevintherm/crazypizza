@@ -39,4 +39,15 @@ class GuestController extends Controller
 
         return view('order-confirmation', compact('order'));
     }
+
+    public function trackOrder(Request $request)
+    {
+        $invoice = $request->input('invoice', null);
+        $order = Order::where('invoice_number', $invoice)->first();
+
+        if (!$invoice || !$order)
+            return redirect()->route('order.track')->with('error', 'Order not found.');
+
+        return redirect()->route('order.confirmation' , ['invoice' => $invoice]);
+    }
 }

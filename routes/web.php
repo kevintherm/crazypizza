@@ -13,10 +13,13 @@ Route::middleware(['guest', 'init-cart'])->group(function () {
     Route::get('pizzas', [GuestController::class, 'pizzas'])->name('pizzas');
     Route::get('cart', [GuestController::class, 'cart'])->name('cart');
 
-    Route::post('checkout', [PaymentController::class, 'checkout'])->name('checkout');
+    Route::view('/track', 'track')->name('order.track');
+    Route::post('/track', [GuestController::class, 'trackOrder'])->name('order.track');
+
     Route::get('/checkout/success', [PaymentController::class, 'success'])->name('checkout.success');
     Route::get('/checkout/cancel', [PaymentController::class, 'cancel'])->name('checkout.cancel');
     Route::get('/order/{invoice}', [GuestController::class, 'orderConfirmation'])->name('order.confirmation');
+    Route::post('/checkout', [PaymentController::class, 'checkout'])->name('checkout');
 
     Route::prefix('cart')->middleware('limit:15,30')->group(function () {
         Route::get('count', [CartController::class, 'getCount'])->name('cart.count');
