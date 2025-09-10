@@ -175,6 +175,7 @@
                         name: "Total",
                         class: "w-48",
                         data: "total_amount",
+                        type: 'money'
                     },
                     {
                         name: "Status",
