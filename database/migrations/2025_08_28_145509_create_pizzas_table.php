@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2);
             $table->boolean('is_available')->default(false);
+            $table->integer('rating')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

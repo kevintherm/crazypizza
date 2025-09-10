@@ -23,7 +23,8 @@
                 customer_name: $persist('').as('checkout_name'),
                 customer_email: $persist('').as('checkout_email'),
                 customer_phone: $persist('').as('checkout_phone'),
-                delivery_address: $persist('').as('checkout_address')
+                delivery_address: $persist('').as('checkout_address'),
+                notes: ''
             }" id ="checkout" action="{{ route('checkout') }}" method="POST">
                 @csrf
 
@@ -35,7 +36,7 @@
                         </div>
                     </div>
 
-                    <div class="h-8 w-full"></div>
+                    <div class="h-4 w-full"></div>
 
                     <div class="grid grid-cols-12">
                         <div class="col-span-12 md:col-span-3">
@@ -47,7 +48,7 @@
                                    type="text" autocomplete="name" placeholder="Name" required />
                         </div>
 
-                        <div class="h-8 col-span-12"></div>
+                        <div class="h-4 col-span-12"></div>
 
                         <div class="col-span-12 md:col-span-3">
                             <label class="w-fit pl-0.5 text-sm capitalize" for="customer_email">Email <span class="text-red-500">*</span></label>
@@ -58,7 +59,7 @@
                                    type="text" autocomplete="email" placeholder="Email" :value="@js(old('customer_email'))" required />
                         </div>
 
-                        <div class="h-8 col-span-12"></div>
+                        <div class="h-4 col-span-12"></div>
 
                         <div class="col-span-12 md:col-span-3">
                             <label class="w-fit pl-0.5 text-sm capitalize" for="customer_phone">Phone</label>
@@ -69,9 +70,9 @@
                                    type="tel" autocomplete="tel" :value="@js(old('customer_phone'))" placeholder="Phone number" />
                         </div>
 
-                        <div class="h-8 col-span-12"></div>
+                        <div class="h-4 col-span-12"></div>
                         <div class="col-span-12 border-b border-zinc-400"></div>
-                        <div class="h-8 col-span-12"></div>
+                        <div class="h-4 col-span-12"></div>
 
                         <div class="col-span-12 md:col-span-3">
                             <label class="w-fit pl-0.5 text-sm capitalize" for="delivery_address">Delivery Address <span class="text-red-500">*</span></label>
@@ -81,9 +82,20 @@
                                       class="w-full rounded-2xl border border-neutral-300 bg-neutral-50 px-2 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black disabled:cursor-not-allowed disabled:opacity-75 dark:border-neutral-700 dark:bg-neutral-900/50 dark:focus-visible:outline-white"
                                       autocomplete="address-level4" placeholder="Delivery address" required></textarea>
                         </div>
+
+                        <div class="h-4 col-span-12"></div>
+
+                        <div class="col-span-12 md:col-span-3">
+                            <label class="w-fit pl-0.5 text-sm capitalize" for="notes">Order Notes</label>
+                        </div>
+                        <div class="col-span-12 md:col-span-9">
+                            <textarea x-model="notes" x-grow id="notes" name="notes"
+                                      class="w-full rounded-2xl border border-neutral-300 bg-neutral-50 px-2 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black disabled:cursor-not-allowed disabled:opacity-75 dark:border-neutral-700 dark:bg-neutral-900/50 dark:focus-visible:outline-white"
+                                      placeholder="Notes" required></textarea>
+                        </div>
                     </div>
 
-                    <div class="h-8 w-full"></div>
+                    <div class="h-4 w-full"></div>
 
                     <div class="flex justify-end gap-4">
                         <button x-on:click="$store.notifiers.modal('#modal-checkout', 'hide')"

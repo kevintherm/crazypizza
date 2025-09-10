@@ -5,8 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Pizza;
+use App\Models\PizzaReview;
+use App\Models\Review;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use SessionHandler;
+use Validator;
 
 class GuestController extends Controller
 {
@@ -35,7 +39,7 @@ class GuestController extends Controller
 
     public function orderConfirmation($invoice)
     {
-        $order = Order::where('invoice_number', $invoice)->firstOrFail();
+        $order = Order::where('invoice_number', $invoice)->with('reviews')->firstOrFail();
 
         return view('order-confirmation', compact('order'));
     }
@@ -48,6 +52,46 @@ class GuestController extends Controller
         if (!$invoice || !$order)
             return redirect()->route('order.track')->with('error', 'Order not found.');
 
-        return redirect()->route('order.confirmation' , ['invoice' => $invoice]);
+        return redirect()->route('order.confirmation', ['invoice' => $invoice]);
+    }
+
+    public function rateOrder(Request $request, $invoice)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'ratings' => 'required|array',
+            'ratings.*.rating' => 'required|integer|min:1|max:5',
+            'ratings.*.comment' => 'nullable|string|max:500',
+        ], []);
+
+        foreach ($request->input('ratings', []) as $key => $value) {
+            Validator::make(
+                ['key' => $key],
+                ['key' => ['required', 'uuid', Rule::exists('pizzas', 'id')]]
+            )->validate();
+        }
+
+        $validated = $validator->validated();
+
+        $order = Order::where('invoice_number', $invoice)->firstOrFail();
+
+        if ($order->reviewed) return redirect()->back();
+
+        if ($validated['email'] != $order->customer_email) return redirect()->back()->with('error', 'Email is incorrect. Please try again.');
+
+        foreach ($validated['ratings'] as $productId => $data) {
+            Review::create([
+                'order_id' => $order->id,
+                'pizza_id' => $productId,
+                'rating' => $data['rating'],
+                'comment' => $data['comment'] ?? null,
+            ]);
+        }
+
+        $order->reviewed = true;
+        $order->save();
+
+        return redirect()->back()->with('success', 'Thank you for your feeback!');
     }
 }

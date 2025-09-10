@@ -34,6 +34,7 @@ class PaymentController extends Controller
                 'customer_email' => 'required|string|max:255',
                 'customer_phone' => 'nullable|string',
                 'delivery_address' => 'required|string|max:1000',
+                'notes' => 'nullable|string|max:1000'
             ]);
 
             $cartId = $request->session()->get('cart_id');
@@ -66,6 +67,7 @@ class PaymentController extends Controller
                 'customer_email' => $validated['customer_email'],
                 'delivery_address' => $validated['delivery_address'],
                 'customer_phone' => $validated['customer_phone'],
+                'notes' => $validated['notes'],
                 'json' => null
             ]);
 

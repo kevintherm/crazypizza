@@ -35,6 +35,11 @@ class Pizza extends Model
             ->where('available_as_topping', false);
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
     protected function price(): Attribute
     {
         return Attribute::make(

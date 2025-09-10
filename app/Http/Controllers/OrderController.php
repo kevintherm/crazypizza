@@ -25,10 +25,13 @@ class OrderController extends Controller
     {
         return $this->safe(function () use ($request) {
 
-            $order = Order::updateOrCreate(
-                ['id' => $request->input('id')],
-                $request->validated()
-            );
+            $order = Order::findOrFail($request->input('id'));
+
+            $payload = $request->validated();
+
+            // if ($order->status == 'completed' && $payload['status'] != 'completed') return ApiResponse::error('Completed order cannot be updated');
+
+            $order->update($payload);
 
             $order->refresh();
 

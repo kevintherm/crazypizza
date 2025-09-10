@@ -27,6 +27,7 @@ return new class extends Migration
             $table->enum('status', array_values(Order::STATUS))->default(Order::STATUS['pending']);
             $table->text('notes')->nullable();
             $table->json('json')->nullable();
+            $table->boolean('reviewed')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

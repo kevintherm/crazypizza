@@ -20,6 +20,7 @@ Route::middleware(['guest', 'init-cart'])->group(function () {
     Route::get('/checkout/success', [PaymentController::class, 'success'])->name('checkout.success');
     Route::get('/checkout/cancel', [PaymentController::class, 'cancel'])->name('checkout.cancel');
     Route::get('/order/{invoice}', [GuestController::class, 'orderConfirmation'])->name('order.confirmation');
+    Route::post('/order/{invoice}/rate', [GuestController::class, 'rateOrder'])->name('order.rate');
     Route::post('/checkout', [PaymentController::class, 'checkout'])->name('checkout');
 
     Route::prefix('cart')->middleware('limit:15,30')->group(function () {

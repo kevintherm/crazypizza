@@ -29,6 +29,11 @@ class Order extends Model
         'cancelled' => 'cancelled'
     ];
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
     public static function generateInvoiceNumber()
     {
         $year = date('Y');
