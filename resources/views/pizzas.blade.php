@@ -109,7 +109,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-12 place-items-center">
 
-                    @foreach ($pizzas as $i => $pizza)
+                    @forelse ($pizzas as $i => $pizza)
                         <article
                                  class="group flex rounded-2xl flex-col overflow-hidden border border-neutral-300 bg-neutral-50 text-neutral-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300 hover:scale-105 transition duration-500 relative">
 
@@ -161,7 +161,9 @@
                                 </button>
                             </div>
                         </article>
-                    @endforeach
+                    @empty
+                        <p class="col-span-12 text-lg text-center leading-tight">We don’t have anything to show at the moment.</p>
+                    @endforelse
 
                 </div>
             </section>
@@ -173,7 +175,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-12 place-items-center">
 
-                    @foreach ($pizzas as $i => $pizza)
+                    @forelse ($pizzas as $i => $pizza)
                         <article
                                  class="group flex rounded-2xl flex-col overflow-hidden border border-neutral-300 bg-neutral-50 text-neutral-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300 hover:scale-105 transition duration-500 relative">
 
@@ -225,7 +227,9 @@
                                 </button>
                             </div>
                         </article>
-                    @endforeach
+                    @empty
+                        <p class="col-span-12 text-lg text-center leading-tight">We don’t have anything to show at the moment.</p>
+                    @endforelse
 
                 </div>
 

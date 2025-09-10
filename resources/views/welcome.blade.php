@@ -122,9 +122,8 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-12 place-items-center">
 
-            @foreach ($top6 as $i => $pizza)
-                <article
-                         class="group flex rounded-2xl flex-col overflow-hidden border border-neutral-300 bg-neutral-50 text-neutral-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300  transition duration-500 relative">
+            @forelse ($top6 as $i => $pizza)
+                <article class="group flex rounded-2xl flex-col overflow-hidden border border-neutral-300 bg-neutral-50 text-neutral-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300  transition duration-500 relative">
 
                     <div class="absolute top-0 left-0 right-0">
                         <div class="rounded-b-4xl w-full h-64 -translate-y-3/4 bg-red-400/20 group-hover:-translate-y-[10%] group-hover:bg-red-400/60 transition-all duration-700"></div>
@@ -174,7 +173,9 @@
                         </button>
                     </div>
                 </article>
-            @endforeach
+            @empty
+                <p class="col-span-12 text-lg text-center leading-tight">We don’t have anything to show at the moment.</p>
+            @endforelse
 
         </div>
 

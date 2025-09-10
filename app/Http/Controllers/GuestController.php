@@ -16,14 +16,14 @@ class GuestController extends Controller
 {
     public function welcome()
     {
-        $top6 = Pizza::with('ingredients')->latest()->take(6)->get();
+        $top6 = Pizza::where('is_available', true)->with('ingredients')->latest()->take(6)->get();
 
         return view('welcome', compact('top6'));
     }
 
     public function pizzas()
     {
-        $pizzas = Pizza::with('ingredients')->latest()->get();
+        $pizzas = Pizza::where('is_available', true)->with('ingredients')->latest()->get();
 
         return view('pizzas', compact('pizzas'));
     }
@@ -33,6 +33,11 @@ class GuestController extends Controller
         $cart = Cart::find($request->session()->get('cart_id'))->load(['items', 'items.pizza']);
         if (!$cart)
             redirect('/');
+
+        foreach ($cart->items as $item) {
+            if (!$item->pizza->is_available)
+                $item->delete();
+        }
 
         return view('cart', compact('cart'));
     }
@@ -76,14 +81,17 @@ class GuestController extends Controller
 
         $order = Order::where('invoice_number', $invoice)->firstOrFail();
 
-        if ($order->reviewed) return redirect()->back();
+        if ($order->reviewed)
+            return redirect()->back();
 
-        if ($validated['email'] != $order->customer_email) return redirect()->back()->with('error', 'Email is incorrect. Please try again.');
+        if ($validated['email'] != $order->customer_email)
+            return redirect()->back()->with('error', 'Email is incorrect. Please try again.');
 
         foreach ($validated['ratings'] as $productId => $data) {
             $pizza = Pizza::find($productId);
 
-            if (!$pizza) continue;
+            if (!$pizza)
+                continue;
             Review::create([
                 'order_id' => $order->id,
                 'pizza_id' => $productId,

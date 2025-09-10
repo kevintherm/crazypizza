@@ -8,7 +8,7 @@ use stdClass;
 
 class CrudService
 {
-    public static function delete(string|stdClass|Model $modelClass, int $id, string $column = null): Model
+    public static function delete(string|stdClass|Model $modelClass, string $id, string $column = null): Model
     {
         DB::beginTransaction();
         $item = $modelClass::findOrFail($id);
