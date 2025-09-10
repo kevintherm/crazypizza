@@ -30,7 +30,7 @@ Alpine.store('notifiers', { toast, modal });
 
 Alpine.start();
 
-if (window.location.pathname == '/') {
+if (window.location.pathname == '/' || true) {
 
     const lenis = new Lenis();
 

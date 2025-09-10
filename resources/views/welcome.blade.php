@@ -124,7 +124,7 @@
 
             @foreach ($top6 as $i => $pizza)
                 <article
-                         class="group flex rounded-2xl flex-col overflow-hidden border border-neutral-300 bg-neutral-50 text-neutral-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300 hover:scale-105 transition duration-500 relative">
+                         class="group flex rounded-2xl flex-col overflow-hidden border border-neutral-300 bg-neutral-50 text-neutral-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300  transition duration-500 relative">
 
                     <div class="absolute top-0 left-0 right-0">
                         <div class="rounded-b-4xl w-full h-64 -translate-y-3/4 bg-red-400/20 group-hover:-translate-y-[10%] group-hover:bg-red-400/60 transition-all duration-700"></div>
@@ -139,7 +139,7 @@
                                 <h3 class="text-lg lg:text-xl font-bold text-neutral-900 dark:text-white" aria-describedby="productDescription">{{ $pizza->name }}</h3>
                                 <div class="flex items-center gap-1">
                                     <span class="sr-only">Rated 3 stars</span>
-                                    @php($ratings = 4) {{-- /5 --}}
+                                    @php($ratings = $pizza->rating) {{-- /5 --}}
                                     @for ($i = 0; $i < $ratings; $i++)
                                         <svg class="size-4 text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                             <path fill-rule="evenodd"

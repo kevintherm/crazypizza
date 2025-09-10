@@ -121,7 +121,7 @@
                                 console.error('Failed to copy:', err);
                             });
                     }
-                }" class="mt-6 bg-white px-4 py-2 rounded-lg flex justify-between items-center border border-gray-200 dark:border-gray-700">
+                }" class="mt-10 rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800 flex items-center justify-between px-4 py-2">
                     <pre x-text="url" class="line-clamp-1 text-zinc-700 dark:text-zinc-300"></pre>
                     <button x-on:click="copy(url)">
                         <svg class="size-4 text-zinc-700 dark:text-zinc-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -150,7 +150,7 @@
 
                 {{-- RATING SYSTEM START --}}
                 @if ($order->status == \App\Models\Order::STATUS['completed'])
-                    <div class="mt-10 overflow-hidden rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+                    <div class="mt-10 rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
                         <div class="border-b border-gray-200 p-6 dark:border-gray-700">
                             <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Rate The Craziness</h2>
                             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">We'd love to hear your feedback on your order!</p>

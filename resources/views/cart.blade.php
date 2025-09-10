@@ -91,7 +91,7 @@
                         <div class="col-span-12 md:col-span-9">
                             <textarea x-model="notes" x-grow id="notes" name="notes"
                                       class="w-full rounded-2xl border border-neutral-300 bg-neutral-50 px-2 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black disabled:cursor-not-allowed disabled:opacity-75 dark:border-neutral-700 dark:bg-neutral-900/50 dark:focus-visible:outline-white"
-                                      placeholder="Notes" required></textarea>
+                                      placeholder="Notes"></textarea>
                         </div>
                     </div>
 

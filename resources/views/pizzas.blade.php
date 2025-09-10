@@ -126,7 +126,7 @@
                                         <h3 class="text-lg lg:text-xl font-bold text-neutral-900 dark:text-white" aria-describedby="productDescription">{{ $pizza->name }}</h3>
                                         <div class="flex items-center gap-1">
                                             <span class="sr-only">Rated 3 stars</span>
-                                            @php($ratings = 4) {{-- /5 --}}
+                                            @php($ratings = $pizza->rating) {{-- /5 --}}
                                             @for ($i = 0; $i < $ratings; $i++)
                                                 <svg class="size-4 text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                                     <path fill-rule="evenodd"
@@ -190,7 +190,7 @@
                                         <h3 class="text-lg lg:text-xl font-bold text-neutral-900 dark:text-white" aria-describedby="productDescription">{{ $pizza->name }}</h3>
                                         <div class="flex items-center gap-1">
                                             <span class="sr-only">Rated 3 stars</span>
-                                            @php($ratings = 4) {{-- /5 --}}
+                                            @php($ratings = $pizza->rating) {{-- /5 --}}
                                             @for ($i = 0; $i < $ratings; $i++)
                                                 <svg class="size-4 text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                                     <path fill-rule="evenodd"

@@ -81,12 +81,18 @@ class GuestController extends Controller
         if ($validated['email'] != $order->customer_email) return redirect()->back()->with('error', 'Email is incorrect. Please try again.');
 
         foreach ($validated['ratings'] as $productId => $data) {
+            $pizza = Pizza::find($productId);
+
+            if (!$pizza) continue;
             Review::create([
                 'order_id' => $order->id,
                 'pizza_id' => $productId,
                 'rating' => $data['rating'],
                 'comment' => $data['comment'] ?? null,
             ]);
+
+            $pizza->rating = $pizza->reviews->average('rating');
+            $pizza->save();
         }
 
         $order->reviewed = true;
