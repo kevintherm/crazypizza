@@ -17,7 +17,70 @@
         </style>
     </x-slot>
 
+    <x-slot name="foot">
+        <x-toast />
+
+        <script>
+            window.addEventListener('alpine:init', () => {
+                document.addEventListener('DOMContentLoaded', () => {
+                    $.store('mg', {
+                        itemsCount: 0,
+                        init() {
+                            this.getCount();
+                        },
+                        addToCart(pizzaId) {
+                            axios.post(@js(route('cart.add')), {
+                                    pizza_id: pizzaId,
+                                })
+                                .then(res => {
+                                    this.itemsCount = res.data?.data;
+
+                                    $.store('notifiers').toast({
+                                        variant: 'success',
+                                        title: 'Yayy!',
+                                        message: res.data.message || 'Success'
+                                    });
+                                })
+                                .catch(err => {
+                                    $.store('notifiers').toast({
+                                        variant: err.status == 400 ? 'warning' : 'danger',
+                                        title: 'Oops...',
+                                        message: err.response?.data?.message || 'Something went wrong.'
+                                    });
+                                });
+                        },
+                        getCount() {
+                            axios.get(@js(route('cart.count')))
+                                .then(res => {
+                                    if (res.data.data) this.itemsCount = res.data.data;
+                                })
+                                .catch(err => {
+                                    $.store('notifiers').toast({
+                                        variant: err.status == 400 ? 'warning' : 'danger',
+                                        title: 'Oops...',
+                                        message: err.response?.data?.message || 'Something went wrong.'
+                                    });
+                                });
+
+                        }
+                    });
+                })
+            });
+        </script>
+    </x-slot>
+
     <x-navbar />
+
+    <div class="fixed right-0 md:top-0 bottom-0 md:translate-y-1/2 z-30">
+        <a class="block me-4 mb-4 bg-[#E53935] rounded-full p-4 hover:scale-105 focus:scale-105 relative" href="/cart" type="button" draggable="false">
+            <svg class="size-8 stroke-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+            </svg>
+            <span x-data x-show="$store.mg?.itemsCount" x-text="$store.mg?.itemsCount" class="absolute left-1/2 -top-1 rounded-full bg-white px-1 leading-4 text-xs font-medium text-danger"></span>
+        </a>
+    </div>
+
 
     <main x-init="$store.prefs.setTheme('light')" x-init="$watch('$store.prefs.state.theme', () => $store.prefs.setTheme('light'))" id="main" class="flex flex-col min-h-[80vh] relative overflow-hidden">
 
@@ -99,7 +162,8 @@
                             {{ $pizza->description }}
                         </p>
                         <small class="text-gray-500 text-xs">*Contains {{ $pizza->ingredients->pluck('name')->implode(', ') }}</small>
-                        <button class="flex items-center justify-center gap-2 whitespace-nowrap bg-red-400 px-4 py-2 text-center text-sm font-medium tracking-wide text-neutral-100 transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bg-red-400 active:opacity-100 active:outline-offset-0 dark:bg-white dark:text-bg-red-400 dark:focus-visible:outline-white rounded-2xl"
+                        <button x-on:click="$store.mg.addToCart(@js($pizza->id))"
+                                class="flex items-center justify-center gap-2 whitespace-nowrap bg-red-400 px-4 py-2 text-center text-sm font-medium tracking-wide text-neutral-100 transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bg-red-400 active:opacity-100 active:outline-offset-0 dark:bg-white dark:text-bg-red-400 dark:focus-visible:outline-white rounded-2xl"
                                 type="button">
                             <svg class="size-3.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
                                 <path fill-rule="evenodd"

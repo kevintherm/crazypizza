@@ -8,14 +8,16 @@ import focus from '@alpinejs/focus';
 import collapse from '@alpinejs/collapse';
 import grow from 'alpinejs-textarea-grow';
 import anchor from '@alpinejs/anchor';
-import intersect from '@alpinejs/intersect'
+import intersect from '@alpinejs/intersect';
+import persist from '@alpinejs/persist';
 
 import { prefs } from './stores';
 import Lenis from 'lenis';
 
 import { alpineToast as toast, alpineModal as modal } from './notifiers';
 
-Alpine.plugin(intersect)
+Alpine.plugin(persist);
+Alpine.plugin(intersect);
 Alpine.plugin(grow);
 Alpine.plugin(anchor);
 Alpine.plugin(collapse);
@@ -28,25 +30,28 @@ Alpine.store('notifiers', { toast, modal });
 
 Alpine.start();
 
-const lenis = new Lenis();
+if (window.location.pathname == '/') {
 
-// Use requestAnimationFrame to continuously update the scroll
-function raf(time) {
-    lenis.raf(time);
+    const lenis = new Lenis();
+
+    function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+    }
+
     requestAnimationFrame(raf);
-}
 
-requestAnimationFrame(raf);
-
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', e => {
-        e.preventDefault()
-        const target = document.querySelector(anchor.getAttribute('href'))
-        if (target) {
-            lenis.scrollTo(target, { offset: -100 })
-        }
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', e => {
+            e.preventDefault()
+            const target = document.querySelector(anchor.getAttribute('href'))
+            if (target) {
+                lenis.scrollTo(target, { offset: -100 })
+            }
+        })
     })
-})
+
+}
 
 delete Alpine.version;
 window.$ = Alpine;

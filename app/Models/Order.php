@@ -2,8 +2,12 @@
 
 namespace App\Models;
 
+use App\Casts\MoneyCast;
+use Illuminate\Database\Eloquent\Casts\AsArrayObject;
+use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Str;
 
 class Order extends Model
 {
@@ -11,9 +15,16 @@ class Order extends Model
 
     protected $guarded = ['id'];
 
+    protected $casts = [
+        'total_amount' => MoneyCast::class,
+        'json' => 'array'
+    ];
+
     public const STATUS = [
         'pending' => 'pending',
+        'paid' => 'paid',
         'shipped' => 'shipped',
+        'arrived' => 'arrived',
         'completed' => 'completed',
         'cancelled' => 'cancelled'
     ];
@@ -22,20 +33,20 @@ class Order extends Model
     {
         $year = date('Y');
 
-        // Find the last invoice created this year
         $lastInvoice = Order::whereYear('created_at', $year)
             ->orderBy('id', 'desc')
             ->first();
 
         if ($lastInvoice) {
-            // Extract the number part (last 3 digits)
             $lastNumber = intval(substr($lastInvoice->invoice_number, -3));
             $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
         } else {
             $newNumber = '001';
         }
 
-        return "INV-{$year}-{$newNumber}";
+        $random = strtoupper(Str::random(6));
+
+        return "INV-{$year}-{$newNumber}-{$random}";
     }
 
 }

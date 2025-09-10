@@ -10,10 +10,6 @@
                 -webkit-text-stroke: 2px #fff;
                 color: transparent;
             }
-
-            * {
-                transition: all 500ms;
-            }
         </style>
     </x-slot>
 

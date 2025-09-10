@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
@@ -11,6 +12,11 @@ Route::middleware(['guest', 'init-cart'])->group(function () {
     Route::get('', [GuestController::class, 'welcome'])->name('welcome');
     Route::get('pizzas', [GuestController::class, 'pizzas'])->name('pizzas');
     Route::get('cart', [GuestController::class, 'cart'])->name('cart');
+
+    Route::post('checkout', [PaymentController::class, 'checkout'])->name('checkout');
+    Route::get('/checkout/success', [PaymentController::class, 'success'])->name('checkout.success');
+    Route::get('/checkout/cancel', [PaymentController::class, 'cancel'])->name('checkout.cancel');
+    Route::get('/order/{invoice}', [GuestController::class, 'orderConfirmation'])->name('order.confirmation');
 
     Route::prefix('cart')->middleware('limit:15,30')->group(function () {
         Route::get('count', [CartController::class, 'getCount'])->name('cart.count');

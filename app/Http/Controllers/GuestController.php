@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\Order;
 use App\Models\Pizza;
 use Illuminate\Http\Request;
 use SessionHandler;
@@ -26,13 +27,16 @@ class GuestController extends Controller
     public function cart(Request $request)
     {
         $cart = Cart::find($request->session()->get('cart_id'))->load(['items', 'items.pizza']);
-        if (!$cart) redirect('/');
-
-        $cartItems = $cart->items;
-
-        // filter items
-
+        if (!$cart)
+            redirect('/');
 
         return view('cart', compact('cart'));
+    }
+
+    public function orderConfirmation($invoice)
+    {
+        $order = Order::where('invoice_number', $invoice)->firstOrFail();
+
+        return view('order-confirmation', compact('order'));
     }
 }

@@ -1,6 +1,6 @@
 <nav x-init="window.addEventListener('scroll', () => {
     scrolled = window.scrollY > 200
-})" x-data="{ mobileMenuIsOpen: false, scrolled: false }" x-on:click.away="mobileMenuIsOpen = false" class=" z-50 fixed top-0 w-full" aria-label="navbar">
+})" x-data="{ mobileMenuIsOpen: false, scrolled: false }" x-on:click.away="mobileMenuIsOpen = false" class=" z-30 fixed top-0 w-full" aria-label="navbar">
     <div class="flex items-center justify-between px-8 py-6 rounded-b-2xl md:rounded-full md:m-4 transition-all duration-500" :class="scrolled ? 'bg-[#E53935]/85 backdrop-blur-sm' : 'bg-transparent'">
         <a class="flex items-center" href="/">
             <svg class="size-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -17,6 +17,7 @@
         <ul class="hidden items-center gap-6 md:flex">
             <li><a class="font-medium underline-offset-2 focus:outline-hidden focus:underline text-white" href="/track">Track</a></li>
             <li><a class="font-medium underline-offset-2 focus:outline-hidden focus:underline text-white" href="/pizzas">Menu</a></li>
+            <li><a class="font-medium underline-offset-2 focus:outline-hidden focus:underline text-white" href="/cart">Cart</a></li>
             <li><a class="font-medium underline-offset-2 focus:outline-hidden focus:underline text-white" href="/about">About</a></li>
             <li><a class="font-medium underline-offset-2 focus:outline-hidden focus:underline text-white" href="/login">Login</a></li>
         </ul>
@@ -34,6 +35,7 @@
             class="fixed max-h-svh overflow-y-auto inset-x-0 top-0 z-50 flex flex-col divide-y divide-zinc-300 rounded-b-2xl border-b border-zinc-300 bg-zinc-50 px-6 pb-6 pt-20 dark:divide-zinc-700 dark:border-zinc-700 dark:bg-zinc-900 md:hidden">
             <li class="py-4"><a class="w-full text-lg font-medium text-zinc-800 focus:underline" href="/track">Track</a></li>
             <li class="py-4"><a class="w-full text-lg font-medium text-zinc-800 focus:underline" href="/pizzas">Menu</a></li>
+            <li class="py-4"><a class="w-full text-lg font-medium text-zinc-800 focus:underline" href="/cart">Cart</a></li>
             <li class="py-4"><a class="w-full text-lg font-medium text-zinc-800 focus:underline" href="/about">About</a></li>
             <li class="py-4"><a class="w-full text-lg font-medium text-zinc-800 focus:underline" href="/login">Login</a></li>
         </ul>

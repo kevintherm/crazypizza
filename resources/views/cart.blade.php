@@ -12,19 +12,101 @@
                 -webkit-text-stroke: 2px #fff;
                 color: transparent;
             }
-
-            * {
-                transition: all 500ms;
-            }
         </style>
     </x-slot>
 
     <x-slot name="foot">
         <x-toast />
 
+        <x-modal id="modal-checkout" :static="true">
+            <form x-data="{
+                customer_name: $persist('').as('checkout_name'),
+                customer_email: $persist('').as('checkout_email'),
+                customer_phone: $persist('').as('checkout_phone'),
+                delivery_address: $persist('').as('checkout_address')
+            }" id ="checkout" action="{{ route('checkout') }}" method="POST">
+                @csrf
+
+                <div class="p-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex flex-col gap-2">
+                            <h1 class="text-lg font-semibold">Checkout</h1>
+                            <p>Wait! Before you pay, we need to know your information for delivery purposes!</p>
+                        </div>
+                    </div>
+
+                    <div class="h-8 w-full"></div>
+
+                    <div class="grid grid-cols-12">
+                        <div class="col-span-12 md:col-span-3">
+                            <label class="w-fit pl-0.5 text-sm capitalize" for="customer_name">Name <span class="text-red-500">*</span></label>
+                        </div>
+                        <div class="col-span-12 md:col-span-9">
+                            <input x-model="customer_name" id="customer_name" name="customer_name"
+                                   class="w-full rounded-2xl border border-neutral-300 bg-neutral-50 px-2 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black disabled:cursor-not-allowed disabled:opacity-75 dark:border-neutral-700 dark:bg-neutral-900/50 dark:focus-visible:outline-white"
+                                   type="text" autocomplete="name" placeholder="Name" required />
+                        </div>
+
+                        <div class="h-8 col-span-12"></div>
+
+                        <div class="col-span-12 md:col-span-3">
+                            <label class="w-fit pl-0.5 text-sm capitalize" for="customer_email">Email <span class="text-red-500">*</span></label>
+                        </div>
+                        <div class="col-span-12 md:col-span-9">
+                            <input x-model="customer_email" id="customer_email" name="customer_email"
+                                   class="w-full rounded-2xl border border-neutral-300 bg-neutral-50 px-2 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black disabled:cursor-not-allowed disabled:opacity-75 dark:border-neutral-700 dark:bg-neutral-900/50 dark:focus-visible:outline-white"
+                                   type="text" autocomplete="email" placeholder="Email" :value="@js(old('customer_email'))" required />
+                        </div>
+
+                        <div class="h-8 col-span-12"></div>
+
+                        <div class="col-span-12 md:col-span-3">
+                            <label class="w-fit pl-0.5 text-sm capitalize" for="customer_phone">Phone</label>
+                        </div>
+                        <div class="col-span-12 md:col-span-9">
+                            <input x-model="customer_phone" id="customer_phone" name="customer_phone"
+                                   class="w-full rounded-2xl border border-neutral-300 bg-neutral-50 px-2 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black disabled:cursor-not-allowed disabled:opacity-75 dark:border-neutral-700 dark:bg-neutral-900/50 dark:focus-visible:outline-white"
+                                   type="tel" autocomplete="tel" :value="@js(old('customer_phone'))" placeholder="Phone number" />
+                        </div>
+
+                        <div class="h-8 col-span-12"></div>
+                        <div class="col-span-12 border-b border-zinc-400"></div>
+                        <div class="h-8 col-span-12"></div>
+
+                        <div class="col-span-12 md:col-span-3">
+                            <label class="w-fit pl-0.5 text-sm capitalize" for="delivery_address">Delivery Address <span class="text-red-500">*</span></label>
+                        </div>
+                        <div class="col-span-12 md:col-span-9">
+                            <textarea x-model="delivery_address" x-grow id="delivery_address" name="delivery_address"
+                                      class="w-full rounded-2xl border border-neutral-300 bg-neutral-50 px-2 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black disabled:cursor-not-allowed disabled:opacity-75 dark:border-neutral-700 dark:bg-neutral-900/50 dark:focus-visible:outline-white"
+                                      autocomplete="address-level4" placeholder="Delivery address" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="h-8 w-full"></div>
+
+                    <div class="flex justify-end gap-4">
+                        <button x-on:click="$store.notifiers.modal('#modal-checkout', 'hide')"
+                                class="whitespace-nowrap rounded-2xl bg-neutral-50 border border-neutral-50 px-4 py-2 text-sm font-medium tracking-wide text-neutral-900 transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-50 active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-neutral-900 dark:border-neutral-900 dark:text-white dark:focus-visible:outline-neutral-900"
+                                type="button">Cancel</button>
+                        <button class="whitespace-nowrap rounded-2xl bg-black border border-black px-4 py-2 text-sm font-medium tracking-wide text-neutral-100 transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-white dark:border-white dark:text-black dark:focus-visible:outline-white"
+                                type="submit">Proceed</button>
+                    </div>
+                </div>
+            </form>
+        </x-modal>
+
         <script>
             window.addEventListener('alpine:init', () => {
                 document.addEventListener('DOMContentLoaded', () => {
+                    @if (session('error'))
+                        $.store('notifiers').toast({
+                            variant: 'danger',
+                            title: 'Oops...',
+                            message: @js(session('error'))
+                        });
+                    @endif
+
                     $.store('mg', {
                         subtotal: 0,
                         shipping: 0,
@@ -133,7 +215,7 @@
                     <a class="text-red-400 hover:underline" href="{{ route('pizzas') }}">Browse Pizzas</a>
                 </div>
 
-                <div x-show="$store.mg?.cartItems.length > 0" class="grid grid-cols-12 gap-y-8 md:gap-8 items-start">
+                <div x-show="$store.mg?.cartItems.length> 0" class="grid grid-cols-12 gap-y-8 md:gap-8 items-start">
 
                     <div class="col-span-12 md:col-span-8 flex flex-col gap-4">
 
@@ -330,13 +412,13 @@
                         </div>
 
                         <div class="pt-2">
-                            <button class="w-full whitespace-nowrap rounded-2xl bg-black border border-black px-4 py-2 text-lg font-medium tracking-wide text-neutral-100 transition hover:bg-gray-800 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-white dark:border-white dark:text-black dark:focus-visible:outline-white"
+                            <button x-on:click="$store.notifiers.modal('#modal-checkout', 'show')"
+                                    class="w-full whitespace-nowrap rounded-2xl bg-black border border-black px-4 py-2 text-lg font-medium tracking-wide text-neutral-100 transition hover:bg-gray-800 text-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed dark:bg-white dark:border-white dark:text-black dark:focus-visible:outline-white"
                                     type="button">Checkout</button>
+
                         </div>
 
                     </div>
-
-                </div>
 
             </section>
 

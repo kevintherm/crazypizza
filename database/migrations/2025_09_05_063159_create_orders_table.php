@@ -15,16 +15,18 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('invoice_number')->unique();
+            $table->string('stripe_session_id')->nullable();
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
             // $table->foreignId('coupon_id')->nullable()->constrained()->onDelete('set null');
             // $table->foreignId('payment_id')->nullable()->constrained()->onDelete('set null');
-            $table->string('customer_name');
-            $table->string('customer_email');
-            $table->string('customer_phone');
-            $table->text('delivery_address');
+            $table->string('customer_name')->nullable();
+            $table->string('customer_email')->nullable();
+            $table->string('customer_phone')->nullable();
+            $table->text('delivery_address')->nullable();
             $table->decimal('total_amount', 10, 2);
             $table->enum('status', array_values(Order::STATUS))->default(Order::STATUS['pending']);
             $table->text('notes')->nullable();
+            $table->json('json')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
