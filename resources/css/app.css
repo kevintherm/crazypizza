@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@plugin "@tailwindcss/typography";
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
@@ -84,25 +86,22 @@ button:not(:disabled) {
     animation: shake 0.3s cubic-bezier(.36, .07, .19, .97) both;
 }
 
-::-webkit-scrollbar-track
-{
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     border-radius: var(--radius-md);
-	background-color: var(--color-surface);
+    background-color: var(--color-surface);
 }
 
-::-webkit-scrollbar
-{
-	width: 8px;
+::-webkit-scrollbar {
+    width: 8px;
     border-radius: var(--radius-md);
-	background-color: var(--color-surface);
+    background-color: var(--color-surface);
 }
 
-::-webkit-scrollbar-thumb
-{
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+::-webkit-scrollbar-thumb {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
     border-radius: var(--radius-md);
-	background-color: var(--color-on-surface);
+    background-color: var(--color-on-surface);
 }
 
 textarea[x-grow] {

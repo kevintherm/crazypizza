@@ -1,13 +1,14 @@
 <?php
 
-use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\GuestController;
-use App\Http\Controllers\IngredientController;
 
 Route::middleware(['guest', 'init-cart'])->group(function () {
+
+    Route::view('about', 'about')->name('about');
 
     Route::get('', [GuestController::class, 'welcome'])->name('welcome');
     Route::get('pizzas', [GuestController::class, 'pizzas'])->name('pizzas');

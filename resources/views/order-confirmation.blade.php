@@ -80,7 +80,7 @@
                 </div>
 
                 <div x-data="{
-                    url: @js(route('order.confirmation', ['invoice' => 'asd'])),
+                    url: @js(route('order.confirmation', ['invoice' => $order->invoice_number])),
                     copy(text) {
                         navigator.clipboard.writeText(text)
                             .then(() => {
