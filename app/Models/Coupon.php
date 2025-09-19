@@ -13,6 +13,8 @@ class Coupon extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'discount' => MoneyCast::class
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+        'discount' => MoneyCast::class,
     ];
 }

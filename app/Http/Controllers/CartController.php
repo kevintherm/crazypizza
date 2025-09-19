@@ -89,6 +89,10 @@ class CartController extends Controller
                 $cart->save();
 
                 $discount = $coupon->discount;
+
+                $coupon->quota_used += 1;
+                $coupon->is_active = $coupon->quota_used < $coupon->quota;
+                $coupon->save();
             }
 
             foreach ($updates as $update) {
@@ -105,7 +109,6 @@ class CartController extends Controller
             $cart->refresh();
 
             $subtotal = $this->calculateSubtotal($cart->items);
-
             $cart->total = $subtotal;
             $cart->save();
 

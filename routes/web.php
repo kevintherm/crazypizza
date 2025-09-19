@@ -49,6 +49,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('orders')->group(function () {
         Route::view('/', 'admin.manage-orders');
+        Route::view('/coupon', 'admin.manage-coupons');
     });
 
 

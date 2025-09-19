@@ -86,6 +86,10 @@
                                 <dt class="font-medium text-gray-900 dark:text-white">Order Date:</dt>
                                 <dd>{{ $order->created_at->format('F j, Y H:m') }}</dd>
                             </div>
+                            <div class="flex justify-between">
+                                <dt class="font-medium text-gray-900 dark:text-white">Coupon Code:</dt>
+                                <dd>{{ $order->coupon_code }}</dd>
+                            </div>
 
                             <div class="flex justify-between pt-2 border-t border-gray-200 dark:border-gray-600">
                                 <dt class="text-base font-bold text-gray-900 dark:text-white">Total Amount:</dt>

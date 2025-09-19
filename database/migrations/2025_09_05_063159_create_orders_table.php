@@ -19,10 +19,12 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
             // $table->foreignId('coupon_id')->nullable()->constrained()->onDelete('set null');
             // $table->foreignId('payment_id')->nullable()->constrained()->onDelete('set null');
+            $table->string('coupon_code')->nullable();
             $table->string('customer_name')->nullable();
             $table->string('customer_email')->nullable();
             $table->string('customer_phone')->nullable();
             $table->text('delivery_address')->nullable();
+            $table->decimal('total_discount', 10, 2)->default(0);
             $table->decimal('total_amount', 10, 2);
             $table->enum('status', array_values(Order::STATUS))->default(Order::STATUS['pending']);
             $table->text('notes')->nullable();

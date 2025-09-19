@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\Coupon;
+use App\Models\Ingredient;
 use App\Models\Order;
+use App\ValueObjects\Money;
 use DB;
 use Error;
 use Helper;
@@ -45,29 +48,88 @@ class PaymentController extends Controller
             }
 
             $lineItems = [];
+
             foreach ($cart->items as $item) {
                 $lineItems[] = [
                     'price_data' => [
                         'currency' => 'usd',
                         'product_data' => [
                             'name' => $item->pizza->name,
+                            'description' => Str::limit($item->pizza->description, 100) . "\n'Contains: " . implode(', ', $item->pizza->ingredients->pluck('name')->toArray()) . ".",
+                            'images' => [
+                                // asset("storage/{$item->pizza->image}")
+                                'https://plus.unsplash.com/premium_photo-1757322537445-892532434841?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+                            ]
                         ],
-                        'unit_amount' => (int) ($cart->total->toFloat() * 100),
+                        'unit_amount_decimal' => $item->pizza->price->toFloat() * 100,
                     ],
                     'quantity' => $item->quantity,
+                ];
+
+                foreach ($item->ingredients ?? [] as $ingredientItem) {
+                    $ingredient = Ingredient::find($ingredientItem['id']);
+                    if (!$ingredient)
+                        continue;
+
+                    $lineItems[] = [
+                        'price_data' => [
+                            'currency' => 'usd',
+                            'product_data' => [
+                                'name' => "Topping: $ingredient->name",
+                                'description' => Str::limit($ingredient->description, 100),
+                                'images' => [
+                                    // asset("storage/{$ingredient->image}")
+                                    'https://plus.unsplash.com/premium_photo-1757322537445-892532434841?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+                                ]
+                            ],
+                            'unit_amount_decimal' => $ingredient->price_per_unit->toFloat() * 100,
+                        ],
+                        'quantity' => $ingredientItem['quantity'],
+                    ];
+                }
+            }
+
+            $discounts = [];
+
+            $coupon = Coupon::where('code', $cart->coupon_code)->where('is_active', true)->first();
+
+            if ($coupon) {
+                $discounts['Coupon'] = $coupon->discount;
+            }
+
+            $totalDiscount = Money::sum(array_values($discounts));
+            $totalAmount = $cart->total->sub($totalDiscount);
+
+            if ($totalAmount->cmp('0') < 0) {
+                $totalAmount = new Money('0');
+
+                $lineItems = [
+                    [
+                        'price_data' => [
+                            'currency' => 'usd',
+                            'product_data' => [
+                                'name' => 'FREE ORDER',
+                                'description' => 'Congratulations! Your order total is $0.00.',
+                            ],
+                            'unit_amount_decimal' => 0,
+                        ],
+                        'quantity' => 1,
+                    ]
                 ];
             }
 
             $order = Order::create([
                 'invoice_number' => Order::generateInvoiceNumber(),
                 'stripe_session_id' => null,
-                'total_amount' => $cart->total->toFloat(),
                 'status' => Order::STATUS['pending'],
                 'customer_name' => $validated['customer_name'],
                 'customer_email' => $validated['customer_email'],
                 'delivery_address' => $validated['delivery_address'],
                 'customer_phone' => $validated['customer_phone'],
                 'notes' => $validated['notes'],
+                'total_amount' => $totalAmount,
+                'coupon_code' => $coupon->code ?? null,
+                'total_discount' => $totalDiscount,
                 'json' => null
             ]);
 
@@ -163,7 +225,8 @@ class PaymentController extends Controller
     public function cancel(Request $request)
     {
         $invoice = $request->input('invoice', null);
-        if (!$invoice) return redirect()->route('cart');
+        if (!$invoice)
+            return redirect()->route('cart');
 
         if ($invoice) {
             $order = Order::where('invoice_number', $invoice)->first();

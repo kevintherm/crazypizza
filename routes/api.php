@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CouponController;
 use App\Http\Controllers\ReviewController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -43,6 +44,13 @@ Route::middleware(['web', 'auth:sanctum'])->group(function () {
             Route::post('/', [OrderController::class, 'createUpdate'])->name('orders.createUpdate');
             Route::delete('/', [OrderController::class, 'delete'])->name('orders.delete');
             Route::delete('/bulk-delete', [OrderController::class, 'bulkDelete'])->name('orders.bulkDelete');
+        });
+
+        Route::prefix('coupons')->group(function () {
+            Route::get('data-table', [CouponController::class, 'dataTable'])->name('coupons.dataTable');
+            Route::post('/', [CouponController::class, 'createUpdate'])->name('coupons.createUpdate');
+            Route::delete('/', [CouponController::class, 'delete'])->name('coupons.delete');
+            Route::delete('/bulk-delete', [CouponController::class, 'bulkDelete'])->name('coupons.bulkDelete');
         });
 
     });
