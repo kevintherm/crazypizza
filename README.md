@@ -24,7 +24,7 @@ You can copy this repo and modify it to your needs with no attribution required.
 1.  **Clone the repository:**
 
     ```bash
-    git clone [https://github.com/crazypizza/crazypizza.git](https://github.com/crazypizza/crazypizza.git)
+    git clone https://github.com/crazypizza/crazypizza.git
     ```
 
 2.  **Install dependencies:**
