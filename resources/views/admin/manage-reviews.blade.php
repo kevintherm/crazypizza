@@ -65,7 +65,8 @@
                         class: "w-32",
                         data: (row, index) => {
                             return row.order.invoice_number;
-                        }
+                        },
+                        type: 'copyable'
                     },
                     {
                         name: "Rating",
@@ -75,7 +76,8 @@
                     {
                         name: "Comment",
                         class: "w-40",
-                        data: 'comment'
+                        data: 'comment',
+                        type: 'copyable'
                     },
                     {
                         name: "Updated At",

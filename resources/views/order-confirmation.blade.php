@@ -142,7 +142,7 @@
                     </a>
                     @if ($order->status == \App\Models\Order::STATUS['paid'])
                         <a class="inline-block rounded-md border border-transparent bg-[#E53935] px-6 py-3 text-base font-medium text-white shadow-sm hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-[#E53935] focus:ring-offset-2 "
-                           href="alert('soon')">
+                           href="javascript:alert('soon')">
                             Live View
                         </a>
                     @endif

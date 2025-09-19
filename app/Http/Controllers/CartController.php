@@ -113,6 +113,9 @@ class CartController extends Controller
             $tax = new Money('0');
 
             $total = Money::sum([$shipping, $tax, $subtotal])->sub($discount);
+            if ($total->cmp('0') < 0) {
+                $total = new Money('0');
+            }
 
             return ApiResponse::success("Cart updated successfully.", [
                 'shipping' => $shipping,
@@ -150,7 +153,11 @@ class CartController extends Controller
             if (isset($item->ingredients)) {
                 $ingredients = Ingredient::find(collect($item->ingredients)->pluck('id'));
                 foreach ($ingredients as $ingredient) {
-                    $subtotal = $subtotal->add($ingredient->price_per_unit->mul(collect($item->ingredients)->firstWhere('id', $ingredient->id)['quantity']));
+                    $subtotal = $subtotal->add(
+                        $ingredient->price_per_unit->mul(
+                            collect($item->ingredients)->firstWhere('id', $ingredient->id)['quantity']
+                        )
+                    );
                 }
             }
         }

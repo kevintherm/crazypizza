@@ -16,8 +16,6 @@ Route::get('/user', function (Request $request) {
 
 Route::middleware(['web', 'auth:sanctum'])->group(function () {
 
-
-
     Route::prefix('products')->group(function () {
 
         Route::prefix('ingredients')->group(function () {
@@ -46,6 +44,16 @@ Route::middleware(['web', 'auth:sanctum'])->group(function () {
             Route::delete('/', [OrderController::class, 'delete'])->name('orders.delete');
             Route::delete('/bulk-delete', [OrderController::class, 'bulkDelete'])->name('orders.bulkDelete');
         });
+
+    });
+
+    Route::prefix('dashboard')->group(function () {
+        Route::get('total-revenue', [App\Http\Controllers\DashboardController::class, 'getTotalRevenue'])->name('dashboard.totalRevenue');
+        Route::get('order-count', [App\Http\Controllers\DashboardController::class, 'getOrderCount'])->name('dashboard.orderCount');
+        Route::get('pizza-count', [App\Http\Controllers\DashboardController::class, 'getPizzaCount'])->name('dashboard.pizzaCount');
+        Route::get('avg-rating', [App\Http\Controllers\DashboardController::class, 'getAvgRating'])->name('dashboard.avgRating');
+        Route::get('order-chart', [App\Http\Controllers\DashboardController::class, 'getOrderChartData'])->name('dashboard.orderChart');
+        Route::get('revenue-chart', [App\Http\Controllers\DashboardController::class, 'getRevenueChartData'])->name('dashboard.revenueChart');
 
     });
 

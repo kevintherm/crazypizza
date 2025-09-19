@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('coupons', function (Blueprint $table) {
             $table->id();
-            $table->string('code')->index();
+            $table->string('code')->unique()->index();
             $table->integer('quota_used')->default(0);
             $table->integer('quota')->default(0);
             $table->boolean('is_active')->default(false);

@@ -14,6 +14,8 @@ import { createDataTableStore, fileUploaderStore, prefs } from './stores';
 import { combobox } from './components';
 import AirDatepicker from 'air-datepicker';
 
+import Chart from 'chart.js/auto';
+
 const IMAGE_NOT_FOUND = "https://placehold.co/300";
 window.IMAGE_NOT_FOUND = IMAGE_NOT_FOUND;
 
@@ -54,6 +56,7 @@ Alpine.store('when', {
 });
 
 Alpine.data('combobox', combobox);
+Alpine.store('prefs', prefs);
 
 window.DatePicker = (el, options = {}) => new AirDatepicker(el, {
     locale: localeEn,
@@ -79,7 +82,8 @@ window.DatePicker = (el, options = {}) => new AirDatepicker(el, {
     ...options
 });
 
-Alpine.store('prefs', prefs);
+window.Chart = Chart;
 
 window.$ = Alpine;
+
 Alpine.start();

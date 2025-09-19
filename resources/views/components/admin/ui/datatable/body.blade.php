@@ -2,7 +2,7 @@
 
 {{-- Requires DataTableStore! --}}
 
-<section id="{{ $id }}" aria-label="Data Table">
+<section id="{{ $id }}" {{ $attributes }} aria-label="Data Table">
 
     {{-- Search and Filtering --}}
     <div class="h-12 w-full"></div>
@@ -219,7 +219,7 @@
                                 </template>
 
                                 <template
-                                    x-if="col.type != 'money' && col.name !== 'CHECK_ALL' && String(col.name).replace(' ', '_').toLowerCase() !== 'updated_at' && col.name !== '#' && col.type !== 'image' && !['action', 'actions'].includes(String(col.name).toLowerCase())">
+                                    x-if="typeof col.data !== 'function' && col.type != 'money' && col.name !== 'CHECK_ALL' && String(col.name).replace(' ', '_').toLowerCase() !== 'updated_at' && col.name !== '#' && col.type !== 'image' && !['action', 'actions'].includes(String(col.name).toLowerCase())">
                                     <p class="p-4 wrap-break-word truncate cursor-pointer"
                                         x-on:click="$el.classList.toggle('truncate')"
                                         x-text="col.data ? row[col.data] : row[col.name.toLowerCase().replaceAll(' ', '')]">

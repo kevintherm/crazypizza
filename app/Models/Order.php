@@ -5,13 +5,14 @@ namespace App\Models;
 use App\Casts\MoneyCast;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Str;
 
 class Order extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasFactory;
 
     protected $guarded = ['id'];
 
@@ -26,7 +27,9 @@ class Order extends Model
         'shipped' => 'shipped',
         'arrived' => 'arrived',
         'completed' => 'completed',
-        'cancelled' => 'cancelled'
+        'cancelled' => 'cancelled',
+        // 'failed' => 'failed',
+        // 'refunded' => 'refunded',
     ];
 
     public function reviews()

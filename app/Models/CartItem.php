@@ -14,6 +14,8 @@ class CartItem extends Model
 
     protected $guarded = ['id'];
 
+    protected $hidden = ['created_at', 'updated_at', 'deleted_at'];
+
     protected $casts = [
         'ingredients' => 'array',
     ];
@@ -25,6 +27,7 @@ class CartItem extends Model
 
     public function pizza()
     {
-        return $this->belongsTo(Pizza::class);
+        return $this->belongsTo(Pizza::class)
+            ->with('ingredients');
     }
 }

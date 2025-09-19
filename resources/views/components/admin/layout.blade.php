@@ -47,7 +47,7 @@
         </nav>
 
         <!-- main content  -->
-        <div id="main-content" class="w-full overflow-y-auto bg-white dark:bg-neutral-950">
+        <div id="main-content" class="w-full overflow-y-auto bg-neutral-50 dark:bg-neutral-800">
             <x-banner />
 
             {{ $slot }}

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Ingredient;
+use App\Models\Order;
 use App\Models\Pizza;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -31,5 +32,7 @@ class DatabaseSeeder extends Seeder
                 Ingredient::factory(rand(1, 3))->create()->pluck('id')->toArray()
             );
         }
+
+        Order::factory(20)->create();
     }
 }
