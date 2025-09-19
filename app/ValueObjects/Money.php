@@ -47,6 +47,11 @@ class Money implements JsonSerializable
         return bccomp($this->amount, $value, 2);
     }
 
+    public function isNegativeOrZero(): bool
+    {
+        return $this->cmp("0") <= 0;
+    }
+
     public function toString(): string
     {
         return $this->amount;
@@ -55,6 +60,11 @@ class Money implements JsonSerializable
     public function toFloat(): float
     {
         return (float) $this->amount;
+    }
+
+    public function toInt(): int
+    {
+        return intval($this->toFloat() * 100);
     }
 
     public function __toString(): string

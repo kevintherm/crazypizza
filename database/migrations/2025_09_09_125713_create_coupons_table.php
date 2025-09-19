@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('coupons', function (Blueprint $table) {
             $table->id();
+            $table->string('stripe_coupon_id')->nullable();
             $table->string('code')->unique()->index();
             $table->integer('quota_used')->default(0);
             $table->integer('quota')->default(0);

@@ -4,7 +4,9 @@
             class="md:rounded-radius border-outline bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark group flex w-full flex-col overflow-hidden md:max-w-sm md:border">
             @csrf
             <div class="flex flex-col gap-4 p-6">
-                <span class="text-sm font-medium">{{ config('app.name') }}</span>
+                <a href="/">
+                    <span class="text-sm font-medium">{{ config('app.name') }}</span>
+                </a>
                 <h3 class="text-on-surface-strong dark:text-on-surface-dark-strong text-balance text-xl font-bold lg:text-2xl"
                     aria-describedby="featureDescription">Login</h3>
 

@@ -82,6 +82,8 @@ class CartController extends Controller
                     ->first();
 
                 if (!$coupon) {
+                    $cart->coupon_code = null;
+                    $cart->save();
                     return ApiResponse::error('Invalid coupon.');
                 }
 

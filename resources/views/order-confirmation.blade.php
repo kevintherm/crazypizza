@@ -88,7 +88,11 @@
                             </div>
                             <div class="flex justify-between">
                                 <dt class="font-medium text-gray-900 dark:text-white">Coupon Code:</dt>
-                                <dd>{{ $order->coupon_code }}</dd>
+                                <dd>
+                                    <span class="px-4 py-0.5 rounded-radius border border-outline dark:border-outline-dark bg-surface/50 dark:bg-surface-dark/50 uppercase">
+                                        {{ $order->coupon_code }}
+                                    </span>
+                                </dd>
                             </div>
 
                             <div class="flex justify-between pt-2 border-t border-gray-200 dark:border-gray-600">
@@ -103,6 +107,10 @@
                                     </div>
                                 @endforeach
                             @endif
+                            <div class="flex justify-between">
+                                <dt class="font-bold text-gray-900 dark:text-white">Coupon:</dt>
+                                <dd>-{{ (new \App\ValueObjects\Money($order->coupon->discount))->format() }}</dd>
+                            </div>
                         </dl>
                         <p class="mt-6 text-sm text-gray-500 dark:text-gray-400">
                             You can use your invoice number to track your order. If you have any questions, please contact our support team.

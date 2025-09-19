@@ -44,7 +44,7 @@ class PaymentController extends Controller
             $cart = Cart::with(['items', 'items.pizza'])->find($cartId);
 
             if (!$cart || $cart->items->isEmpty()) {
-                return redirect()->route('welcome')->with('error', 'Your cart is empty.');
+                return redirect()->route('cart')->with('error', 'Your cart is empty.');
             }
 
             $lineItems = [];
@@ -52,7 +52,7 @@ class PaymentController extends Controller
             foreach ($cart->items as $item) {
                 $lineItems[] = [
                     'price_data' => [
-                        'currency' => 'usd',
+                        'currency' => config('app.currency', 'usd'),
                         'product_data' => [
                             'name' => $item->pizza->name,
                             'description' => Str::limit($item->pizza->description, 100) . "\n'Contains: " . implode(', ', $item->pizza->ingredients->pluck('name')->toArray()) . ".",
@@ -73,7 +73,7 @@ class PaymentController extends Controller
 
                     $lineItems[] = [
                         'price_data' => [
-                            'currency' => 'usd',
+                            'currency' => config('app.currency', 'usd'),
                             'product_data' => [
                                 'name' => "Topping: $ingredient->name",
                                 'description' => Str::limit($ingredient->description, 100),
@@ -89,8 +89,8 @@ class PaymentController extends Controller
                 }
             }
 
+            // Internal Order Calculation
             $discounts = [];
-
             $coupon = Coupon::where('code', $cart->coupon_code)->where('is_active', true)->first();
 
             if ($coupon) {
@@ -100,23 +100,8 @@ class PaymentController extends Controller
             $totalDiscount = Money::sum(array_values($discounts));
             $totalAmount = $cart->total->sub($totalDiscount);
 
-            if ($totalAmount->cmp('0') < 0) {
+            if ($totalAmount->isNegativeOrZero())
                 $totalAmount = new Money('0');
-
-                $lineItems = [
-                    [
-                        'price_data' => [
-                            'currency' => 'usd',
-                            'product_data' => [
-                                'name' => 'FREE ORDER',
-                                'description' => 'Congratulations! Your order total is $0.00.',
-                            ],
-                            'unit_amount_decimal' => 0,
-                        ],
-                        'quantity' => 1,
-                    ]
-                ];
-            }
 
             $order = Order::create([
                 'invoice_number' => Order::generateInvoiceNumber(),
@@ -133,19 +118,26 @@ class PaymentController extends Controller
                 'json' => null
             ]);
 
+            // Coupon for stripe
             $stripeParams = [
-                [
-                    'line_items' => $lineItems,
-                    'mode' => 'payment',
-                    'success_url' => route('checkout.success', ['invoice' => $order->invoice_number]),
-                    'cancel_url' => route('checkout.cancel', ['invoice' => $order->invoice_number]),
-                    'customer_email' => $validated['customer_email'],
-                    'metadata' => [
-                        'cart_id' => $cartId,
-                    ],
-                ]
+                'line_items' => $lineItems,
+                'mode' => 'payment',
+                'success_url' => route('checkout.success', ['invoice' => $order->invoice_number]),
+                'cancel_url' => route('checkout.cancel', ['invoice' => $order->invoice_number]),
+                'customer_email' => $validated['customer_email'],
+                'discounts' => [],
+                'metadata' => [
+                    'cart_id' => $cartId,
+                ],
             ];
 
+            if ($coupon && $coupon->stripe_coupon_id) {
+                $stripeParams['discounts'][] = [
+                    'coupon' => $coupon->stripe_coupon_id,
+                ];
+            }
+
+            // FIX: Pass the params array directly, not wrapped in another array
             $checkoutSession = $this->stripe->checkout->sessions->create($stripeParams);
 
             $order->stripe_session_id = $checkoutSession->id;
@@ -158,7 +150,7 @@ class PaymentController extends Controller
 
             DB::commit();
 
-            return redirect($checkoutSession->url);
+            return redirect()->to($checkoutSession->url);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -198,11 +190,6 @@ class PaymentController extends Controller
 
             $cartId = isset($order->json['cart']['id']) ? $order->json['cart']['id'] : null;
             $cart = Cart::with('items')->find($cartId);
-
-            if ($cart) {
-                $cart->items()->delete();
-                $cart->delete();
-            }
 
             $request->session()->forget('cart_id');
 

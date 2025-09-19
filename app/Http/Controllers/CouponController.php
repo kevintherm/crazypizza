@@ -12,9 +12,17 @@ use App\Services\CrudService;
 use App\Services\DataTableService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Stripe\StripeClient;
 
 class CouponController extends Controller
 {
+    private StripeClient $stripe;
+
+    public function __construct()
+    {
+        $this->stripe = new StripeClient(config('services.stripe.secret'));
+    }
+
     public function dataTable(Request $request)
     {
         return $this->safe(function () use ($request) {
@@ -27,10 +35,26 @@ class CouponController extends Controller
     {
         return $this->safe(function () use ($request) {
 
-            $coupon = Coupon::updateOrCreate(
-                ['id' => $request->input('id')],
-                $request->only(['code', 'discount', 'quota', 'is_active'])
-            );
+            $coupon = Coupon::firstOrCreate(['id' => $request->input('id')], $request->only(['code', 'discount', 'quota', 'is_active']));
+
+            if ($coupon->quota != $request->input('quota')) {
+                return ApiResponse::error('Cannot update quota after creation. Please create a new coupon with the desired quota.', null, 400);
+            }
+
+            $coupon->update($request->only(['code', 'discount', 'quota', 'is_active']));
+
+            if (!$coupon->stripe_coupon_id) {
+                $stripeCoupon = $this->stripe->coupons->create([
+                    'duration' => 'once',
+                    'max_redemptions' => $coupon->quota > 0 ? $coupon->quota : 1,
+                    'name' => "Discount: {$coupon->code}",
+                    'amount_off' => $coupon->discount->toInt(),
+                    'currency' => config('app.currency', 'usd'),
+                ]);
+
+                $coupon->stripe_coupon_id = $stripeCoupon->id;
+                $coupon->save();
+            }
 
             $coupon->refresh();
 
@@ -42,6 +66,11 @@ class CouponController extends Controller
     {
         return $this->safe(function () use ($request) {
             $coupon = CrudService::delete(Coupon::class, $request->id, $request->column);
+
+            if ($coupon->stripe_coupon_id) {
+                $this->stripe->coupons->delete($coupon->stripe_coupon_id);
+            }
+
             return ApiResponse::success("Deleted successfully.", $coupon);
         });
     }
